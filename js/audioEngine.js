@@ -181,12 +181,15 @@ class AudioEngine {
 
   /**
    * Plays sequential audio chunks via native online neural TTS (e.g. for pure Punjabi, Hindi, etc.)
+   * Strictly guarantees single audio output so two voices NEVER speak simultaneously.
    */
   playAudioChunks(chunks, langCode, options = {}) {
     const { onStart, onEnd, onError, rate = 1.0, volume = 1.0 } = options;
     let index = 0;
+    let isTerminated = false;
 
     const playNext = () => {
+      if (isTerminated) return;
       if (index >= chunks.length) {
         this.isPlayingAudio = false;
         this.currentAudioElement = null;
@@ -204,9 +207,33 @@ class AudioEngine {
       audio.volume = Math.min(Math.max(volume, 0), 1);
       this.currentAudioElement = audio;
 
-      let triedDirect = false;
+      let hasStarted = false;
+      let hasFailed = false;
+
+      const triggerFallback = () => {
+        if (hasFailed || isTerminated) return;
+        hasFailed = true;
+        isTerminated = true;
+
+        if (this.currentAudioElement) {
+          try {
+            this.currentAudioElement.pause();
+            this.currentAudioElement.removeAttribute('src');
+            this.currentAudioElement.load();
+          } catch (e) {}
+          this.currentAudioElement = null;
+        }
+
+        // Only call browser speak once
+        this.fallbackBrowserSpeak(chunks.slice(index - 1).join(' '), langCode, options);
+      };
 
       audio.onplay = () => {
+        if (isTerminated) {
+          audio.pause();
+          return;
+        }
+        hasStarted = true;
         if (index === 1) {
           this.isPlayingAudio = true;
           onStart?.();
@@ -214,41 +241,25 @@ class AudioEngine {
       };
 
       audio.onended = () => {
+        if (isTerminated) return;
         playNext();
       };
 
-      audio.onerror = (err) => {
-        if (!triedDirect) {
-          triedDirect = true;
-          console.info(`Switching to direct TTS for ${langCode}...`);
-          audio.src = directGoogleUrl;
-          audio.play().catch(() => {
-            this.fallbackBrowserSpeak(chunks.slice(index - 1).join(' '), langCode, options);
-          });
-          return;
-        }
-        console.warn(`Online audio error for ${langCode}, falling back to browser synthesis:`, err);
-        this.fallbackBrowserSpeak(chunks.slice(index - 1).join(' '), langCode, options);
+      audio.onerror = () => {
+        triggerFallback();
       };
 
       // Try local proxy if running on web server
       if (window.location.protocol.startsWith('http')) {
         audio.src = localProxyUrl;
       } else {
-        triedDirect = true;
         audio.src = directGoogleUrl;
       }
 
-      audio.play().catch((err) => {
-        if (!triedDirect) {
-          triedDirect = true;
-          audio.src = directGoogleUrl;
-          audio.play().catch(() => {
-            this.fallbackBrowserSpeak(chunks.slice(index - 1).join(' '), langCode, options);
-          });
-          return;
+      audio.play().catch(() => {
+        if (!hasStarted) {
+          triggerFallback();
         }
-        this.fallbackBrowserSpeak(chunks.slice(index - 1).join(' '), langCode, options);
       });
     };
 
