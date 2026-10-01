@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeftRight, Sparkles, Building2, Train, Stethoscope, Landmark } from 'lucide-react';
+import { ArrowLeftRight, Sparkles, Building2, Train, Stethoscope, Landmark, Layers } from 'lucide-react';
 
 export const SUPPORTED_LANGUAGES = [
   { code: 'hi', name: 'Hindi (हिन्दी)', flag: '🇮🇳', region: 'India', native: 'हिन्दी' },
@@ -19,10 +19,10 @@ export const SUPPORTED_LANGUAGES = [
 ];
 
 export const DOMAINS = [
-  { id: 'general', name: 'Public Desk / Civic Counter', icon: Landmark },
-  { id: 'railway', name: 'Railway Station & Transport', icon: Train },
-  { id: 'medical', name: 'Healthcare & Hospital Clinic', icon: Stethoscope },
-  { id: 'public_service', name: 'Government Administration', icon: Building2 },
+  { id: 'general', name: 'Civic Counter // Public Desk', icon: Landmark },
+  { id: 'railway', name: 'Transit Terminal // Railway Desk', icon: Train },
+  { id: 'medical', name: 'Healthcare Clinic // Hospital', icon: Stethoscope },
+  { id: 'public_service', name: 'Govt Administration // Citizen Service', icon: Building2 },
 ];
 
 export default function LanguageSelector({
@@ -46,19 +46,19 @@ export default function LanguageSelector({
   const langB = getLanguage(personBLang);
 
   return (
-    <div className="bg-theme-card/95 backdrop-blur-md rounded-3xl p-5 shadow-warm border border-theme-sand/70">
+    <div className="bg-slate-900/80 backdrop-blur-xl rounded-3xl p-5 shadow-cyber-card border border-slate-800">
       <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
         
-        {/* Person A Language Card */}
-        <div className="flex-1 bg-theme-surface/90 rounded-2xl p-3.5 border border-theme-sand/80 shadow-sm flex flex-col gap-2">
+        {/* Person A Channel Card */}
+        <div className="flex-1 bg-slate-950/80 rounded-2xl p-4 border border-slate-800/80 hover:border-cyan-500/30 transition-all flex flex-col gap-2">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-theme-terracotta flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-theme-terracotta"></span>
-              Person A (Counter Operator)
+            <span className="text-[11px] font-mono font-bold tracking-wider text-cyan-400 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#22d3ee]"></span>
+              CHANNEL_01 // DESK OPERATOR
             </span>
             {langA.region === 'India' && (
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300">
-                Native Indic
+              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-300 border border-cyan-500/40">
+                INDIC_NATIVE
               </span>
             )}
           </div>
@@ -67,10 +67,10 @@ export default function LanguageSelector({
               value={personALang}
               onChange={(e) => setPersonALang(e.target.value)}
               disabled={disabled}
-              className="w-full pl-3.5 pr-8 py-2.5 rounded-xl bg-white border border-theme-sand text-theme-dark font-bold text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-theme-terracotta transition cursor-pointer disabled:opacity-60 shadow-2xs"
+              className="w-full pl-3.5 pr-8 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700/80 text-white font-bold text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 transition cursor-pointer disabled:opacity-50"
             >
               {SUPPORTED_LANGUAGES.map((lang) => (
-                <option key={`a-${lang.code}`} value={lang.code}>
+                <option key={`a-${lang.code}`} value={lang.code} className="bg-slate-900 text-white">
                   {lang.flag} {lang.name}
                 </option>
               ))}
@@ -78,28 +78,28 @@ export default function LanguageSelector({
           </div>
         </div>
 
-        {/* Swap Button with Circular Terracotta Accent */}
-        <div className="flex items-center justify-center self-center my-[-4px] lg:my-0">
+        {/* Swap Button with Neon Glow */}
+        <div className="flex items-center justify-center self-center my-[-2px] lg:my-0">
           <button
             onClick={handleSwap}
             disabled={disabled}
-            title="Swap Languages between Operator and Visitor"
-            className="p-3.5 rounded-2xl bg-theme-cream hover:bg-theme-sand text-theme-terracotta transition transform active:scale-90 hover:rotate-180 duration-300 border border-theme-sand shadow-sm disabled:opacity-50"
+            title="Swap Inbound/Outbound Languages"
+            className="p-3.5 rounded-2xl bg-slate-800/90 hover:bg-cyan-500/20 text-cyan-400 border border-slate-700 hover:border-cyan-400 transition-all transform active:scale-90 hover:rotate-180 duration-300 shadow-[0_0_15px_rgba(6,182,212,0.15)] hover:shadow-neon-cyan disabled:opacity-40"
           >
             <ArrowLeftRight className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Person B Language Card */}
-        <div className="flex-1 bg-theme-surface/90 rounded-2xl p-3.5 border border-theme-sand/80 shadow-sm flex flex-col gap-2">
+        {/* Person B Channel Card */}
+        <div className="flex-1 bg-slate-950/80 rounded-2xl p-4 border border-slate-800/80 hover:border-blue-500/30 transition-all flex flex-col gap-2">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-theme-dark flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-theme-sand"></span>
-              Person B (Visitor / Citizen)
+            <span className="text-[11px] font-mono font-bold tracking-wider text-blue-400 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-blue-400 shadow-[0_0_8px_#60a5fa]"></span>
+              CHANNEL_02 // CITIZEN / VISITOR
             </span>
             {langB.region === 'India' && (
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300">
-                Native Indic
+              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-blue-950 text-blue-300 border border-blue-500/40">
+                INDIC_NATIVE
               </span>
             )}
           </div>
@@ -108,10 +108,10 @@ export default function LanguageSelector({
               value={personBLang}
               onChange={(e) => setPersonBLang(e.target.value)}
               disabled={disabled}
-              className="w-full pl-3.5 pr-8 py-2.5 rounded-xl bg-white border border-theme-sand text-theme-dark font-bold text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-theme-terracotta transition cursor-pointer disabled:opacity-60 shadow-2xs"
+              className="w-full pl-3.5 pr-8 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700/80 text-white font-bold text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition cursor-pointer disabled:opacity-50"
             >
               {SUPPORTED_LANGUAGES.map((lang) => (
-                <option key={`b-${lang.code}`} value={lang.code}>
+                <option key={`b-${lang.code}`} value={lang.code} className="bg-slate-900 text-white">
                   {lang.flag} {lang.name}
                 </option>
               ))}
@@ -119,21 +119,21 @@ export default function LanguageSelector({
           </div>
         </div>
 
-        {/* Domain Vocabulary / Service Setting */}
-        <div className="w-full lg:w-72 bg-theme-surface/90 rounded-2xl p-3.5 border border-theme-sand/80 shadow-sm flex flex-col gap-2">
+        {/* Context / Domain Vocabulary Module */}
+        <div className="w-full lg:w-80 bg-slate-950/80 rounded-2xl p-4 border border-slate-800/80 flex flex-col gap-2">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-stone-600 flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-              Counter Context
+            <span className="text-[11px] font-mono font-bold tracking-wider text-slate-400 flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+              DOMAIN_LEXICON_CONTEXT
             </span>
           </div>
           <select
             value={domain}
             onChange={(e) => setDomain(e.target.value)}
-            className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-theme-sand text-theme-dark font-semibold text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-theme-terracotta transition cursor-pointer shadow-2xs"
+            className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900/90 border border-slate-700/80 text-cyan-300 font-mono font-semibold text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400 transition cursor-pointer"
           >
             {DOMAINS.map((d) => (
-              <option key={d.id} value={d.id}>
+              <option key={d.id} value={d.id} className="bg-slate-900 text-white">
                 {d.name}
               </option>
             ))}

@@ -6,10 +6,10 @@ import {
   FlipVertical, 
   User, 
   Users, 
-  Volume2, 
-  VolumeX,
-  Radio,
-  Sparkles
+  Radio, 
+  Sparkles,
+  Zap,
+  Activity
 } from 'lucide-react';
 
 export default function AudioControls({
@@ -25,45 +25,47 @@ export default function AudioControls({
   disabled
 }) {
   return (
-    <div className="bg-theme-card/95 backdrop-blur-md rounded-3xl p-4 sm:p-5 shadow-warm border border-theme-sand/70">
-      <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
+    <div className="bg-slate-900/90 backdrop-blur-xl rounded-3xl p-5 shadow-cyber-card border border-slate-800">
+      <div className="flex flex-col lg:flex-row items-center justify-between gap-5">
         
-        {/* Left: Speaker Selection Tabs */}
-        <div className="w-full lg:w-auto flex items-center justify-center p-1.5 bg-theme-surface rounded-2xl border border-theme-sand/70 shadow-inner">
+        {/* Left: Active Channel / Speaker Toggle */}
+        <div className="w-full lg:w-auto flex items-center justify-center p-1.5 bg-slate-950/90 rounded-2xl border border-slate-800 shadow-inner">
           <button
             onClick={() => onSwitchSpeaker('person_a')}
-            className={`flex-1 lg:flex-none flex items-center justify-center gap-2.5 px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all duration-200 ${
+            className={`flex-1 lg:flex-none flex items-center justify-center gap-2.5 px-6 py-2.5 rounded-xl font-mono font-bold text-xs sm:text-sm transition-all duration-200 ${
               activeSpeaker === 'person_a'
-                ? 'bg-theme-terracotta text-white shadow-md scale-[1.02]'
-                : 'text-stone-600 hover:text-theme-dark hover:bg-theme-cream/60'
+                ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 font-black shadow-[0_0_20px_rgba(6,182,212,0.4)] scale-[1.02]'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
             }`}
           >
             <User className="w-4 h-4" />
-            <span>Person A (Desk Agent)</span>
+            <span>OPERATOR [CH_A]</span>
           </button>
 
           <button
             onClick={() => onSwitchSpeaker('person_b')}
-            className={`flex-1 lg:flex-none flex items-center justify-center gap-2.5 px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all duration-200 ${
+            className={`flex-1 lg:flex-none flex items-center justify-center gap-2.5 px-6 py-2.5 rounded-xl font-mono font-bold text-xs sm:text-sm transition-all duration-200 ${
               activeSpeaker === 'person_b'
-                ? 'bg-theme-terracotta text-white shadow-md scale-[1.02]'
-                : 'text-stone-600 hover:text-theme-dark hover:bg-theme-cream/60'
+                ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-slate-950 font-black shadow-[0_0_20px_rgba(59,130,246,0.4)] scale-[1.02]'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
             }`}
           >
             <Users className="w-4 h-4" />
-            <span>Person B (Visitor)</span>
+            <span>VISITOR [CH_B]</span>
           </button>
         </div>
 
-        {/* Center: Main Mic Controls & Real-Time Audio Level Spectrum */}
-        <div className="flex items-center gap-4">
+        {/* Center: Real Microphone Audio Waveform & Big Glowing Cyber Mic Button */}
+        <div className="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto justify-center">
+          
+          {/* Main Action Button */}
           <button
             onClick={isListening ? onStopListening : onStartListening}
             disabled={disabled}
-            className={`group relative flex items-center gap-3 px-7 py-3.5 rounded-2xl font-extrabold text-sm sm:text-base tracking-wide transition-all duration-300 shadow-md active:scale-95 disabled:opacity-50 ${
+            className={`group relative flex items-center gap-3 px-8 py-3.5 rounded-2xl font-mono font-extrabold text-sm sm:text-base tracking-wider transition-all duration-300 shadow-lg active:scale-95 disabled:opacity-40 ${
               isListening
-                ? 'bg-rose-600 hover:bg-rose-700 text-white mic-active-glow ring-4 ring-rose-500/20'
-                : 'bg-theme-terracotta hover:bg-[#8e4225] text-white hover:shadow-lg'
+                ? 'bg-gradient-to-r from-rose-600 to-red-500 text-white shadow-[0_0_30px_rgba(244,63,94,0.5)] ring-4 ring-rose-500/20'
+                : 'bg-gradient-to-r from-cyan-500 via-blue-500 to-cyan-400 text-slate-950 hover:shadow-neon-cyan'
             }`}
           >
             {isListening ? (
@@ -73,70 +75,74 @@ export default function AudioControls({
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-white"></span>
                 </span>
                 <MicOff className="w-5 h-5" />
-                <span>Stop Listening</span>
+                <span>TERMINATE MIC</span>
               </>
             ) : (
               <>
                 <Mic className="w-5 h-5 transition-transform group-hover:scale-110" />
-                <span>Start Listening</span>
+                <span>ENGAGE STREAM</span>
               </>
             )}
           </button>
 
-          {/* Equalizer Visualizer Spectrum */}
-          <div className="flex items-center gap-2 px-4 py-2.5 bg-theme-surface rounded-2xl border border-theme-sand/70 h-12">
-            <div className="flex items-end gap-1 h-6 w-20 justify-center">
-              {[15, 30, 50, 75, 90, 60, 40, 20].map((baseH, idx) => {
-                const isActive = isListening && audioLevel > 5;
+          {/* Central Real-Time Dynamic Audio Spectrum Visualizer */}
+          <div className="flex items-center gap-3 px-5 py-2.5 bg-slate-950/90 rounded-2xl border border-slate-800 h-14 min-w-[180px] shadow-inner">
+            <div className="flex items-end gap-1.5 h-8 justify-center flex-1">
+              {[15, 35, 60, 85, 100, 75, 45, 25, 55, 90, 65, 30].map((baseH, idx) => {
+                const isActive = isListening && audioLevel > 4;
                 const dynamicH = isActive
-                  ? Math.min(100, Math.max(15, (audioLevel / 100) * baseH * 1.5))
+                  ? Math.min(100, Math.max(12, (audioLevel / 100) * baseH * 1.4))
                   : 12;
                 return (
                   <div
                     key={idx}
-                    className={`w-1.5 rounded-full transition-all duration-75 ${
+                    className={`w-1 rounded-full transition-all duration-75 ${
                       isActive
-                        ? audioLevel > 65
-                          ? 'bg-rose-500'
-                          : 'bg-theme-terracotta'
-                        : 'bg-theme-sand/60'
+                        ? audioLevel > 70
+                          ? 'bg-rose-400 shadow-[0_0_8px_#f43f5e]'
+                          : 'bg-gradient-to-t from-blue-500 to-cyan-300 shadow-[0_0_8px_#22d3ee]'
+                        : 'bg-slate-800'
                     }`}
                     style={{ height: `${dynamicH}%` }}
                   />
                 );
               })}
             </div>
-            <div className="flex flex-col text-[10px] font-mono font-bold text-stone-500 leading-tight">
-              <span>{isListening ? `${audioLevel}%` : 'MUTED'}</span>
-              <span className="text-[8px] text-stone-400 font-sans uppercase">
-                {isListening ? '16kHz PCM' : 'Idle'}
+            
+            <div className="flex flex-col text-[10px] font-mono font-bold leading-tight pl-2 border-l border-slate-800">
+              <span className={isListening ? 'text-cyan-400' : 'text-slate-500'}>
+                {isListening ? `${audioLevel}% VU` : 'MUTED'}
+              </span>
+              <span className="text-[8px] text-slate-500 uppercase tracking-tighter">
+                {isListening ? '16kHz S16LE' : 'STANDBY'}
               </span>
             </div>
           </div>
+
         </div>
 
-        {/* Right: Counter Actions (180° Flip & Clear) */}
-        <div className="w-full lg:w-auto flex items-center justify-center lg:justify-end gap-2.5">
+        {/* Right: Counter Actions (180° Face-to-Face & Clear) */}
+        <div className="w-full lg:w-auto flex items-center justify-center lg:justify-end gap-3">
           <button
             onClick={onToggleMirrored}
-            title="Rotate Person B's panel 180° for flat countertop / face-to-face tablet positioning"
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold border transition-all active:scale-95 shadow-2xs ${
+            title="Rotate Visitor Panel 180° for Flat Tablet / Across Counter View"
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl font-mono text-xs sm:text-sm font-bold border transition-all active:scale-95 shadow-2xs ${
               isMirrored
-                ? 'bg-amber-100 text-amber-900 border-amber-300 ring-2 ring-amber-400/30'
-                : 'bg-theme-surface hover:bg-theme-cream text-theme-dark border-theme-sand/80'
+                ? 'bg-cyan-950/80 text-cyan-300 border-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.3)] ring-2 ring-cyan-500/20'
+                : 'bg-slate-950/80 hover:bg-slate-800 text-slate-300 border-slate-800'
             }`}
           >
-            <FlipVertical className="w-4 h-4 text-theme-terracotta" />
-            <span>Face-to-Face 180°</span>
+            <FlipVertical className="w-4 h-4 text-cyan-400" />
+            <span>180° COUNTER_FLIP</span>
           </button>
 
           <button
             onClick={onClearConversation}
-            title="Clear all conversation messages"
-            className="flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold bg-theme-surface hover:bg-rose-50 text-stone-600 hover:text-rose-700 border border-theme-sand/80 transition-all active:scale-95 shadow-2xs"
+            title="Reset conversation stream"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-2xl font-mono text-xs sm:text-sm font-bold bg-slate-950/80 hover:bg-rose-950/50 text-slate-400 hover:text-rose-400 border border-slate-800 hover:border-rose-500/40 transition-all active:scale-95 shadow-2xs"
           >
             <Trash2 className="w-4 h-4" />
-            <span className="hidden sm:inline">Clear</span>
+            <span className="hidden sm:inline">RESET</span>
           </button>
         </div>
 
