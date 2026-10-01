@@ -455,7 +455,7 @@ class App {
       updatePipeline(5);
       if (targetText) {
         targetText.innerHTML = `
-          <div style="font-size: 1.15rem; font-weight: 600; color: #60a5fa; margin-bottom: 0.5rem;">${result.translatedText}</div>
+          <div style="font-size: 1.15rem; font-weight: 600; color: var(--ch-sand); margin-bottom: 0.5rem;">${result.translatedText}</div>
           <div style="font-size: 0.75rem; color: var(--text-muted); display: flex; gap: 0.75rem;">
             <span>Engine: <b style="color: var(--accent-emerald);">${result.provider}</b></span>
             <span>Latency: <b style="color: var(--accent-cyan);">${result.latencyMs}ms</b></span>
@@ -685,7 +685,7 @@ class App {
 
       bubble.innerHTML = `
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; font-size: 0.75rem;">
-          <span style="font-weight: 700; color: ${isA ? '#60a5fa' : '#34d399'};">
+          <span style="font-weight: 700; color: ${isA ? 'var(--ch-cream)' : 'var(--ch-sand)'};">
             ${isA ? '👤 Speaker A' : '👥 Speaker B'} (${msg.lang.toUpperCase()} → ${msg.targetLang.toUpperCase()})
           </span>
           <span style="color: var(--text-muted); font-size: 0.7rem;">${msg.timestamp}</span>
@@ -693,7 +693,7 @@ class App {
         <div style="font-size: 0.95rem; color: var(--text-primary); margin-bottom: 0.35rem;">
           ${msg.original}
         </div>
-        <div style="font-size: 0.95rem; font-weight: 600; color: ${isA ? '#93c5fd' : '#a7f3d0'}; padding-top: 0.35rem; border-top: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center;">
+        <div style="font-size: 0.95rem; font-weight: 600; color: ${isA ? 'var(--ch-sand)' : 'var(--ch-cream)'}; padding-top: 0.35rem; border-top: 1px solid rgba(220,195,170,0.15); display: flex; justify-content: space-between; align-items: center;">
           <span>${msg.translated}</span>
           <button class="btn-icon conv-play-msg" data-idx="${idx}" style="width: 28px; height: 28px; min-width: 28px; font-size: 0.75rem;" title="Play Audio">
             ▶
@@ -849,7 +849,7 @@ class App {
         <td style="padding: 0.65rem 0.75rem; color: var(--text-primary); font-weight: 500;">
           <span style="margin-right: 0.35rem;">${srcLangObj.flag}</span> ${item.sourceText}
         </td>
-        <td style="padding: 0.65rem 0.75rem; color: #60a5fa; font-weight: 500;">
+        <td style="padding: 0.65rem 0.75rem; color: var(--ch-sand); font-weight: 500;">
           <span style="margin-right: 0.35rem;">${tgtLangObj.flag}</span> ${item.targetText}
         </td>
         <td style="padding: 0.65rem 0.75rem; color: var(--text-muted); font-size: 0.75rem;">
@@ -949,7 +949,7 @@ class App {
         <td style="padding: 0.75rem; font-weight: 600;">${srcLangObj.flag} ${srcLangObj.name}</td>
         <td style="padding: 0.75rem; color: var(--text-primary);">${item.sourceText}</td>
         <td style="padding: 0.75rem; font-weight: 600;">${tgtLangObj.flag} ${tgtLangObj.name}</td>
-        <td style="padding: 0.75rem; color: #60a5fa; font-weight: 500;">${item.targetText}</td>
+        <td style="padding: 0.75rem; color: var(--ch-sand); font-weight: 500;">${item.targetText}</td>
         <td style="padding: 0.75rem; color: var(--text-muted); font-size: 0.75rem;">${new Date(item.date).toLocaleString()}</td>
         <td style="padding: 0.75rem; text-align: right;">
           <button class="btn-icon play-full-history-item" style="width: 30px; height: 30px; font-size: 0.75rem;" title="Play Audio">
