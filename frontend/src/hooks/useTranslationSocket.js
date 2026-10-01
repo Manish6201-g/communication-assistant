@@ -141,6 +141,20 @@ export function useTranslationSocket({ personALang, personBLang, domain }) {
     setPartialTranscript(null);
   }, [personALang, personBLang]);
 
+  const sendDirectText = useCallback((text, speaker = activeSpeaker) => {
+    if (!text || !text.trim()) return;
+    const src = speaker === 'person_a' ? personALang : personBLang;
+    const tgt = speaker === 'person_a' ? personBLang : personALang;
+
+    wsService.sendJson({
+      type: 'translate_text',
+      text: text.trim(),
+      speaker_role: speaker,
+      source_language: src,
+      target_language: tgt
+    });
+  }, [activeSpeaker, personALang, personBLang]);
+
   const clearConversation = useCallback(() => {
     setMessages([]);
     setPartialTranscript(null);
@@ -183,6 +197,7 @@ export function useTranslationSocket({ personALang, personBLang, domain }) {
     startListening,
     stopListening,
     switchSpeaker,
+    sendDirectText,
     clearConversation,
     replayMessageAudio
   };

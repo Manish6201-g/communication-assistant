@@ -191,6 +191,42 @@ async def websocket_stream_endpoint(websocket: WebSocket):
                             session.source_language = session.person_b_lang
                             session.target_language = session.person_a_lang
 
+                    elif event_type == "translate_text":
+                        text = payload.get("text", "").strip()
+                        if text:
+                            speaker = payload.get("speaker_role", session.current_speaker)
+                            source_lang = payload.get("source_language", session.source_language)
+                            target_lang = payload.get("target_language", session.target_language)
+                            segment_id = session.next_segment_id()
+                            
+                            trans_text, trans_ms = await translation_service.translate(
+                                text,
+                                source_lang=source_lang,
+                                target_lang=target_lang,
+                                domain=session.domain
+                            )
+                            tts_b64, _ = tts_service.synthesize(trans_text, language=target_lang)
+                            latency = LatencyBreakdown(
+                                capture_ms=0.0,
+                                vad_ms=0.0,
+                                asr_ms=0.0,
+                                translation_ms=round(trans_ms, 2),
+                                total_ms=round(trans_ms, 2)
+                            )
+                            event = TranslationEvent(
+                                session_id=session.session_id,
+                                segment_id=segment_id,
+                                speaker_role=speaker,
+                                source_language=source_lang,
+                                target_language=target_lang,
+                                source_text=text,
+                                translated_text=trans_text,
+                                is_final=True,
+                                latency=latency,
+                                audio_data_base64=tts_b64
+                            )
+                            await websocket.send_text(event.model_dump_json())
+
                     elif event_type == "tts_request":
                         text = payload.get("text", "")
                         lang = payload.get("language", "en")
