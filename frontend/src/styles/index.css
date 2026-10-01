@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #FAF7EA;
+    color: #3A1F13;
+  }
+}
+
+/* Custom scrollbars for clean kiosk look */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #EDE7CF;
+}
+::-webkit-scrollbar-thumb {
+  background: #DDBC89;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #AA512F;
+}
+
+/* 180-degree flip for face-to-face counter mode */
+.flip-180 {
+  transform: rotate(180deg);
+}

@@ -1,91 +1,229 @@
-# AI-Based Real-Time Multilingual Communication Assistant
-**Engineering Clinic Project (2026–27)**  
-*School of Engineering & Technology, CGC University Mohali*  
-*Department of Artificial Intelligence & Data Science*
+# Screen-Based AI Communication Assistant
+
+A full-stack, real-time speech-to-speech communication assistant designed for public-facing counters, interactive kiosks, healthcare desks, transport hubs, and face-to-face tablet interactions.
+
+Zero custom hardware required. Runs natively on standard computers, tablets, and kiosks.
 
 ---
 
-## 👥 Project Team & Mentors
+## 🏗 System Architecture
 
-### Team Members (CSE – Apex BT AIDS)
-- **Sanskar Srivastava** – Roll No: `2547172`
-- **Piyush Jaiswal** – Roll No: `2547135`
-- **Manish** – Roll No: `2547102`
-- **Parkeerat Singh** – Roll No: `2547131`
+```mermaid
+flowchart TD
+    subgraph Browser ["Frontend (React 18 + Vite + Tailwind CSS)"]
+        MIC["Microphone Audio"] --> WORKLET["Web Audio API Resampler (16kHz Mono PCM)"]
+        WORKLET --> WS_CLIENT["WebSocket Client (Binary Audio & JSON)"]
+        WS_CLIENT --> UI_PANELS["Dual Kiosk Panels (Person A & Person B)"]
+        UI_PANELS --> FACE_MODE["180° Face-to-Face Counter Flip Mode"]
+        UI_PANELS --> AUDIO_OUT["TTS Audio Player & Replay"]
+    end
 
-### Project Mentors
-- **Ms. Mittali** – Assistant Professor
-- **Dr. Inam Haq** – Assistant Professor
-
----
-
-## 💡 Project Synopsis & Overview
-The **AI-Based Real-Time Multilingual Communication Assistant** is a software-only speech-to-speech communication application developed to run entirely on a laptop. By utilizing the laptop's built-in microphone, speakers, and screen interface, it eliminates the need for external IoT modules (ESP32), wearable electronics, or custom hardware prototyping.
-
-### 7-Step Operational Pipeline (Synopsis Section 6.2)
-1. **Speech Input**: Built-in laptop microphone captures user speech in real time.
-2. **Speech-to-Text (STT)**: Real-time conversion of audio input into text via Web Speech API.
-3. **Display Recognized Text**: Instant rendering of recognized words on laptop display.
-4. **Neural Machine Translation (NMT)**: Neural translation across 19+ languages (English, Hindi, Punjabi, Spanish, French, German, Japanese, etc.).
-5. **Display Translation**: Target-language sentence rendered side-by-side with latency metrics.
-6. **Text-to-Speech (TTS)**: Neural acoustic synthesis producing spoken audio in the target language accent.
-7. **Audio Output**: Translated audio played through the laptop's built-in speakers.
-
----
-
-## 🚀 How to Run the Website
-
-### Option 1: Using the Python Server (Recommended)
-Run the included zero-dependency server:
-```bash
-python3 serve.py
-```
-Open your browser at `http://localhost:3000`.
-
-### Option 2: Using Any Static Web Server
-```bash
-# Using Python standard module
-python3 -m http.server 3000
-
-# Or using Node.js npx
-npx serve .
+    subgraph Backend ["Backend (FastAPI + AsyncIO + WebSockets)"]
+        WS_SERVER["WebSocket Server (/ws/stream)"]
+        SESS["Session Manager (Bounded Queue & States)"]
+        VAD["Voice Activity Detector (Energy & Boundary Segmenter)"]
+        ASR["ASR Engine (Faster-Whisper int8 / Greedy Beam=1)"]
+        TRANS["Multilingual Neural Translation Engine (Indian Native + Global)"]
+        TTS["gTTS Neural Text-to-Speech Engine"]
+        
+        WS_SERVER <--> SESS
+        SESS --> VAD
+        VAD --> ASR
+        ASR --> TRANS
+        TRANS --> TTS
+        TRANS --> WS_SERVER
+        TTS --> WS_SERVER
+    end
 ```
 
-> **Note**: For native Speech-to-Text (STT) microphone access, modern browsers require either `http://localhost` or `https://`. Recommended browsers: **Google Chrome** or **Microsoft Edge**.
+---
+
+## 🎨 Theme & Visual Palette
+
+Designed using the Warm Terracotta and Cream palette:
+* **Warm Ivory**: `#F9F3CF`
+* **Almond Cream**: `#EDE7CF`
+* **Sand Gold**: `#DDBC89`
+* **Terracotta Crimson**: `#AA512F`
 
 ---
 
-## 🌟 Key Application Features
+## 📁 Repository Structure
 
-1. **Interactive Dashboard (Fig. 2 Reproduction)**:
-   - "Welcome Back, Piyush" hero banner with feature highlights.
-   - Dual-card translation studio with live microphone input and audio playback.
-   - Quick action shortcuts (Live Conversation, Translate Studio, Translate Image, Voice Mode).
-   - Recent translations table with audio playback and timestamps.
-   - "One World Many Voices" interactive language greeting cloud.
+```text
+├── backend/
+│   ├── app/
+│   │   ├── main.py                     # FastAPI application & lifespan
+│   │   ├── config.py                   # System configuration & domain vocabularies
+│   │   ├── api/
+│   │   │   └── websocket.py            # Real-time WebSocket streaming endpoint
+│   │   ├── services/
+│   │   │   ├── audio_processor.py      # PCM decoding, normalization, resampling
+│   │   │   ├── vad_service.py          # Real-time Voice Activity Detection
+│   │   │   ├── asr_service.py          # Faster-Whisper ASR inference & fallback
+│   │   │   ├── translation_service.py  # Neural translation (Indian native & global)
+│   │   │   └── tts_service.py          # Text-to-speech synthesis & caching
+│   │   ├── session/
+│   │   │   └── manager.py              # Bounded session states & memory guards
+│   │   ├── models/
+│   │   │   └── model_loader.py         # Singleton model preloader
+│   │   └── schemas/
+│   │       └── events.py               # Pydantic schemas for event protocol
+│   ├── tests/
+│   │   ├── test_api.py                 # Health & unit tests
+│   │   └── test_websocket.py           # End-to-end WebSocket tests
+│   ├── requirements.txt                # Python dependencies
+│   └── .env.example
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── LanguageSelector.jsx    # Indian native & global language switcher
+│   │   │   ├── AudioControls.jsx       # Mic controls, live VU meter & 180° flip
+│   │   │   ├── TranscriptPanel.jsx     # Dual communication caption panels
+│   │   │   ├── ConnectionStatus.jsx    # Real-time connection badge
+│   │   │   └── LatencyIndicator.jsx    # Capture, VAD, ASR, translation metrics
+│   │   ├── hooks/
+│   │   │   ├── useAudioCapture.js      # 16kHz PCM downsampling Web Audio hook
+│   │   │   └── useTranslationSocket.js # WebSocket event & session hook
+│   │   ├── services/
+│   │   │   └── websocket.js            # Resilient WebSocket transport client
+│   │   ├── pages/
+│   │   │   └── Translator.jsx          # Main split-screen countertop layout
+│   │   ├── styles/
+│   │   │   └── index.css               # Tailwind CSS & 180° counter rotation
+│   │   ├── App.jsx
+│   │   └── main.jsx
+│   ├── package.json
+│   ├── vite.config.js
+│   ├── tailwind.config.js
+│   └── .env.example
+├── start.sh                            # One-click startup script
+└── README.md
+```
 
-2. **Translate Studio (Full 7-Step Pipeline)**:
-   - Live visual step indicator highlighting each stage from mic capture to speaker output.
-   - Real-time animated canvas waveform visualizer using Web Audio API FFT analysis.
-   - Preset demo prompts covering travel, emergencies, academic introductions, and shopping.
+---
 
-3. **Live Two-Way Conversation Mode**:
-   - Turn-taking dialogue interface between Speaker A and Speaker B.
-   - Hands-free speech-to-speech loop with conversational chat bubbles and transcript logs.
+## ⚡ Quick Start
 
-4. **Image / Document OCR Translation (Fig. 2 Quick Action)**:
-   - Extract text from signs, hospital boards, transit schedules, and restaurant menus.
-   - Instant neural translation and audio synthesis.
+### 1. Prerequisites
+- Python 3.10+
+- Node.js 18+ and npm
 
-5. **History & Transcripts**:
-   - Searchable and filterable archive of all translation sessions.
-   - Export session logs as **JSON** or formatted **TXT** transcript.
+### 2. Launch with Single Command
+```bash
+chmod +x start.sh
+./start.sh
+```
 
-6. **Academic Project Dossier (CGC University Mohali)**:
-   - Complete digital copy of the Engineering Clinic Project Synopsis.
-   - System Requirements Table 1 and 8-Phase Implementation Plan Table 2.
+Or run manually:
 
-7. **Audio & System Diagnostics**:
-   - Live microphone test with visual input feedback.
-   - Dual-frequency harmonic test chime and voice test for laptop speakers.
-   - Speech rate and pitch calibration sliders.
+**Backend:**
+```bash
+cd backend
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
+
+**Frontend:**
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Visit:
+- **Frontend App**: `http://localhost:3000`
+- **Backend Swagger Docs**: `http://localhost:8000/docs`
+- **Health Check**: `http://localhost:8000/health`
+
+---
+
+## 🇮🇳 Supported Native Indian & Global Languages
+
+| Language | Script / Code | Native Name | Region |
+| :--- | :--- | :--- | :--- |
+| **Hindi** | `hi` | हिन्दी | India |
+| **Punjabi** | `pa` | ਪੰਜਾਬੀ | India |
+| **Bengali** | `bn` | বাংলা | India |
+| **Tamil** | `ta` | தமிழ் | India |
+| **Telugu** | `te` | తెలుగు | India |
+| **Marathi** | `mr` | मराठी | India |
+| **Gujarati** | `gu` | ગુજરાતી | India |
+| **Urdu** | `ur` | اردو | India |
+| **English** | `en` | English | Global |
+| **Spanish** | `es` | Español | Global |
+| **French** | `fr` | Français | Global |
+| **German** | `de` | Deutsch | Global |
+| **Arabic** | `ar` | العربية | Global |
+| **Japanese** | `ja` | 日本語 | Global |
+
+---
+
+## 📡 WebSocket Event Protocol
+
+### 1. Connection Ready (Server → Client)
+```json
+{
+  "type": "ready",
+  "session_id": "8b51c3e1-382a-4bc4-9d74-...",
+  "source_language": "hi",
+  "target_language": "en",
+  "speaker_role": "person_a",
+  "sample_rate": 16000
+}
+```
+
+### 2. Start Session (Client → Server)
+```json
+{
+  "type": "start",
+  "source_language": "hi",
+  "target_language": "en",
+  "speaker_role": "person_a",
+  "audio_format": "pcm_s16le",
+  "sample_rate": 16000,
+  "domain": "railway"
+}
+```
+
+### 3. Binary Audio Frames (Client → Server)
+- 16,000 Hz, 16-bit Mono Little-Endian PCM raw bytes streamed continuously over the WebSocket.
+
+### 4. Translation Result (Server → Client)
+```json
+{
+  "type": "translation",
+  "session_id": "8b51c3e1-...",
+  "segment_id": 1,
+  "speaker_role": "person_a",
+  "source_language": "hi",
+  "target_language": "en",
+  "source_text": "मुझे टिकट रद्द करानी है",
+  "translated_text": "I need to cancel my ticket",
+  "is_final": true,
+  "latency": {
+    "capture_ms": 110,
+    "vad_ms": 20,
+    "asr_ms": 160,
+    "translation_ms": 85,
+    "total_ms": 375
+  },
+  "audio_data_base64": "<base64-encoded-mp3>"
+}
+```
+
+---
+
+## 🔒 Privacy & Security
+- **Zero raw audio storage**: Audio frames processed in volatile memory only and discarded.
+- **Bounded Queues**: Audio buffers strictly capped at 500 frames to prevent memory leaks.
+- **Local / Self-hosted execution**: Supports local Faster-Whisper models for offline privacy.
+
+---
+
+## 🧪 Running Tests
+```bash
+PYTHONPATH=backend ./backend/venv/bin/pytest -c backend/pytest.ini backend/tests/
+```
