@@ -180,7 +180,7 @@ class AudioEngine {
   }
 
   /**
-   * Plays sequential audio chunks via native online neural TTS (e.g. for Punjabi, Hindi, etc.)
+   * Plays sequential audio chunks via native online neural TTS (e.g. for pure Punjabi, Hindi, etc.)
    */
   playAudioChunks(chunks, langCode, options = {}) {
     const { onStart, onEnd, onError, rate = 1.0, volume = 1.0 } = options;
@@ -195,12 +195,16 @@ class AudioEngine {
       }
 
       const chunk = chunks[index++];
-      const url = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${encodeURIComponent(langCode)}&q=${encodeURIComponent(chunk)}`;
+      const localProxyUrl = `/api/tts?tl=${encodeURIComponent(langCode)}&q=${encodeURIComponent(chunk)}`;
+      const directGoogleUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${encodeURIComponent(langCode)}&q=${encodeURIComponent(chunk)}`;
 
-      const audio = new Audio(url);
+      const audio = new Audio();
+      audio.referrerPolicy = 'no-referrer';
       audio.playbackRate = Math.min(Math.max(rate, 0.75), 1.3);
       audio.volume = Math.min(Math.max(volume, 0), 1);
       this.currentAudioElement = audio;
+
+      let triedDirect = false;
 
       audio.onplay = () => {
         if (index === 1) {
@@ -214,12 +218,36 @@ class AudioEngine {
       };
 
       audio.onerror = (err) => {
-        console.warn(`Online neural audio error for ${langCode}, falling back to browser synthesis:`, err);
+        if (!triedDirect) {
+          triedDirect = true;
+          console.info(`Switching to direct TTS for ${langCode}...`);
+          audio.src = directGoogleUrl;
+          audio.play().catch(() => {
+            this.fallbackBrowserSpeak(chunks.slice(index - 1).join(' '), langCode, options);
+          });
+          return;
+        }
+        console.warn(`Online audio error for ${langCode}, falling back to browser synthesis:`, err);
         this.fallbackBrowserSpeak(chunks.slice(index - 1).join(' '), langCode, options);
       };
 
+      // Try local proxy if running on web server
+      if (window.location.protocol.startsWith('http')) {
+        audio.src = localProxyUrl;
+      } else {
+        triedDirect = true;
+        audio.src = directGoogleUrl;
+      }
+
       audio.play().catch((err) => {
-        console.warn(`Audio playback blocked or failed, falling back to browser synthesis:`, err);
+        if (!triedDirect) {
+          triedDirect = true;
+          audio.src = directGoogleUrl;
+          audio.play().catch(() => {
+            this.fallbackBrowserSpeak(chunks.slice(index - 1).join(' '), langCode, options);
+          });
+          return;
+        }
         this.fallbackBrowserSpeak(chunks.slice(index - 1).join(' '), langCode, options);
       });
     };
