@@ -15,6 +15,7 @@ class AudioEngine {
     this.microphoneStream = null;
     this.animationFrameId = null;
     this.currentUtterance = null;
+    this.currentAudioElement = null;
     this.voices = [];
     this.isPlayingAudio = false;
 
@@ -143,12 +144,97 @@ class AudioEngine {
   }
 
   /**
-   * Text-to-Speech playback through laptop speakers
+   * Split long text into natural sentence or word chunks for TTS endpoints
    */
-  speak(text, langCode, options = {}) {
+  splitTextIntoChunks(text, maxLen = 160) {
+    if (!text || text.length <= maxLen) return [text];
+    const sentences = text.match(/[^.!?।\n]+[.!?।\n]+|[^.!?।\n]+$/g) || [text];
+    const chunks = [];
+    let current = '';
+
+    for (const s of sentences) {
+      if ((current + ' ' + s).trim().length <= maxLen) {
+        current = (current + ' ' + s).trim();
+      } else {
+        if (current) chunks.push(current);
+        if (s.length > maxLen) {
+          const words = s.split(/\s+/);
+          let wordChunk = '';
+          for (const w of words) {
+            if ((wordChunk + ' ' + w).trim().length <= maxLen) {
+              wordChunk = (wordChunk + ' ' + w).trim();
+            } else {
+              if (wordChunk) chunks.push(wordChunk);
+              wordChunk = w;
+            }
+          }
+          if (wordChunk) chunks.push(wordChunk);
+          current = '';
+        } else {
+          current = s.trim();
+        }
+      }
+    }
+    if (current) chunks.push(current);
+    return chunks.filter(c => c.length > 0);
+  }
+
+  /**
+   * Plays sequential audio chunks via native online neural TTS (e.g. for Punjabi, Hindi, etc.)
+   */
+  playAudioChunks(chunks, langCode, options = {}) {
+    const { onStart, onEnd, onError, rate = 1.0, volume = 1.0 } = options;
+    let index = 0;
+
+    const playNext = () => {
+      if (index >= chunks.length) {
+        this.isPlayingAudio = false;
+        this.currentAudioElement = null;
+        onEnd?.();
+        return;
+      }
+
+      const chunk = chunks[index++];
+      const url = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${encodeURIComponent(langCode)}&q=${encodeURIComponent(chunk)}`;
+
+      const audio = new Audio(url);
+      audio.playbackRate = Math.min(Math.max(rate, 0.75), 1.3);
+      audio.volume = Math.min(Math.max(volume, 0), 1);
+      this.currentAudioElement = audio;
+
+      audio.onplay = () => {
+        if (index === 1) {
+          this.isPlayingAudio = true;
+          onStart?.();
+        }
+      };
+
+      audio.onended = () => {
+        playNext();
+      };
+
+      audio.onerror = (err) => {
+        console.warn(`Online neural audio error for ${langCode}, falling back to browser synthesis:`, err);
+        this.fallbackBrowserSpeak(chunks.slice(index - 1).join(' '), langCode, options);
+      };
+
+      audio.play().catch((err) => {
+        console.warn(`Audio playback blocked or failed, falling back to browser synthesis:`, err);
+        this.fallbackBrowserSpeak(chunks.slice(index - 1).join(' '), langCode, options);
+      });
+    };
+
+    playNext();
+  }
+
+  /**
+   * Browser SpeechSynthesis fallback
+   */
+  fallbackBrowserSpeak(text, langCode, options = {}) {
     const { onStart, onEnd, onError, rate = 1.0, pitch = 1.0, volume = 1.0 } = options;
 
     if (!this.isTTSSupported() || !text) {
+      this.isPlayingAudio = false;
       onError?.(new Error('TTS not supported or empty text'));
       return;
     }
@@ -164,10 +250,16 @@ class AudioEngine {
     utterance.pitch = pitch;
     utterance.volume = volume;
 
-    // Best effort voice match
     if (this.voices.length > 0) {
-      const match = this.voices.find(v => v.lang.toLowerCase() === ttsLocale.toLowerCase()) ||
-                    this.voices.find(v => v.lang.toLowerCase().startsWith(langCode.toLowerCase()));
+      let match = this.voices.find(v => v.lang.toLowerCase() === ttsLocale.toLowerCase()) ||
+                  this.voices.find(v => v.lang.toLowerCase().startsWith(langCode.toLowerCase()));
+
+      // For Indian languages without direct voice, try Hindi voice for phonetics
+      if (!match && ['pa', 'mr', 'gu', 'te', 'ta', 'bn', 'ur', 'kn', 'ml'].includes(langCode)) {
+        match = this.voices.find(v => v.lang.toLowerCase() === 'hi-in' || v.lang.toLowerCase().startsWith('hi')) ||
+                this.voices.find(v => v.lang.toLowerCase() === 'en-in');
+      }
+
       if (match) {
         utterance.voice = match;
       }
@@ -185,7 +277,7 @@ class AudioEngine {
 
     utterance.onerror = (e) => {
       this.isPlayingAudio = false;
-      console.warn('TTS playback error:', e);
+      console.warn('Browser TTS error:', e);
       onError?.(e);
     };
 
@@ -194,11 +286,65 @@ class AudioEngine {
   }
 
   /**
+   * Text-to-Speech playback through laptop speakers
+   * Supports authentic native pronunciation for Punjabi, Hindi, and all Indian regional languages
+   */
+  speak(text, langCode, options = {}) {
+    const { onStart, onEnd, onError, rate = 1.0, pitch = 1.0, volume = 1.0 } = options;
+
+    if (!text || !text.trim()) {
+      onError?.(new Error('TTS empty text'));
+      return;
+    }
+
+    // Stop any currently playing audio/speech
+    this.stopSpeaking();
+
+    const langObj = SUPPORTED_LANGUAGES.find(l => l.code === langCode);
+    const ttsLocale = langObj ? langObj.ttsLang : 'en-US';
+
+    // Check if the browser actually has a native voice installed for this language
+    const hasBrowserVoice = this.voices.some(v =>
+      v.lang.toLowerCase() === ttsLocale.toLowerCase() ||
+      v.lang.toLowerCase().replace('_', '-').startsWith(langCode.toLowerCase() + '-')
+    );
+
+    // Languages that commonly lack OS offline voices (specifically Indian languages like Punjabi)
+    // For these, high-fidelity neural audio stream provides authentic native pronunciation!
+    const nativeOnlinePreferred = ['pa', 'mr', 'gu', 'te', 'ta', 'bn', 'ur', 'kn', 'ml'];
+
+    if (!hasBrowserVoice || nativeOnlinePreferred.includes(langCode)) {
+      const chunks = this.splitTextIntoChunks(text.trim());
+      this.playAudioChunks(chunks, langCode, {
+        onStart,
+        onEnd,
+        onError: () => {
+          this.fallbackBrowserSpeak(text, langCode, options);
+        },
+        rate,
+        volume
+      });
+      return;
+    }
+
+    this.fallbackBrowserSpeak(text, langCode, options);
+  }
+
+  /**
    * Cancel any active audio playback
    */
   stopSpeaking() {
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
+    }
+    if (this.currentAudioElement) {
+      try {
+        this.currentAudioElement.pause();
+        this.currentAudioElement.currentTime = 0;
+      } catch (err) {
+        console.warn('Error pausing audio:', err);
+      }
+      this.currentAudioElement = null;
     }
     this.isPlayingAudio = false;
   }

@@ -1040,6 +1040,24 @@ class App {
       );
     });
 
+    const testPunjabiBtn = document.getElementById('settings-test-punjabi-btn');
+    testPunjabiBtn?.addEventListener('click', () => {
+      audioEngine.speak(
+        'ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ, ਪੰਜਾਬੀ ਆਵਾਜ਼ ਪ੍ਰਣਾਲੀ ਪੂਰੀ ਤਰ੍ਹਾਂ ਕੰਮ ਕਰ ਰਹੀ ਹੈ।',
+        'pa',
+        { rate: this.speechRate, pitch: this.speechPitch }
+      );
+    });
+
+    const testHindiBtn = document.getElementById('settings-test-hindi-btn');
+    testHindiBtn?.addEventListener('click', () => {
+      audioEngine.speak(
+        'नमस्ते, हिंदी आवाज़ प्रणाली सफलतापूर्वक काम कर रही है।',
+        'hi',
+        { rate: this.speechRate, pitch: this.speechPitch }
+      );
+    });
+
     speedSlider?.addEventListener('input', () => {
       this.speechRate = parseFloat(speedSlider.value);
       if (speedVal) speedVal.textContent = `${this.speechRate.toFixed(1)}x`;
