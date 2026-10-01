@@ -326,14 +326,14 @@ class AudioEngine {
 
         const gradient = ctx.createLinearGradient(0, y, 0, y + barHeight);
         if (this.isRecording) {
-          gradient.addColorStop(0, '#810b38');
-          gradient.addColorStop(1, '#f1e2d1');
+          gradient.addColorStop(0, '#8b9a6e');
+          gradient.addColorStop(1, '#f7f2eb');
         } else if (this.isPlayingAudio) {
-          gradient.addColorStop(0, '#810b38');
-          gradient.addColorStop(1, '#dcc3aa');
+          gradient.addColorStop(0, '#8b9a6e');
+          gradient.addColorStop(1, '#eae2d6');
         } else {
-          gradient.addColorStop(0, '#541a1a');
-          gradient.addColorStop(1, '#810b38');
+          gradient.addColorStop(0, '#2b3827');
+          gradient.addColorStop(1, '#8b9a6e');
         }
 
         ctx.fillStyle = gradient;
