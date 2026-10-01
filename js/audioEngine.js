@@ -427,6 +427,144 @@ class AudioEngine {
   }
 
   /**
+   * Play high-tech sci-fi audio cues for interactive UI events
+   */
+  playFeedbackTone(type = 'click') {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      if (!this.audioContext) {
+        this.audioContext = new AudioCtx();
+      }
+      if (this.audioContext.state === 'suspended') {
+        this.audioContext.resume();
+      }
+      const ctx = this.audioContext;
+      const now = ctx.currentTime;
+
+      if (type === 'mic-start') {
+        // High-tech ascending dual chime (wake up cue)
+        const osc1 = ctx.createOscillator();
+        const osc2 = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc1.type = 'sine';
+        osc2.type = 'triangle';
+        osc1.frequency.setValueAtTime(440, now);
+        osc1.frequency.exponentialRampToValueAtTime(880, now + 0.12);
+        osc2.frequency.setValueAtTime(554.37, now + 0.06);
+        osc2.frequency.exponentialRampToValueAtTime(1108.73, now + 0.18);
+
+        gain.gain.setValueAtTime(0.18, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+
+        osc1.connect(gain);
+        osc2.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc1.start(now);
+        osc2.start(now + 0.06);
+        osc1.stop(now + 0.22);
+        osc2.stop(now + 0.22);
+
+      } else if (type === 'mic-stop') {
+        // Soft descending release tone
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(659.25, now);
+        osc.frequency.exponentialRampToValueAtTime(329.63, now + 0.15);
+
+        gain.gain.setValueAtTime(0.15, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.18);
+
+      } else if (type === 'translated') {
+        // Celestial translation completion chime (F5 -> A5 -> C6)
+        const freqs = [698.46, 880, 1046.5];
+        freqs.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          const startTime = now + idx * 0.06;
+
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, startTime);
+
+          gain.gain.setValueAtTime(0.12, startTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.35);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start(startTime);
+          osc.stop(startTime + 0.35);
+        });
+
+      } else if (type === 'persona') {
+        // Bubbly persona morph tone
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(520, now);
+        osc.frequency.exponentialRampToValueAtTime(780, now + 0.08);
+
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.12);
+
+      } else if (type === 'flip') {
+        // Smooth swoop tone for 180 flip
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(220, now);
+        osc.frequency.exponentialRampToValueAtTime(660, now + 0.2);
+
+        gain.gain.setValueAtTime(0.15, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.25);
+
+      } else {
+        // Subtle click
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(1000, now);
+
+        gain.gain.setValueAtTime(0.08, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.05);
+      }
+    } catch (e) {
+      console.warn('Feedback tone error:', e);
+    }
+  }
+
+  /**
    * Start Live Audio Visualizer connected to canvas
    */
   async startAudioVisualization() {
@@ -447,7 +585,6 @@ class AudioEngine {
         source.connect(this.analyser);
       }
     } catch (err) {
-      // If mic permission blocked or error, visualization uses simulated gentle wave
       console.info('Using simulated visualizer wave:', err.message);
     }
   }
@@ -496,13 +633,11 @@ class AudioEngine {
             const val = dataArray[i % dataArray.length] / 255;
             barHeight = Math.max(6, val * (height - 8));
           } else {
-            // Simulated mic wave
             barHeight = 6 + Math.abs(Math.sin(phase + i * 0.4)) * (height - 12);
           }
         } else if (this.isPlayingAudio) {
           barHeight = 5 + Math.abs(Math.sin(phase * 1.5 + i * 0.3)) * (height * 0.7);
         } else {
-          // Idle gentle wave
           barHeight = 4 + Math.sin(phase * 0.5 + i * 0.2) * 2;
         }
 
@@ -532,6 +667,182 @@ class AudioEngine {
 
     render();
   }
+
+  /**
+   * Set dynamic state for the 3D Neural AI Orb
+   * @param {'idle' | 'listening' | 'translating' | 'speaking'} state
+   */
+  setOrbState(state) {
+    this.orbState = state;
+    const statusText = document.getElementById('orb-status-text');
+    const orbCard = document.getElementById('neural-orb-card');
+    if (statusText) {
+      const stateLabels = {
+        'idle': '✨ AI Neural Core: Idle (Click to Speak)',
+        'listening': '🎙️ Listening to Voice...',
+        'translating': '⚡ Neural Computing NMT...',
+        'speaking': '🔊 AI Speaking (Native Audio)...'
+      };
+      statusText.textContent = stateLabels[state] || 'AI Core Ready';
+    }
+    if (orbCard) {
+      orbCard.setAttribute('data-orb-state', state);
+    }
+  }
+
+  /**
+   * Attaches a living, futuristic 3D Neural AI Orb to the given canvas
+   */
+  attachNeuralOrb(canvas) {
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+    const centerX = width / 2;
+    const centerY = height / 2;
+
+    this.orbState = 'idle';
+    let tick = 0;
+
+    // Particle constellation
+    const particles = [];
+    const particleCount = 28;
+    for (let i = 0; i < particleCount; i++) {
+      particles.push({
+        angle: (i / particleCount) * Math.PI * 2,
+        distance: 38 + Math.random() * 22,
+        speed: 0.015 + Math.random() * 0.02,
+        size: 1.5 + Math.random() * 2.5,
+        color: i % 2 === 0 ? '#8ea66b' : '#d8a2a2'
+      });
+    }
+
+    const renderOrb = () => {
+      requestAnimationFrame(renderOrb);
+      ctx.clearRect(0, 0, width, height);
+
+      tick += 0.03;
+      const state = this.orbState || (this.isRecording ? 'listening' : (this.isPlayingAudio ? 'speaking' : 'idle'));
+
+      // 1. Outer dynamic glow/pulse
+      let baseRadius = 32;
+      let pulseSpeed = 1;
+      let coreColorStart = '#8ea66b';
+      let coreColorEnd = '#2e2427';
+      let auraColor = 'rgba(142, 166, 107, 0.25)';
+
+      if (state === 'listening') {
+        pulseSpeed = 2.4;
+        baseRadius = 36 + Math.sin(tick * pulseSpeed) * 6;
+        coreColorStart = '#8ea66b';
+        coreColorEnd = '#fff9d6';
+        auraColor = 'rgba(142, 166, 107, 0.45)';
+      } else if (state === 'translating') {
+        pulseSpeed = 3.5;
+        baseRadius = 34 + Math.sin(tick * pulseSpeed) * 4;
+        coreColorStart = '#ffdcdc';
+        coreColorEnd = '#d8a2a2';
+        auraColor = 'rgba(216, 162, 162, 0.55)';
+      } else if (state === 'speaking') {
+        pulseSpeed = 2.0;
+        baseRadius = 35 + Math.abs(Math.sin(tick * pulseSpeed)) * 7;
+        coreColorStart = '#d8a2a2';
+        coreColorEnd = '#ffdcdc';
+        auraColor = 'rgba(255, 220, 220, 0.45)';
+      } else {
+        baseRadius = 30 + Math.sin(tick * 1.2) * 2.5;
+      }
+
+      // Draw Aura
+      const auraGradient = ctx.createRadialGradient(centerX, centerY, 5, centerX, centerY, baseRadius * 1.6);
+      auraGradient.addColorStop(0, auraColor);
+      auraGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = auraGradient;
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, baseRadius * 1.6, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 2. Soundwave / Synapse rings in active states
+      if (state === 'listening' || state === 'speaking') {
+        const ringCount = 3;
+        for (let r = 0; r < ringCount; r++) {
+          const ringProgress = (tick * 0.8 + r / ringCount) % 1;
+          const ringRadius = baseRadius + ringProgress * 28;
+          const ringAlpha = (1 - ringProgress) * 0.6;
+
+          ctx.strokeStyle = state === 'listening' ? `rgba(142, 166, 107, ${ringAlpha})` : `rgba(216, 162, 162, ${ringAlpha})`;
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.arc(centerX, centerY, ringRadius, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+      }
+
+      // 3. Rotating Gyroscopic Rings
+      const ringAngles = [tick * 1.2, -tick * 0.9, tick * 1.5];
+      ringAngles.forEach((angle, idx) => {
+        ctx.save();
+        ctx.translate(centerX, centerY);
+        ctx.rotate(angle);
+        ctx.strokeStyle = idx === 0 ? 'rgba(142, 166, 107, 0.45)' : (idx === 1 ? 'rgba(216, 162, 162, 0.4)' : 'rgba(255, 249, 214, 0.35)');
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, baseRadius * 1.25, baseRadius * 0.45, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      });
+
+      // 4. Orbiting Constellation Particles
+      particles.forEach(p => {
+        const speedMult = state === 'translating' ? 3.5 : (state === 'listening' ? 2.0 : 1.0);
+        p.angle += p.speed * speedMult;
+        const px = centerX + Math.cos(p.angle) * p.distance;
+        const py = centerY + Math.sin(p.angle) * (p.distance * 0.7);
+
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(px, py, p.size, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Subtle synaptic lines connecting to center in translating mode
+        if (state === 'translating' && Math.random() > 0.6) {
+          ctx.strokeStyle = 'rgba(255, 249, 214, 0.25)';
+          ctx.lineWidth = 0.8;
+          ctx.beginPath();
+          ctx.moveTo(centerX, centerY);
+          ctx.lineTo(px, py);
+          ctx.stroke();
+        }
+      });
+
+      // 5. High-Tech Core Sphere with Specular Highlight
+      const coreGradient = ctx.createRadialGradient(
+        centerX - baseRadius * 0.3,
+        centerY - baseRadius * 0.3,
+        baseRadius * 0.1,
+        centerX,
+        centerY,
+        baseRadius
+      );
+      coreGradient.addColorStop(0, '#ffffff');
+      coreGradient.addColorStop(0.3, coreColorStart);
+      coreGradient.addColorStop(0.85, coreColorEnd);
+      coreGradient.addColorStop(1, 'rgba(20, 15, 18, 0.95)');
+
+      ctx.fillStyle = coreGradient;
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, baseRadius, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Core Outer Rim
+      ctx.strokeStyle = state === 'translating' ? '#ffdcdc' : '#8ea66b';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    };
+
+    renderOrb();
+  }
 }
 
 export const audioEngine = new AudioEngine();
+

@@ -160,13 +160,13 @@
             </div>
           </div>
 
-          <!-- Decorative Card "Explore Connect Belong" (Fig. 2) -->
-          <div style="background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.15); border-radius: 1rem; padding: 1.25rem; text-align: center; min-width: 220px;">
-            <div style="width: 80px; height: 80px; margin: 0 auto 0.75rem auto; border-radius: 50%; background: linear-gradient(135deg, var(--ch-wine), var(--ch-sand)); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; box-shadow: 0 0 22px rgba(129, 11, 56, 0.55); border: 1px solid rgba(220, 195, 170, 0.35);">
-              🌐
+          <!-- 3D Neural AI Holographic Orb (Interactive) -->
+          <div class="neural-orb-container" id="neural-orb-card" title="Click Neural Core to Start Speech Recognition">
+            <canvas id="neural-orb-canvas" width="130" height="130" style="display: block; margin: 0 auto;"></canvas>
+            <div class="orb-status-badge">
+              <span class="orb-dot"></span>
+              <span id="orb-status-text">✨ AI Core: Idle (Click to Speak)</span>
             </div>
-            <div style="font-weight: 700; font-size: 0.95rem; color: #ffffff;">Explore Connect Belong</div>
-            <div style="font-size: 0.72rem; color: var(--accent-cyan); margin-top: 0.2rem;">STT → NMT → TTS Pipeline</div>
           </div>
         </div>
 
@@ -176,6 +176,16 @@
           <!-- Translator Card (Left) -->
           <div class="glass-panel" style="padding: 1.5rem; display: flex; flex-direction: column;">
             
+            <!-- AI Tone / Persona Bar -->
+            <div class="persona-selector-bar">
+              <span class="persona-label-prefix">AI Tone:</span>
+              <button class="persona-pill active" data-persona="natural">🌟 Natural</button>
+              <button class="persona-pill" data-persona="academic">🎓 Academic</button>
+              <button class="persona-pill" data-persona="friendly">🗣️ Casual / Street</button>
+              <button class="persona-pill" data-persona="business">💼 Business Pro</button>
+              <button class="persona-pill" data-persona="dramatic">🎭 Dramatic</button>
+            </div>
+
             <!-- Language Selectors Header -->
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-color);">
               <!-- Source Language -->
@@ -228,8 +238,19 @@
 
               <!-- Target Translation Box -->
               <div style="background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 1rem; display: flex; flex-direction: column;">
-                <div id="dash-target-text" style="width: 100%; flex: 1; min-height: 110px; color: var(--ch-sand); font-size: 0.95rem; font-weight: 500; line-height: 1.4; word-break: break-word;">
+                <div id="dash-target-text" style="width: 100%; flex: 1; min-height: 100px; color: var(--ch-sand); font-size: 0.95rem; font-weight: 500; line-height: 1.4; word-break: break-word;">
                   Translated text will appear here...
+                </div>
+
+                <!-- Phonetic Pronunciation Guide -->
+                <div id="dash-pronunciation-box" class="pronunciation-card" style="display: none;">
+                  <div class="pronunciation-content">
+                    <div class="pronunciation-tag">🗣️ Phonetic Pronunciation</div>
+                    <div id="dash-phonetic-text" class="pronunciation-text">Sat Sri Akaal! Tusi kiven ho?</div>
+                  </div>
+                  <button id="dash-phonetic-copy" class="btn-icon" style="width: 28px; height: 28px; min-width: 28px;" title="Copy Phonetic text">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>
+                  </button>
                 </div>
 
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 0.75rem; pt-2; border-top: 1px solid rgba(255,255,255,0.05);">
@@ -310,6 +331,24 @@
             </div>
           </div>
 
+        </div>
+
+        <!-- INTERACTIVE REAL-WORLD SCENARIO ROLEPLAY -->
+        <div class="glass-card" style="padding: 1.25rem; margin-bottom: 1.75rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+            <div>
+              <div style="font-size: 0.85rem; font-weight: 800; color: var(--ch-vanilla); text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.45rem;">
+                <span>🚀</span> Real-World Scenario Roleplay (1-Click Interactive Demo)
+              </div>
+              <p style="font-size: 0.74rem; color: var(--text-muted); margin-top: 0.15rem;">Click any authentic situation to auto-translate with phonetic guide and native speaker playback</p>
+            </div>
+            <span style="font-size: 0.7rem; padding: 0.2rem 0.55rem; border-radius: 9999px; background: rgba(142, 166, 107, 0.2); color: var(--ch-olive); font-weight: 700; border: 1px solid rgba(142,166,107,0.3);">
+              ✨ 5 Built-in Scenarios
+            </span>
+          </div>
+          <div id="scenario-cards-container" class="scenario-grid">
+            <!-- Rendered by JS from SCENARIOS -->
+          </div>
         </div>
 
         <!-- RECENT TRANSLATIONS & ONE WORLD CARD (Fig. 2 Bottom Grid) -->
@@ -483,21 +522,26 @@
       =============================================== -->
       <section id="tab-conversation" class="tab-view" style="display: none;">
         
-        <div style="margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center;">
+        <div style="margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
           <div>
             <h2 style="font-size: 1.35rem; font-weight: 800;">Two-Way Live Conversation</h2>
             <p style="font-size: 0.82rem; color: var(--text-muted);">Simultaneous bilingual dialog between two speakers using laptop audio</p>
           </div>
-          <button id="conv-clear-btn" class="btn-secondary" style="font-size: 0.8rem;">
-            Clear Chat History
-          </button>
+          <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <button id="conv-face-to-face-btn" class="face-to-face-toggle-btn btn-secondary" style="font-size: 0.8rem; display: flex; align-items: center; gap: 0.4rem;" title="Rotate Speaker B upside down so two people facing each other across a table can read">
+              🔄 <span>Face-to-Face Dual View (180° Flip)</span>
+            </button>
+            <button id="conv-clear-btn" class="btn-secondary" style="font-size: 0.8rem;">
+              Clear Chat History
+            </button>
+          </div>
         </div>
 
         <!-- Speakers Selection Bar -->
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
           
           <!-- Speaker A Setup -->
-          <div class="glass-panel" style="padding: 1.25rem; border-top: 3px solid var(--ch-wine);">
+          <div class="glass-panel" id="conv-speaker-a-panel" style="padding: 1.25rem; border-top: 3px solid var(--ch-wine);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
               <div style="display: flex; align-items: center; gap: 0.5rem;">
                 <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--ch-wine); display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--ch-cream); border: 1px solid rgba(220,195,170,0.3);">A</div>
@@ -518,7 +562,7 @@
           </div>
 
           <!-- Speaker B Setup -->
-          <div class="glass-panel" style="padding: 1.25rem; border-top: 3px solid var(--ch-sand);">
+          <div class="glass-panel" id="conv-speaker-b-panel" style="padding: 1.25rem; border-top: 3px solid var(--ch-sand);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
               <div style="display: flex; align-items: center; gap: 0.5rem;">
                 <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--ch-sand); display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--ch-maroon); border: 1px solid rgba(84,26,26,0.3);">B</div>

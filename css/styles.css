@@ -413,3 +413,279 @@ body {
     padding: 0.75rem;
   }
 }
+
+/* =========================================================================
+   INTERACTIVE SCI-FI TRANSLATION EXPERIENCE ENHANCEMENTS
+   ========================================================================= */
+
+/* 1. Neural AI Holographic Orb */
+.neural-orb-container {
+  background: radial-gradient(circle at center, rgba(46, 36, 39, 0.95), rgba(20, 15, 18, 0.98));
+  border: 1px solid var(--border-color);
+  border-radius: 1.25rem;
+  padding: 1.25rem 1.5rem;
+  text-align: center;
+  min-width: 230px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+}
+
+.neural-orb-container::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(142, 166, 107, 0.12) 0%, transparent 65%);
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.neural-orb-container:hover {
+  transform: translateY(-3px) scale(1.02);
+  border-color: var(--ch-olive);
+  box-shadow: 0 14px 35px rgba(142, 166, 107, 0.25);
+}
+
+.neural-orb-container:active {
+  transform: scale(0.98);
+}
+
+.orb-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.65rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-color);
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--ch-vanilla);
+  letter-spacing: 0.02em;
+  transition: all 0.2s ease;
+}
+
+.neural-orb-container[data-orb-state="listening"] .orb-status-badge {
+  border-color: var(--ch-olive);
+  color: #fff9d6;
+  background: rgba(142, 166, 107, 0.25);
+  box-shadow: 0 0 12px rgba(142, 166, 107, 0.4);
+}
+
+.neural-orb-container[data-orb-state="translating"] .orb-status-badge {
+  border-color: var(--ch-rose);
+  color: #ffdcdc;
+  background: rgba(216, 162, 162, 0.25);
+  box-shadow: 0 0 12px rgba(216, 162, 162, 0.4);
+}
+
+.neural-orb-container[data-orb-state="speaking"] .orb-status-badge {
+  border-color: var(--ch-blossom);
+  color: #ffffff;
+  background: rgba(255, 220, 220, 0.3);
+  box-shadow: 0 0 12px rgba(255, 220, 220, 0.45);
+}
+
+.orb-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ch-olive);
+  box-shadow: 0 0 8px var(--ch-olive);
+  animation: pulse-dot 1.8s infinite ease-in-out;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.75); }
+}
+
+/* 2. Tone / Persona Selector Bar */
+.persona-selector-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.65rem;
+  margin-bottom: 1rem;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.persona-selector-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.persona-label-prefix {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  margin-right: 0.25rem;
+}
+
+.persona-pill {
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.persona-pill:hover {
+  color: var(--ch-vanilla);
+  background: rgba(142, 166, 107, 0.15);
+  border-color: rgba(142, 166, 107, 0.3);
+}
+
+.persona-pill.active {
+  background: linear-gradient(135deg, var(--ch-olive), #6f864e);
+  color: #fff9d6;
+  border-color: var(--ch-olive);
+  box-shadow: 0 2px 10px rgba(142, 166, 107, 0.35);
+}
+
+/* 3. Phonetic Pronunciation Guide Card */
+.pronunciation-card {
+  margin-top: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 0.65rem;
+  background: linear-gradient(135deg, rgba(142, 166, 107, 0.12) 0%, rgba(46, 36, 39, 0.45) 100%);
+  border: 1px dashed var(--ch-olive);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  animation: fadeIn 0.3s ease;
+}
+
+.pronunciation-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  overflow: hidden;
+}
+
+.pronunciation-tag {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ch-olive);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.pronunciation-text {
+  font-size: 0.92rem;
+  font-style: italic;
+  font-weight: 600;
+  color: var(--ch-vanilla);
+  letter-spacing: 0.02em;
+  word-break: break-word;
+}
+
+/* 4. Interactive Real-World Scenarios Grid */
+.scenario-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+.scenario-card {
+  padding: 0.85rem 1rem;
+  border-radius: 0.75rem;
+  background: rgba(46, 36, 39, 0.5);
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  text-align: left;
+}
+
+.scenario-card:hover {
+  transform: translateY(-2px);
+  background: rgba(142, 166, 107, 0.18);
+  border-color: var(--ch-olive);
+  box-shadow: 0 6px 18px rgba(142, 166, 107, 0.22);
+}
+
+.scenario-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.scenario-icon {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.scenario-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--ch-vanilla);
+  line-height: 1.2;
+}
+
+.scenario-desc {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  line-height: 1.3;
+}
+
+.scenario-tag {
+  display: inline-block;
+  align-self: flex-start;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.15rem 0.45rem;
+  border-radius: 9999px;
+  background: rgba(216, 162, 162, 0.2);
+  color: var(--ch-rose);
+  border: 1px solid rgba(216, 162, 162, 0.3);
+}
+
+/* 5. Live Conversation 180° Face-to-Face Dual Mode */
+.face-to-face-mode #conv-speaker-b-panel {
+  transform: rotate(180deg);
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow: 0 -8px 24px rgba(216, 162, 162, 0.35);
+  border-color: var(--ch-rose);
+}
+
+.face-to-face-mode .conv-bubble-partner {
+  transform: rotate(180deg);
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transform-origin: center center;
+}
+
+.face-to-face-toggle-btn.active {
+  background: linear-gradient(135deg, var(--ch-olive), #6f864e);
+  color: #fff9d6;
+  border-color: var(--ch-olive);
+  box-shadow: 0 0 14px rgba(142, 166, 107, 0.45);
+}
+

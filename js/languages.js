@@ -240,3 +240,88 @@ export const FALLBACK_DICTIONARY = {
     gu: "શું તમે કૃપા કરીને મને મદદ કરી શકો છો?"
   }
 };
+
+// Phonetic Pronunciation Guide (How to pronounce in English letters)
+export const PRONUNCIATION_GUIDE = {
+  "ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ": "Sat Sri Akaal",
+  "ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ! ਤੁਸੀਂ ਕਿਵੇਂ ਹੋ?": "Sat Sri Akaal! Tusi kiven ho?",
+  "ਨਮਸਤੇ": "Namaste",
+  "नमस्ते": "Namaste",
+  "नमस्ते! आप कैसे हैं?": "Namaste! Aap kaise hain?",
+  "ਤੁਹਾਡਾ ਬਹੁਤ ਬਹੁਤ ਧੰਨਵਾਦ": "Tuhada bahut bahut dhanvaad",
+  "ਤੁਹਾਡਾ ਬਹੁਤ ਬਹੁਤ ਧੰਨਵਾਦ!": "Tuhada bahut bahut dhanvaad!",
+  "आपका बहुत-बहुत धन्यवाद": "Aapka bahut-bahut dhanyavaad",
+  "आपका बहुत-बहुत धन्यवाद!": "Aapka bahut-bahut dhanyavaad!",
+  "ਬੱਸ ਸਟਾਪ ਕਿੱਥੇ ਹੈ?": "Bus stop kithe hai?",
+  "बस स्टॉप कहाँ है?": "Bus stop kahan hai?",
+  "¡Hola! ¿Cómo estás?": "OH-lah! KOH-moh ess-TAHS?",
+  "Bonjour! Comment allez-vous?": "Bohn-ZHOOR! Koh-mahn tah-lay VOO?",
+  "こんにちは！お元気ですか？": "Konnichiwa! O-genki desu ka?",
+  "Wie ist das Wetter heute?": "Vee ist dahs VET-ter HOY-teh?",
+  "ਅੱਜ ਮੌਸਮ ਕਿਹੋ ਜਿਹਾ ਹੈ?": "Ajj mausam kiho jiha hai?",
+  "ਮੈਂ ਸੀਜੀਸੀ ਯੂਨੀਵਰਸਿਟੀ ਮੋਹਾਲੀ ਦਾ ਵਿਦਿਆਰਥੀ ਹਾਂ।": "Main CGC University Mohali da vidyarthi haan.",
+  "ਕੀ ਤੁਸੀਂ ਕਿਰਪਾ ਕਰਕੇ ਮੇਰੀ ਮਦਦ ਕਰ ਸਕਦੇ ਹੋ?": "Ki tusi kirpa karke meri madad kar sakde ho?"
+};
+
+// Interactive Roleplay Scenarios
+export const SCENARIOS = [
+  {
+    id: "dhaba",
+    icon: "🍛",
+    title: "Punjab Dhaba Order",
+    desc: "Ordering authentic food in Mohali",
+    sourceLang: "en",
+    targetLang: "pa",
+    prompt: "One plate butter paneer and two tandoori rotis, make it spicy please!",
+    responseMock: "ਜੀ ਬਿਲਕੁਲ, ਤੁਹਾਡਾ ਆਰਡਰ ਦਸ ਮਿੰਟਾਂ ਵਿੱਚ ਤਿਆਰ ਹੋ ਜਾਵੇਗਾ।"
+  },
+  {
+    id: "airport",
+    icon: "✈️",
+    title: "Airport & Immigration",
+    desc: "Finding terminal and boarding gate",
+    sourceLang: "en",
+    targetLang: "es",
+    prompt: "Where is the terminal and boarding gate for international flights?",
+    responseMock: "La puerta de embarque está recta por el pasillo B."
+  },
+  {
+    id: "taxi",
+    icon: "🚕",
+    title: "Auto / Taxi Haggling",
+    desc: "Fare negotiation in local transport",
+    sourceLang: "en",
+    targetLang: "pa",
+    prompt: "How much to go from Mohali Phase 7 to Chandigarh Sector 17?",
+    responseMock: "ਦੋ ਸੌ ਰੁਪਏ ਲੱਗਣਗੇ ਭਾਜੀ, ਬੈਠੋ ਚੱਲੀਏ।"
+  },
+  {
+    id: "doctor",
+    icon: "🏥",
+    title: "Hospital & Medical Care",
+    desc: "Urgent health consultation",
+    sourceLang: "en",
+    targetLang: "hi",
+    prompt: "I have a sudden headache and need to see a doctor immediately.",
+    responseMock: "कृपया आपातकालीन कक्ष में चलिए, डॉक्टर तुरंत आ रहे हैं।"
+  },
+  {
+    id: "viva",
+    icon: "🎓",
+    title: "CGC College Viva & Demo",
+    desc: "Presenting to professors in AI Clinic",
+    sourceLang: "en",
+    targetLang: "pa",
+    prompt: "Good morning professors, welcome to our AI real-time multilingual communication assistant demonstration.",
+    responseMock: "ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ ਜੀ, ਸਾਡੇ ਏਆਈ ਪ੍ਰੋਜੈਕਟ ਪ੍ਰਦਰਸ਼ਨ ਵਿੱਚ ਤੁਹਾਡਾ ਨਿੱਘਾ ਸੁਆਗਤ ਹੈ।"
+  }
+];
+
+// AI Persona Modes
+export const PERSONAS = [
+  { id: "natural", label: "🌟 Natural", desc: "Balanced everyday tone" },
+  { id: "academic", label: "🎓 Academic & Formal", desc: "Respectful and dignified phrasing" },
+  { id: "friendly", label: "🗣️ Casual / Street", desc: "Warm friendly buddy slang" },
+  { id: "business", label: "💼 Business Pro", desc: "Executive meeting precision" },
+  { id: "dramatic", label: "🎭 Dramatic & Epic", desc: "Cinematic emotional flair" }
+];

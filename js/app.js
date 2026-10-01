@@ -4,13 +4,14 @@
  * CGC University Mohali - Department of AI & Data Science
  */
 
-import { SUPPORTED_LANGUAGES, SAMPLE_PROMPTS } from './languages.js';
+import { SUPPORTED_LANGUAGES, SAMPLE_PROMPTS, PRONUNCIATION_GUIDE, SCENARIOS, PERSONAS } from './languages.js';
 import { translationEngine } from './translationEngine.js';
 import { audioEngine } from './audioEngine.js';
 
 class App {
   constructor() {
     this.currentTab = 'dashboard';
+    this.currentPersona = 'natural';
     this.speechRate = 1.0;
     this.speechPitch = 1.0;
     this.autoplayAudio = true;
@@ -37,6 +38,12 @@ class App {
     const canvas = document.getElementById('waveform-canvas');
     if (canvas) {
       audioEngine.attachCanvasVisualizer(canvas);
+    }
+
+    // Attach 3D Neural AI Holographic Orb
+    const orbCanvas = document.getElementById('neural-orb-canvas');
+    if (orbCanvas) {
+      audioEngine.attachNeuralOrb(orbCanvas);
     }
   }
 
@@ -238,6 +245,51 @@ class App {
     const swapBtn = document.getElementById('dash-swap-btn');
     const latencyEl = document.getElementById('system-latency');
     const engineBadge = document.getElementById('dash-translation-engine-badge');
+    const neuralOrbCard = document.getElementById('neural-orb-card');
+    const pronunBox = document.getElementById('dash-pronunciation-box');
+    const phoneticTextEl = document.getElementById('dash-phonetic-text');
+    const phoneticCopyBtn = document.getElementById('dash-phonetic-copy');
+
+    // Helper: Determine phonetic pronunciation
+    const updatePronunciation = (translatedText, toLang) => {
+      if (!pronunBox || !phoneticTextEl) return;
+      const clean = (translatedText || '').trim();
+      let phonetic = PRONUNCIATION_GUIDE[clean];
+
+      // Auto-detect common phrases or Punjabi/Hindi key patterns
+      if (!phonetic) {
+        if (clean.includes('ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ') || clean.includes('Sat Sri')) {
+          phonetic = 'Sat Sri Akaal! (True is the Timeless Creator)';
+        } else if (clean.includes('ਧੰਨਵਾਦ') || clean.includes('ਧੰਨਵਾਦ!')) {
+          phonetic = 'Dhanvaad! (Thank you very much)';
+        } else if (clean.includes('ਕਿਵੇਂ ਹੋ')) {
+          phonetic = 'Kiven ho? (How are you doing?)';
+        } else if (clean.includes('नमस्ते')) {
+          phonetic = 'Namaste! (Respectful Greetings)';
+        } else if (clean.includes('धन्यवाद')) {
+          phonetic = 'Dhanyavaad! (Thank you)';
+        }
+      }
+
+      if (phonetic) {
+        phoneticTextEl.textContent = phonetic;
+        pronunBox.style.display = 'flex';
+      } else {
+        pronunBox.style.display = 'none';
+      }
+    };
+
+    // Copy Phonetic Pronunciation
+    phoneticCopyBtn?.addEventListener('click', async () => {
+      if (phoneticTextEl && phoneticTextEl.textContent) {
+        await navigator.clipboard.writeText(phoneticTextEl.textContent);
+        audioEngine.playFeedbackTone('click');
+        phoneticCopyBtn.innerHTML = '✓';
+        setTimeout(() => {
+          phoneticCopyBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>`;
+        }, 1200);
+      }
+    });
 
     // Character counter
     sourceText?.addEventListener('input', () => {
@@ -245,7 +297,7 @@ class App {
       if (charCount) charCount.textContent = `${len} / 500`;
     });
 
-    // Translate button
+    // Translate Action
     const doTranslate = async () => {
       const text = sourceText?.value?.trim();
       if (!text) return;
@@ -253,6 +305,7 @@ class App {
       const fromLang = document.getElementById('dash-source-lang')?.value || 'en';
       const toLang = document.getElementById('dash-target-lang')?.value || 'es';
 
+      audioEngine.setOrbState('translating');
       if (targetText) targetText.textContent = 'Translating via Neural NMT...';
       if (engineBadge) engineBadge.textContent = 'Processing...';
 
@@ -262,21 +315,42 @@ class App {
       if (latencyEl) latencyEl.textContent = `${result.latencyMs}ms`;
       if (engineBadge) engineBadge.textContent = `${result.provider}`;
 
-      // Save to recent translations
+      // Update Phonetic Pronunciation
+      updatePronunciation(result.translatedText, toLang);
+
+      // Play celestial completion chime
+      audioEngine.playFeedbackTone('translated');
+
+      // Save to history
       this.addHistoryRecord(text, fromLang, result.translatedText, toLang);
 
-      // Auto-play audio if enabled
+      // Audio playback with Orb state reactive tracking
       if (this.autoplayAudio && result.translatedText) {
+        audioEngine.setOrbState('speaking');
         audioEngine.speak(result.translatedText, toLang, {
           rate: this.speechRate,
-          pitch: this.speechPitch
+          pitch: this.speechPitch,
+          onStart: () => {
+            audioEngine.setOrbState('speaking');
+          },
+          onEnd: () => {
+            audioEngine.setOrbState('idle');
+          },
+          onError: () => {
+            audioEngine.setOrbState('idle');
+          }
         });
+      } else {
+        setTimeout(() => audioEngine.setOrbState('idle'), 800);
       }
     };
 
-    translateBtn?.addEventListener('click', doTranslate);
+    translateBtn?.addEventListener('click', () => {
+      audioEngine.playFeedbackTone('click');
+      doTranslate();
+    });
 
-    // Enter key inside textarea (with Shift+Enter for newline)
+    // Enter key inside textarea
     sourceText?.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
@@ -285,18 +359,24 @@ class App {
     });
 
     // Microphone STT Trigger
-    micBtn?.addEventListener('click', () => {
+    const toggleDashboardSTT = () => {
       if (audioEngine.isRecording) {
+        audioEngine.playFeedbackTone('mic-stop');
         audioEngine.stopListening();
-        micBtn.classList.remove('recording-pulse');
+        micBtn?.classList.remove('recording-pulse');
+        audioEngine.setOrbState('idle');
         return;
       }
 
+      audioEngine.playFeedbackTone('mic-start');
+      audioEngine.setOrbState('listening');
+
       const fromLang = document.getElementById('dash-source-lang')?.value || 'en';
-      micBtn.classList.add('recording-pulse');
+      micBtn?.classList.add('recording-pulse');
 
       audioEngine.startListening(fromLang, {
         onStart: () => {
+          audioEngine.setOrbState('listening');
           if (sourceText) sourceText.placeholder = 'Listening to laptop microphone... speak now!';
         },
         onInterim: (interim) => {
@@ -310,18 +390,80 @@ class App {
           }
         },
         onEnd: (finalText) => {
-          micBtn.classList.remove('recording-pulse');
+          micBtn?.classList.remove('recording-pulse');
           if (sourceText) sourceText.placeholder = 'Type or click microphone to speak...';
           if (finalText) {
             doTranslate();
+          } else {
+            audioEngine.setOrbState('idle');
           }
         },
         onError: (err) => {
-          micBtn.classList.remove('recording-pulse');
+          micBtn?.classList.remove('recording-pulse');
+          audioEngine.setOrbState('idle');
           console.warn('STT Error:', err);
         }
       });
+    };
+
+    micBtn?.addEventListener('click', toggleDashboardSTT);
+
+    // Interactive Neural AI Orb Card Click to Speak
+    neuralOrbCard?.addEventListener('click', () => {
+      toggleDashboardSTT();
     });
+
+    // AI Tone / Persona Bar
+    document.querySelectorAll('.persona-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        document.querySelectorAll('.persona-pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        this.currentPersona = pill.getAttribute('data-persona');
+        audioEngine.playFeedbackTone('persona');
+
+        // If user already typed something, instantly re-translate with new flavor
+        const text = sourceText?.value?.trim();
+        if (text) {
+          doTranslate();
+        }
+      });
+    });
+
+    // Populate Interactive Real-World Scenarios Grid
+    const scenarioContainer = document.getElementById('scenario-cards-container');
+    if (scenarioContainer) {
+      scenarioContainer.innerHTML = SCENARIOS.map(s => `
+        <div class="scenario-card" data-scenario-id="${s.id}" title="Click to test ${s.title}">
+          <div class="scenario-header">
+            <span class="scenario-icon">${s.icon}</span>
+            <div>
+              <div class="scenario-title">${s.title}</div>
+              <div class="scenario-desc">${s.desc}</div>
+            </div>
+          </div>
+          <span class="scenario-tag">${s.sourceLang.toUpperCase()} → ${s.targetLang.toUpperCase()}</span>
+        </div>
+      `).join('');
+
+      scenarioContainer.querySelectorAll('.scenario-card').forEach(card => {
+        card.addEventListener('click', () => {
+          const id = card.getAttribute('data-scenario-id');
+          const s = SCENARIOS.find(x => x.id === id);
+          if (!s) return;
+
+          audioEngine.playFeedbackTone('persona');
+          this.setSelectValue('dash-source-lang', s.sourceLang);
+          this.setSelectValue('dash-target-lang', s.targetLang);
+
+          if (sourceText) {
+            sourceText.value = s.prompt;
+            if (charCount) charCount.textContent = `${s.prompt.length} / 500`;
+          }
+
+          doTranslate();
+        });
+      });
+    }
 
     // Speak Source Audio
     speakSourceBtn?.addEventListener('click', () => {
@@ -337,15 +479,24 @@ class App {
       const text = targetText?.textContent?.trim();
       const toLang = document.getElementById('dash-target-lang')?.value || 'es';
       if (text && !text.includes('Translating') && !text.includes('appear here')) {
-        audioEngine.speak(text, toLang, { rate: this.speechRate, pitch: this.speechPitch });
+        audioEngine.setOrbState('speaking');
+        audioEngine.speak(text, toLang, {
+          rate: this.speechRate,
+          pitch: this.speechPitch,
+          onEnd: () => audioEngine.setOrbState('idle'),
+          onError: () => audioEngine.setOrbState('idle')
+        });
       }
     });
 
     // Clear
     clearBtn?.addEventListener('click', () => {
+      audioEngine.playFeedbackTone('click');
       if (sourceText) sourceText.value = '';
       if (targetText) targetText.textContent = 'Translated text will appear here...';
       if (charCount) charCount.textContent = '0 / 500';
+      if (pronunBox) pronunBox.style.display = 'none';
+      audioEngine.setOrbState('idle');
     });
 
     // Copy Target
@@ -353,6 +504,7 @@ class App {
       const text = targetText?.textContent?.trim();
       if (text && !text.includes('Translating') && !text.includes('appear here')) {
         await navigator.clipboard.writeText(text);
+        audioEngine.playFeedbackTone('click');
         copyBtn.innerHTML = '✓';
         setTimeout(() => {
           copyBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg>`;
@@ -362,6 +514,7 @@ class App {
 
     // Swap Languages
     swapBtn?.addEventListener('click', () => {
+      audioEngine.playFeedbackTone('click');
       const srcEl = document.getElementById('dash-source-lang');
       const tgtEl = document.getElementById('dash-target-lang');
       if (srcEl && tgtEl) {
@@ -578,6 +731,20 @@ class App {
     const micB = document.getElementById('conv-mic-b');
     const container = document.getElementById('conv-messages-container');
     const clearBtn = document.getElementById('conv-clear-btn');
+    const faceToFaceBtn = document.getElementById('conv-face-to-face-btn');
+    const convTab = document.getElementById('tab-conversation');
+
+    // 180° Face-to-Face Dual Mode Toggle
+    faceToFaceBtn?.addEventListener('click', () => {
+      audioEngine.playFeedbackTone('flip');
+      const isFlipped = convTab.classList.toggle('face-to-face-mode');
+      faceToFaceBtn.classList.toggle('active', isFlipped);
+      if (isFlipped) {
+        faceToFaceBtn.innerHTML = `🔄 <span>Face-to-Face Active (180° Inverted)</span>`;
+      } else {
+        faceToFaceBtn.innerHTML = `🔄 <span>Face-to-Face Dual View (180° Flip)</span>`;
+      }
+    });
 
     // Seed initial dialogue demonstration
     this.conversation = [
@@ -607,11 +774,13 @@ class App {
       const targetLang = document.getElementById(isSpeakerA ? 'conv-lang-b' : 'conv-lang-a')?.value || (isSpeakerA ? 'hi' : 'en');
 
       if (audioEngine.isRecording) {
+        audioEngine.playFeedbackTone('mic-stop');
         audioEngine.stopListening();
         activeMicBtn.classList.remove('recording-pulse');
         return;
       }
 
+      audioEngine.playFeedbackTone('mic-start');
       activeMicBtn.classList.add('recording-pulse');
       activeMicBtn.querySelector('span').textContent = `Listening to Speaker ${speakerId}...`;
 
@@ -625,6 +794,7 @@ class App {
 
           if (finalText) {
             const translation = await translationEngine.translate(finalText, speakerLang, targetLang);
+            audioEngine.playFeedbackTone('translated');
             const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
             const newMsg = {
@@ -657,6 +827,7 @@ class App {
     micB?.addEventListener('click', () => handleSpeakerTurn('B'));
 
     clearBtn?.addEventListener('click', () => {
+      audioEngine.playFeedbackTone('click');
       this.conversation = [];
       this.renderConversation();
     });
@@ -681,7 +852,7 @@ class App {
     this.conversation.forEach((msg, idx) => {
       const isA = msg.speaker === 'A';
       const bubble = document.createElement('div');
-      bubble.className = isA ? 'chat-bubble-a' : 'chat-bubble-b';
+      bubble.className = isA ? 'chat-bubble-a' : 'chat-bubble-b conv-bubble-partner';
 
       bubble.innerHTML = `
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; font-size: 0.75rem;">
