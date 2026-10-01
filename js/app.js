@@ -309,7 +309,7 @@ class App {
       if (targetText) targetText.textContent = 'Translating via Neural NMT...';
       if (engineBadge) engineBadge.textContent = 'Processing...';
 
-      const result = await translationEngine.translate(text, fromLang, toLang);
+      const result = await translationEngine.translate(text, fromLang, toLang, this.currentPersona);
 
       if (targetText) targetText.textContent = result.translatedText;
       if (latencyEl) latencyEl.textContent = `${result.latencyMs}ms`;
@@ -602,7 +602,7 @@ class App {
 
       // Step 4: Neural Translation
       updatePipeline(4);
-      const result = await translationEngine.translate(text, fromLang, toLang);
+      const result = await translationEngine.translate(text, fromLang, toLang, this.currentPersona);
 
       // Step 5: Display Translation
       updatePipeline(5);
@@ -793,7 +793,7 @@ class App {
           activeMicBtn.querySelector('span').textContent = `Speak as Speaker ${speakerId}`;
 
           if (finalText) {
-            const translation = await translationEngine.translate(finalText, speakerLang, targetLang);
+            const translation = await translationEngine.translate(finalText, speakerLang, targetLang, this.currentPersona);
             audioEngine.playFeedbackTone('translated');
             const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
