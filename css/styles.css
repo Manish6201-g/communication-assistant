@@ -1,82 +1,82 @@
 /*
  * AI-Based Real-Time Multilingual Communication Assistant
- * Stylesheet - Color Hunt Theme: #D8A2A2 | #FFDCDC | #FFF9D6 | #8EA66B
- * Dusty Rose, Blossom Pink, Vanilla Cream & Fresh Olive Sage
+ * Stylesheet - Color Hunt Theme: #F9F3CF | #EDE7CF | #DDBC89 | #AA512F
+ * Warm Ivory Cream, Soft Parchment Oat, Golden Amber Sand & Rust Terracotta
  */
 
 :root {
   /* Color Hunt Palette Definition */
-  --ch-rose: #d8a2a2;        /* Dusty Rose / Warm Antique Blush */
-  --ch-blossom: #ffdcdc;     /* Blossom Pink / Soft Pastel Accent */
-  --ch-vanilla: #fff9d6;     /* Vanilla Cream / High Contrast Light */
-  --ch-olive: #8ea66b;       /* Fresh Olive Sage / Vibrant Organic Accent */
+  --ch-ivory: #f9f3cf;       /* Warm Ivory Cream / Crisp Contrast Accent */
+  --ch-parchment: #ede7cf;   /* Soft Parchment Oat / Smooth Neutral */
+  --ch-amber: #ddbc89;       /* Golden Amber Sand / Warm Ochre Highlight */
+  --ch-rust: #aa512f;        /* Rust Terracotta / Vibrant Earth Brand Accent */
 
   /* Backwards-compatible aliases for index.html inline references */
-  --ch-wine: #8ea66b;
-  --ch-cream: #fff9d6;
-  --ch-sand: #ffdcdc;
-  --ch-maroon: #2e2427;
+  --ch-wine: #aa512f;
+  --ch-cream: #f9f3cf;
+  --ch-sand: #ddbc89;
+  --ch-maroon: #26160e;
 
   /* Dark Mode Default Theme Tokens */
-  --ch-deep: #191416;
-  --ch-surface: #241c1f;
+  --ch-deep: #160e0a;
+  --ch-surface: #221711;
 
   --bg-primary: var(--ch-deep);
   --bg-secondary: var(--ch-surface);
-  --bg-card: rgba(46, 36, 39, 0.65);
-  --bg-card-hover: rgba(142, 166, 107, 0.22);
-  --border-color: rgba(216, 162, 162, 0.22);
-  --border-glow: rgba(142, 166, 107, 0.55);
+  --bg-card: rgba(38, 24, 17, 0.75);
+  --bg-card-hover: rgba(170, 81, 47, 0.22);
+  --border-color: rgba(221, 188, 137, 0.25);
+  --border-glow: rgba(170, 81, 47, 0.55);
 
-  --text-primary: var(--ch-vanilla);
-  --text-secondary: var(--ch-blossom);
-  --text-muted: #c2a3a5;
+  --text-primary: var(--ch-ivory);
+  --text-secondary: var(--ch-parchment);
+  --text-muted: #bda995;
 
-  --accent-brand: var(--ch-olive);
-  --accent-cream: var(--ch-vanilla);
-  --accent-sand: var(--ch-blossom);
-  --accent-maroon: #2e2427;
+  --accent-brand: var(--ch-rust);
+  --accent-cream: var(--ch-ivory);
+  --accent-sand: var(--ch-amber);
+  --accent-maroon: #26160e;
 
-  --accent-blue: var(--ch-olive);
-  --accent-cyan: var(--ch-rose);
-  --accent-indigo: #96af73;
-  --accent-emerald: var(--ch-olive);
-  --accent-amber: #e7ca94;
-  --accent-rose: var(--ch-rose);
+  --accent-blue: var(--ch-rust);
+  --accent-cyan: var(--ch-amber);
+  --accent-indigo: #c46741;
+  --accent-emerald: var(--ch-rust);
+  --accent-amber: var(--ch-amber);
+  --accent-rose: var(--ch-rust);
 
-  --gradient-brand: linear-gradient(135deg, #8ea66b 0%, #6f864e 100%);
-  --gradient-card: linear-gradient(180deg, rgba(46, 36, 39, 0.75) 0%, rgba(25, 20, 22, 0.9) 100%);
-  --shadow-lg: 0 10px 25px -5px rgba(15, 11, 13, 0.65), 0 8px 10px -6px rgba(15, 11, 13, 0.55);
+  --gradient-brand: linear-gradient(135deg, #aa512f 0%, #873d1e 100%);
+  --gradient-card: linear-gradient(180deg, rgba(38, 24, 17, 0.8) 0%, rgba(22, 14, 10, 0.95) 100%);
+  --shadow-lg: 0 10px 25px -5px rgba(12, 7, 5, 0.75), 0 8px 10px -6px rgba(12, 7, 5, 0.65);
   --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
 }
 
 [data-theme="light"] {
-  --bg-primary: #fff9d6;
-  --bg-secondary: #ffdcdc;
+  --bg-primary: #f9f3cf;
+  --bg-secondary: #ede7cf;
   --bg-card: #ffffff;
-  --bg-card-hover: #fff3e2;
-  --border-color: rgba(216, 162, 162, 0.4);
-  --border-glow: rgba(142, 166, 107, 0.4);
+  --bg-card-hover: #fffdf5;
+  --border-color: rgba(170, 81, 47, 0.25);
+  --border-glow: rgba(170, 81, 47, 0.45);
 
-  --text-primary: #2d2225;
-  --text-secondary: #574045;
-  --text-muted: #83676c;
+  --text-primary: #26160e;
+  --text-secondary: #4d3324;
+  --text-muted: #7d6556;
 
-  --accent-brand: #8ea66b;
-  --accent-cream: #2d2225;
-  --accent-sand: #d8a2a2;
-  --accent-maroon: #4d363b;
+  --accent-brand: #aa512f;
+  --accent-cream: #26160e;
+  --accent-sand: #ddbc89;
+  --accent-maroon: #3b2216;
 
-  --accent-blue: #8ea66b;
-  --accent-cyan: #d8a2a2;
-  --accent-indigo: #789057;
-  --accent-emerald: #6b844b;
-  --accent-amber: #9e7f4a;
-  --accent-rose: #d8a2a2;
+  --accent-blue: #aa512f;
+  --accent-cyan: #aa512f;
+  --accent-indigo: #914221;
+  --accent-emerald: #aa512f;
+  --accent-amber: #ddbc89;
+  --accent-rose: #aa512f;
 
-  --gradient-brand: linear-gradient(135deg, #8ea66b 0%, #6f864e 100%);
-  --gradient-card: linear-gradient(180deg, #ffffff 0%, #fff7d6 100%);
-  --shadow-lg: 0 10px 25px -5px rgba(45, 34, 37, 0.08), 0 8px 10px -6px rgba(45, 34, 37, 0.04);
+  --gradient-brand: linear-gradient(135deg, #aa512f 0%, #873d1e 100%);
+  --gradient-card: linear-gradient(180deg, #ffffff 0%, #ede7cf 100%);
+  --shadow-lg: 0 10px 25px -5px rgba(38, 22, 14, 0.1), 0 8px 10px -6px rgba(38, 22, 14, 0.05);
 }
 
 * {
@@ -366,11 +366,11 @@ body {
 }
 
 .btn-icon:hover {
-  color: var(--ch-vanilla);
+  color: var(--ch-ivory);
   background: var(--bg-card-hover);
-  border-color: var(--ch-olive);
+  border-color: var(--ch-rust);
   transform: scale(1.05);
-  box-shadow: 0 0 10px rgba(142, 166, 107, 0.35);
+  box-shadow: 0 0 10px rgba(170, 81, 47, 0.35);
 }
 
 /* 7-Step Pipeline Badges */
@@ -380,7 +380,7 @@ body {
   gap: 0.5rem;
   padding: 0.5rem 0.85rem;
   border-radius: 0.5rem;
-  background: rgba(46, 36, 39, 0.5);
+  background: rgba(38, 24, 17, 0.5);
   border: 1px solid var(--border-color);
   font-size: 0.75rem;
   color: var(--text-secondary);
@@ -388,16 +388,16 @@ body {
 }
 
 .pipeline-step.active {
-  background: rgba(142, 166, 107, 0.35);
-  border-color: var(--ch-olive);
-  color: var(--ch-vanilla);
-  box-shadow: 0 0 14px rgba(142, 166, 107, 0.45);
+  background: rgba(170, 81, 47, 0.35);
+  border-color: var(--ch-rust);
+  color: var(--ch-ivory);
+  box-shadow: 0 0 14px rgba(170, 81, 47, 0.45);
 }
 
 .pipeline-step.completed {
-  background: rgba(111, 134, 78, 0.4);
-  border-color: var(--ch-blossom);
-  color: var(--ch-blossom);
+  background: rgba(135, 61, 30, 0.35);
+  border-color: var(--ch-amber);
+  color: var(--ch-amber);
 }
 
 /* Responsive adjustments */
@@ -420,7 +420,7 @@ body {
 
 /* 1. Neural AI Holographic Orb */
 .neural-orb-container {
-  background: radial-gradient(circle at center, rgba(46, 36, 39, 0.95), rgba(20, 15, 18, 0.98));
+  background: radial-gradient(circle at center, rgba(38, 24, 17, 0.95), rgba(22, 14, 10, 0.98));
   border: 1px solid var(--border-color);
   border-radius: 1.25rem;
   padding: 1.25rem 1.5rem;
@@ -440,15 +440,15 @@ body {
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle, rgba(142, 166, 107, 0.12) 0%, transparent 65%);
+  background: radial-gradient(circle, rgba(170, 81, 47, 0.14) 0%, transparent 65%);
   pointer-events: none;
   transition: opacity 0.3s ease;
 }
 
 .neural-orb-container:hover {
   transform: translateY(-3px) scale(1.02);
-  border-color: var(--ch-olive);
-  box-shadow: 0 14px 35px rgba(142, 166, 107, 0.25);
+  border-color: var(--ch-rust);
+  box-shadow: 0 14px 35px rgba(170, 81, 47, 0.28);
 }
 
 .neural-orb-container:active {
@@ -466,38 +466,38 @@ body {
   border: 1px solid var(--border-color);
   font-size: 0.74rem;
   font-weight: 600;
-  color: var(--ch-vanilla);
+  color: var(--ch-ivory);
   letter-spacing: 0.02em;
   transition: all 0.2s ease;
 }
 
 .neural-orb-container[data-orb-state="listening"] .orb-status-badge {
-  border-color: var(--ch-olive);
-  color: #fff9d6;
-  background: rgba(142, 166, 107, 0.25);
-  box-shadow: 0 0 12px rgba(142, 166, 107, 0.4);
+  border-color: var(--ch-rust);
+  color: #f9f3cf;
+  background: rgba(170, 81, 47, 0.28);
+  box-shadow: 0 0 12px rgba(170, 81, 47, 0.45);
 }
 
 .neural-orb-container[data-orb-state="translating"] .orb-status-badge {
-  border-color: var(--ch-rose);
-  color: #ffdcdc;
-  background: rgba(216, 162, 162, 0.25);
-  box-shadow: 0 0 12px rgba(216, 162, 162, 0.4);
+  border-color: var(--ch-amber);
+  color: #ede7cf;
+  background: rgba(221, 188, 137, 0.25);
+  box-shadow: 0 0 12px rgba(221, 188, 137, 0.4);
 }
 
 .neural-orb-container[data-orb-state="speaking"] .orb-status-badge {
-  border-color: var(--ch-blossom);
+  border-color: var(--ch-ivory);
   color: #ffffff;
-  background: rgba(255, 220, 220, 0.3);
-  box-shadow: 0 0 12px rgba(255, 220, 220, 0.45);
+  background: rgba(249, 243, 207, 0.3);
+  box-shadow: 0 0 12px rgba(249, 243, 207, 0.45);
 }
 
 .orb-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--ch-olive);
-  box-shadow: 0 0 8px var(--ch-olive);
+  background: var(--ch-rust);
+  box-shadow: 0 0 8px var(--ch-rust);
   animation: pulse-dot 1.8s infinite ease-in-out;
 }
 
@@ -551,16 +551,16 @@ body {
 }
 
 .persona-pill:hover {
-  color: var(--ch-vanilla);
-  background: rgba(142, 166, 107, 0.15);
-  border-color: rgba(142, 166, 107, 0.3);
+  color: var(--ch-ivory);
+  background: rgba(170, 81, 47, 0.15);
+  border-color: rgba(170, 81, 47, 0.35);
 }
 
 .persona-pill.active {
-  background: linear-gradient(135deg, var(--ch-olive), #6f864e);
-  color: #fff9d6;
-  border-color: var(--ch-olive);
-  box-shadow: 0 2px 10px rgba(142, 166, 107, 0.35);
+  background: linear-gradient(135deg, var(--ch-rust), #873d1e);
+  color: #f9f3cf;
+  border-color: var(--ch-rust);
+  box-shadow: 0 2px 10px rgba(170, 81, 47, 0.38);
 }
 
 /* 3. Phonetic Pronunciation Guide Card */
@@ -568,8 +568,8 @@ body {
   margin-top: 0.75rem;
   padding: 0.65rem 0.85rem;
   border-radius: 0.65rem;
-  background: linear-gradient(135deg, rgba(142, 166, 107, 0.12) 0%, rgba(46, 36, 39, 0.45) 100%);
-  border: 1px dashed var(--ch-olive);
+  background: linear-gradient(135deg, rgba(170, 81, 47, 0.12) 0%, rgba(38, 24, 17, 0.55) 100%);
+  border: 1px dashed var(--ch-amber);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -589,7 +589,7 @@ body {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--ch-olive);
+  color: var(--ch-amber);
   display: flex;
   align-items: center;
   gap: 0.35rem;
@@ -599,7 +599,7 @@ body {
   font-size: 0.92rem;
   font-style: italic;
   font-weight: 600;
-  color: var(--ch-vanilla);
+  color: var(--ch-ivory);
   letter-spacing: 0.02em;
   word-break: break-word;
 }
@@ -615,7 +615,7 @@ body {
 .scenario-card {
   padding: 0.85rem 1rem;
   border-radius: 0.75rem;
-  background: rgba(46, 36, 39, 0.5);
+  background: rgba(38, 24, 17, 0.5);
   border: 1px solid var(--border-color);
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
@@ -627,9 +627,9 @@ body {
 
 .scenario-card:hover {
   transform: translateY(-2px);
-  background: rgba(142, 166, 107, 0.18);
-  border-color: var(--ch-olive);
-  box-shadow: 0 6px 18px rgba(142, 166, 107, 0.22);
+  background: rgba(170, 81, 47, 0.18);
+  border-color: var(--ch-rust);
+  box-shadow: 0 6px 18px rgba(170, 81, 47, 0.25);
 }
 
 .scenario-header {
@@ -646,7 +646,7 @@ body {
 .scenario-title {
   font-size: 0.85rem;
   font-weight: 700;
-  color: var(--ch-vanilla);
+  color: var(--ch-ivory);
   line-height: 1.2;
 }
 
@@ -663,17 +663,17 @@ body {
   font-weight: 700;
   padding: 0.15rem 0.45rem;
   border-radius: 9999px;
-  background: rgba(216, 162, 162, 0.2);
-  color: var(--ch-rose);
-  border: 1px solid rgba(216, 162, 162, 0.3);
+  background: rgba(221, 188, 137, 0.2);
+  color: var(--ch-amber);
+  border: 1px solid rgba(221, 188, 137, 0.3);
 }
 
 /* 5. Live Conversation 180° Face-to-Face Dual Mode */
 .face-to-face-mode #conv-speaker-b-panel {
   transform: rotate(180deg);
   transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
-  box-shadow: 0 -8px 24px rgba(216, 162, 162, 0.35);
-  border-color: var(--ch-rose);
+  box-shadow: 0 -8px 24px rgba(170, 81, 47, 0.35);
+  border-color: var(--ch-rust);
 }
 
 .face-to-face-mode .conv-bubble-partner {
@@ -683,9 +683,9 @@ body {
 }
 
 .face-to-face-toggle-btn.active {
-  background: linear-gradient(135deg, var(--ch-olive), #6f864e);
-  color: #fff9d6;
-  border-color: var(--ch-olive);
-  box-shadow: 0 0 14px rgba(142, 166, 107, 0.45);
+  background: linear-gradient(135deg, var(--ch-rust), #873d1e);
+  color: #f9f3cf;
+  border-color: var(--ch-rust);
+  box-shadow: 0 0 14px rgba(170, 81, 47, 0.45);
 }
 

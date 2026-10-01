@@ -652,14 +652,14 @@ class AudioEngine {
 
         const gradient = ctx.createLinearGradient(0, y, 0, y + barHeight);
         if (this.isRecording) {
-          gradient.addColorStop(0, '#8ea66b');
-          gradient.addColorStop(1, '#fff9d6');
+          gradient.addColorStop(0, '#aa512f');
+          gradient.addColorStop(1, '#f9f3cf');
         } else if (this.isPlayingAudio) {
-          gradient.addColorStop(0, '#d8a2a2');
-          gradient.addColorStop(1, '#ffdcdc');
+          gradient.addColorStop(0, '#ddbc89');
+          gradient.addColorStop(1, '#ede7cf');
         } else {
-          gradient.addColorStop(0, '#8ea66b');
-          gradient.addColorStop(1, '#d8a2a2');
+          gradient.addColorStop(0, '#aa512f');
+          gradient.addColorStop(1, '#ddbc89');
         }
 
         ctx.fillStyle = gradient;
@@ -719,7 +719,7 @@ class AudioEngine {
         distance: 38 + Math.random() * 22,
         speed: 0.015 + Math.random() * 0.02,
         size: 1.5 + Math.random() * 2.5,
-        color: i % 2 === 0 ? '#8ea66b' : '#d8a2a2'
+        color: i % 2 === 0 ? '#aa512f' : '#ddbc89'
       });
     }
 
@@ -733,28 +733,28 @@ class AudioEngine {
       // 1. Outer dynamic glow/pulse
       let baseRadius = 32;
       let pulseSpeed = 1;
-      let coreColorStart = '#8ea66b';
-      let coreColorEnd = '#2e2427';
-      let auraColor = 'rgba(142, 166, 107, 0.25)';
+      let coreColorStart = '#aa512f';
+      let coreColorEnd = '#26160e';
+      let auraColor = 'rgba(170, 81, 47, 0.25)';
 
       if (state === 'listening') {
         pulseSpeed = 2.4;
         baseRadius = 36 + Math.sin(tick * pulseSpeed) * 6;
-        coreColorStart = '#8ea66b';
-        coreColorEnd = '#fff9d6';
-        auraColor = 'rgba(142, 166, 107, 0.45)';
+        coreColorStart = '#aa512f';
+        coreColorEnd = '#f9f3cf';
+        auraColor = 'rgba(170, 81, 47, 0.45)';
       } else if (state === 'translating') {
         pulseSpeed = 3.5;
         baseRadius = 34 + Math.sin(tick * pulseSpeed) * 4;
-        coreColorStart = '#ffdcdc';
-        coreColorEnd = '#d8a2a2';
-        auraColor = 'rgba(216, 162, 162, 0.55)';
+        coreColorStart = '#ede7cf';
+        coreColorEnd = '#ddbc89';
+        auraColor = 'rgba(221, 188, 137, 0.55)';
       } else if (state === 'speaking') {
         pulseSpeed = 2.0;
         baseRadius = 35 + Math.abs(Math.sin(tick * pulseSpeed)) * 7;
-        coreColorStart = '#d8a2a2';
-        coreColorEnd = '#ffdcdc';
-        auraColor = 'rgba(255, 220, 220, 0.45)';
+        coreColorStart = '#ddbc89';
+        coreColorEnd = '#f9f3cf';
+        auraColor = 'rgba(249, 243, 207, 0.45)';
       } else {
         baseRadius = 30 + Math.sin(tick * 1.2) * 2.5;
       }
@@ -776,7 +776,7 @@ class AudioEngine {
           const ringRadius = baseRadius + ringProgress * 28;
           const ringAlpha = (1 - ringProgress) * 0.6;
 
-          ctx.strokeStyle = state === 'listening' ? `rgba(142, 166, 107, ${ringAlpha})` : `rgba(216, 162, 162, ${ringAlpha})`;
+          ctx.strokeStyle = state === 'listening' ? `rgba(170, 81, 47, ${ringAlpha})` : `rgba(221, 188, 137, ${ringAlpha})`;
           ctx.lineWidth = 1.5;
           ctx.beginPath();
           ctx.arc(centerX, centerY, ringRadius, 0, Math.PI * 2);
@@ -790,7 +790,7 @@ class AudioEngine {
         ctx.save();
         ctx.translate(centerX, centerY);
         ctx.rotate(angle);
-        ctx.strokeStyle = idx === 0 ? 'rgba(142, 166, 107, 0.45)' : (idx === 1 ? 'rgba(216, 162, 162, 0.4)' : 'rgba(255, 249, 214, 0.35)');
+        ctx.strokeStyle = idx === 0 ? 'rgba(170, 81, 47, 0.45)' : (idx === 1 ? 'rgba(221, 188, 137, 0.4)' : 'rgba(249, 243, 207, 0.35)');
         ctx.lineWidth = 1.2;
         ctx.beginPath();
         ctx.ellipse(0, 0, baseRadius * 1.25, baseRadius * 0.45, 0, 0, Math.PI * 2);
@@ -812,7 +812,7 @@ class AudioEngine {
 
         // Subtle synaptic lines connecting to center in translating mode
         if (state === 'translating' && Math.random() > 0.6) {
-          ctx.strokeStyle = 'rgba(255, 249, 214, 0.25)';
+          ctx.strokeStyle = 'rgba(249, 243, 207, 0.25)';
           ctx.lineWidth = 0.8;
           ctx.beginPath();
           ctx.moveTo(centerX, centerY);
@@ -833,7 +833,7 @@ class AudioEngine {
       coreGradient.addColorStop(0, '#ffffff');
       coreGradient.addColorStop(0.3, coreColorStart);
       coreGradient.addColorStop(0.85, coreColorEnd);
-      coreGradient.addColorStop(1, 'rgba(20, 15, 18, 0.95)');
+      coreGradient.addColorStop(1, 'rgba(22, 14, 10, 0.95)');
 
       ctx.fillStyle = coreGradient;
       ctx.beginPath();
@@ -841,7 +841,7 @@ class AudioEngine {
       ctx.fill();
 
       // Core Outer Rim
-      ctx.strokeStyle = state === 'translating' ? '#ffdcdc' : '#8ea66b';
+      ctx.strokeStyle = state === 'translating' ? '#ede7cf' : '#aa512f';
       ctx.lineWidth = 1.5;
       ctx.stroke();
     };
