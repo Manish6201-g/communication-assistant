@@ -245,20 +245,26 @@ class AudioEngine {
         playNext();
       };
 
+      let hasTriedFallback = false;
+
       audio.onerror = () => {
+        if (!hasTriedFallback && !isTerminated) {
+          hasTriedFallback = true;
+          audio.src = localProxyUrl;
+          audio.play().catch(() => triggerFallback());
+          return;
+        }
         triggerFallback();
       };
 
-      // Try local proxy if running on web server
-      if (window.location.protocol.startsWith('http')) {
-        audio.src = localProxyUrl;
-      } else {
-        audio.src = directGoogleUrl;
-      }
+      // Direct high-fidelity Google TTS stream with no-referrer
+      audio.src = directGoogleUrl;
 
       audio.play().catch(() => {
-        if (!hasStarted) {
-          triggerFallback();
+        if (!hasStarted && !hasTriedFallback && !isTerminated) {
+          hasTriedFallback = true;
+          audio.src = localProxyUrl;
+          audio.play().catch(() => triggerFallback());
         }
       });
     };

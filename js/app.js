@@ -809,11 +809,13 @@ class App {
             this.conversation.push(newMsg);
             this.renderConversation();
 
-            // Speak translated message to other party
-            audioEngine.speak(translation.translatedText, targetLang, {
-              rate: this.speechRate,
-              pitch: this.speechPitch
-            });
+            // Speak translated message to other party cleanly after completion chime
+            setTimeout(() => {
+              audioEngine.speak(translation.translatedText, targetLang, {
+                rate: this.speechRate,
+                pitch: this.speechPitch
+              });
+            }, 200);
           }
         },
         onError: () => {
