@@ -1,11 +1,14 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { AlertCircle } from 'lucide-react';
-import Header from '../components/Header';
-import LanguageBar from '../components/LanguageBar';
-import TranscriptView from '../components/TranscriptView';
-import ControlDock from '../components/ControlDock';
-import DiagnosticsDrawer from '../components/DiagnosticsDrawer';
+import { AlertCircle, Send, X } from 'lucide-react';
+import Navbar from '../components/Navbar';
+import DualTouchPills from '../components/DualTouchPills';
+import VoiceCore from '../components/VoiceCore';
+import TimelineStream from '../components/TimelineStream';
+import FaceToFaceView from '../components/FaceToFaceView';
+import DualPanelsView from '../components/DualPanelsView';
+import LanguageSelectorModal from '../components/LanguageSelectorModal';
 import QuickPhrasesModal from '../components/QuickPhrasesModal';
+import DiagnosticsDrawer from '../components/DiagnosticsDrawer';
 import { useTranslationSocket } from '../hooks/useTranslationSocket';
 import { useAudioCapture } from '../hooks/useAudioCapture';
 
@@ -13,13 +16,18 @@ export default function Translator() {
   const [personALang, setPersonALang] = useState('hi'); // Default Hindi (Native Indic)
   const [personBLang, setPersonBLang] = useState('en'); // Default English
   const [domain, setDomain] = useState('general');
-  const [isMirrored, setIsMirrored] = useState(false);
-  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [viewMode, setViewMode] = useState('timeline'); // 'timeline', 'facetoface', 'dual'
   const [fontSize, setFontSize] = useState('large'); // 'normal', 'large', 'huge'
-  const [showDiagnostics, setShowDiagnostics] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  
+  // Modals & Drawers
+  const [languageModalTarget, setLanguageModalTarget] = useState(null); // 'a' or 'b' or null
   const [showQuickPhrases, setShowQuickPhrases] = useState(false);
+  const [showDiagnostics, setShowDiagnostics] = useState(false);
+  const [showTextInput, setShowTextInput] = useState(false);
+  const [customText, setCustomText] = useState('');
 
-  // Translation WebSocket hook
+  // Real Translation WebSocket Hook
   const {
     connectionStatus,
     activeSpeaker,
@@ -35,7 +43,7 @@ export default function Translator() {
     replayMessageAudio
   } = useTranslationSocket({ personALang, personBLang, domain });
 
-  // Web Audio microphone capture hook (downsamples to 16kHz Mono PCM)
+  // Real Web Audio Capture Hook (16kHz PCM downsampler)
   const handleAudioChunk = useCallback((arrayBuffer) => {
     sendAudioChunk(arrayBuffer);
   }, [sendAudioChunk]);
@@ -48,10 +56,11 @@ export default function Translator() {
     stopCapture
   } = useAudioCapture({ onAudioChunk: handleAudioChunk });
 
-  // Start / Stop conversation
-  const handleStartListening = async () => {
+  // Direct Start for specific speaker (Operator or Visitor)
+  const handleStartForSpeaker = async (speaker) => {
+    switchSpeaker(speaker);
     await startCapture();
-    startListeningSocket(activeSpeaker);
+    startListeningSocket(speaker);
   };
 
   const handleStopListening = () => {
@@ -59,24 +68,19 @@ export default function Translator() {
     stopListeningSocket();
   };
 
-  const handleSwitchSpeaker = (role) => {
-    switchSpeaker(role);
-    if (isCapturing) {
-      startListeningSocket(role);
-    }
+  const handleSwapLanguages = () => {
+    const temp = personALang;
+    setPersonALang(personBLang);
+    setPersonBLang(temp);
   };
 
   // Fullscreen management
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch((err) => {
-        console.warn(`Fullscreen error: ${err.message}`);
-      });
+      document.documentElement.requestFullscreen().catch((err) => console.warn(err));
       setIsFullscreen(true);
     } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      }
+      if (document.exitFullscreen) document.exitFullscreen();
       setIsFullscreen(false);
     }
   };
@@ -87,26 +91,23 @@ export default function Translator() {
     return () => document.removeEventListener('fullscreenchange', handleFsChange);
   }, []);
 
-  // Global Keyboard Shortcuts
+  // Keyboard Shortcuts
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
-        return;
-      }
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
       if (e.code === 'Space') {
         e.preventDefault();
         if (isCapturing) {
           handleStopListening();
         } else {
-          handleStartListening();
+          handleStartForSpeaker(activeSpeaker);
         }
-      } else if (e.code === 'Tab') {
-        e.preventDefault();
-        handleSwitchSpeaker(activeSpeaker === 'person_a' ? 'person_b' : 'person_a');
-      } else if (e.code === 'KeyF') {
-        setIsMirrored((prev) => !prev);
-      } else if (e.code === 'KeyD') {
-        setShowDiagnostics((prev) => !prev);
+      } else if (e.code === 'Digit1') {
+        setViewMode('timeline');
+      } else if (e.code === 'Digit2') {
+        setViewMode('facetoface');
+      } else if (e.code === 'Digit3') {
+        setViewMode('dual');
       }
     };
 
@@ -114,18 +115,28 @@ export default function Translator() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isCapturing, activeSpeaker]);
 
+  const handleDirectTextSubmit = (e) => {
+    e.preventDefault();
+    if (!customText.trim()) return;
+    sendDirectText(customText.trim(), activeSpeaker);
+    setCustomText('');
+    setShowTextInput(false);
+  };
+
   return (
-    <div className="min-h-screen bg-[#080C15] text-slate-100 flex flex-col justify-between p-3 sm:p-5 lg:p-6 pb-28 relative">
+    <div className="min-h-screen bg-[#080C15] text-slate-100 flex flex-col justify-between p-3 sm:p-5 lg:p-6 pb-6 relative selection:bg-sky-500/20 selection:text-sky-200">
       
       {/* Container */}
-      <div className="max-w-7xl w-full mx-auto space-y-3.5 sm:space-y-4">
+      <div className="max-w-7xl w-full mx-auto space-y-4">
         
-        {/* Navigation Header */}
-        <Header
+        {/* Navigation Bar */}
+        <Navbar
           connectionStatus={connectionStatus}
           latestLatency={latestLatency}
-          isMirrored={isMirrored}
-          onToggleMirrored={() => setIsMirrored(!isMirrored)}
+          viewMode={viewMode}
+          onChangeViewMode={setViewMode}
+          domain={domain}
+          onChangeDomain={setDomain}
           fontSize={fontSize}
           onChangeFontSize={setFontSize}
           isFullscreen={isFullscreen}
@@ -134,73 +145,140 @@ export default function Translator() {
           onClearConversation={clearConversation}
         />
 
-        {/* Microphone Error Alert (if permission is denied) */}
+        {/* Microphone Error Alert */}
         {audioError && (
-          <div className="p-3.5 bg-rose-500/10 border border-rose-500/30 rounded-xl text-xs sm:text-sm text-rose-300 flex items-center justify-between">
+          <div className="p-3.5 bg-rose-500/10 border border-rose-500/30 rounded-2xl text-xs sm:text-sm text-rose-300 flex items-center justify-between">
             <div className="flex items-center gap-2.5">
               <AlertCircle className="w-4 h-4 text-rose-400 flex-shrink-0" />
               <span>Microphone access issue: {audioError}</span>
             </div>
             <button
-              onClick={() => handleStartListening()}
-              className="px-3 py-1 bg-rose-500 text-slate-950 font-bold rounded-lg text-xs hover:bg-rose-400 transition"
+              onClick={() => handleStartForSpeaker(activeSpeaker)}
+              className="px-3 py-1 bg-rose-500 text-slate-950 font-bold rounded-xl text-xs hover:bg-rose-400 transition"
             >
               Retry
             </button>
           </div>
         )}
 
-        {/* Language Selection Bar */}
-        <LanguageBar
+        {/* Dual Direct-Touch Mic Pods */}
+        <DualTouchPills
           personALang={personALang}
-          setPersonALang={setPersonALang}
           personBLang={personBLang}
-          setPersonBLang={setPersonBLang}
-          domain={domain}
-          setDomain={setDomain}
-          disabled={isCapturing}
+          isListening={isCapturing}
+          activeSpeaker={activeSpeaker}
+          audioLevel={audioLevel}
+          onStartForSpeaker={handleStartForSpeaker}
+          onStopListening={handleStopListening}
+          onOpenLanguageModal={(target) => setLanguageModalTarget(target)}
+          onSwapLanguages={handleSwapLanguages}
+          onOpenQuickPhrases={() => setShowQuickPhrases(true)}
+          onToggleTextInput={() => setShowTextInput(!showTextInput)}
+          disabled={connectionStatus !== 'connected'}
         />
 
-        {/* Dual Communication Workspace */}
-        <main>
-          <TranscriptView
-            personALang={personALang}
-            personBLang={personBLang}
-            messages={messages}
-            partialTranscript={partialTranscript}
-            activeSpeaker={activeSpeaker}
-            isListening={isCapturing}
-            audioLevel={audioLevel}
-            isMirrored={isMirrored}
-            fontSize={fontSize}
-            onReplayAudio={replayMessageAudio}
-          />
+        {/* Text Input Fallback Bar (if toggled) */}
+        {showTextInput && (
+          <form
+            onSubmit={handleDirectTextSubmit}
+            className="w-full max-w-4xl mx-auto p-2 bg-[#0E1524] rounded-2xl border border-white/10 shadow-glass flex items-center gap-2 animate-fade-in"
+          >
+            <input
+              type="text"
+              value={customText}
+              onChange={(e) => setCustomText(e.target.value)}
+              placeholder={`Type message to translate as ${activeSpeaker === 'person_a' ? 'Operator' : 'Visitor'}...`}
+              autoFocus
+              className="flex-1 px-4 py-2 bg-slate-900 border border-white/10 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-400/50"
+            />
+            <button
+              type="submit"
+              disabled={!customText.trim()}
+              className="px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs disabled:opacity-40 transition flex items-center gap-1.5"
+            >
+              <Send className="w-3.5 h-3.5" />
+              <span>Translate</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowTextInput(false)}
+              className="p-2 text-slate-400 hover:text-white"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </form>
+        )}
+
+        {/* Central Fluid Visual Voice Core (ripples when active) */}
+        {isCapturing && (
+          <div className="py-1 animate-fade-in">
+            <VoiceCore 
+              audioLevel={audioLevel} 
+              isListening={isCapturing} 
+              activeSpeaker={activeSpeaker} 
+            />
+          </div>
+        )}
+
+        {/* Active Communication Layout */}
+        <main className="w-full">
+          {viewMode === 'timeline' && (
+            <TimelineStream
+              messages={messages}
+              partialTranscript={partialTranscript}
+              activeSpeaker={activeSpeaker}
+              isListening={isCapturing}
+              fontSize={fontSize}
+              personALang={personALang}
+              personBLang={personBLang}
+              onReplayAudio={replayMessageAudio}
+            />
+          )}
+
+          {viewMode === 'facetoface' && (
+            <FaceToFaceView
+              personALang={personALang}
+              personBLang={personBLang}
+              messages={messages}
+              partialTranscript={partialTranscript}
+              activeSpeaker={activeSpeaker}
+              isListening={isCapturing}
+              fontSize={fontSize}
+              onStartForSpeaker={handleStartForSpeaker}
+              onStopListening={handleStopListening}
+              onReplayAudio={replayMessageAudio}
+            />
+          )}
+
+          {viewMode === 'dual' && (
+            <DualPanelsView
+              personALang={personALang}
+              personBLang={personBLang}
+              messages={messages}
+              partialTranscript={partialTranscript}
+              activeSpeaker={activeSpeaker}
+              isListening={isCapturing}
+              fontSize={fontSize}
+              onReplayAudio={replayMessageAudio}
+            />
+          )}
         </main>
 
       </div>
 
-      {/* Floating Ergonomic Control Dock */}
-      <ControlDock
-        isListening={isCapturing}
-        onStartListening={handleStartListening}
-        onStopListening={handleStopListening}
-        activeSpeaker={activeSpeaker}
-        onSwitchSpeaker={handleSwitchSpeaker}
-        audioLevel={audioLevel}
-        onOpenQuickPhrases={() => setShowQuickPhrases(true)}
-        onSendText={sendDirectText}
-        disabled={connectionStatus !== 'connected'}
+      {/* Language Selector Modal */}
+      <LanguageSelectorModal
+        isOpen={languageModalTarget !== null}
+        onClose={() => setLanguageModalTarget(null)}
+        selectedCode={languageModalTarget === 'a' ? personALang : personBLang}
+        onSelect={(code) => {
+          if (languageModalTarget === 'a') setPersonALang(code);
+          else setPersonBLang(code);
+        }}
+        title={languageModalTarget === 'a' ? "Select Operator Language" : "Select Visitor Language"}
       />
 
-      {/* Slide-Over Diagnostics Drawer */}
-      <DiagnosticsDrawer
-        isOpen={showDiagnostics}
-        onClose={() => setShowDiagnostics(false)}
-        latency={latestLatency}
-        connectionStatus={connectionStatus}
-      />
-
-      {/* Quick Phrases Popover */}
+      {/* Quick Phrases Modal */}
       <QuickPhrasesModal
         isOpen={showQuickPhrases}
         onClose={() => setShowQuickPhrases(false)}
@@ -209,6 +287,18 @@ export default function Translator() {
         onSelectPhrase={sendDirectText}
       />
 
+      {/* Telemetry Slide-Over Drawer */}
+      <DiagnosticsDrawer
+        isOpen={showDiagnostics}
+        onClose={() => setShowDiagnostics(false)}
+        latency={latestLatency}
+        connectionStatus={connectionStatus}
+      />
+
+      {/* Minimal Footer */}
+      <footer className="max-w-7xl w-full mx-auto pt-6 text-center text-xs text-slate-500 font-medium">
+        CivicEye • Zero Audio Storage Privacy • Faster-Whisper & Multilingual Neural Translation
+      </footer>
     </div>
   );
 }
