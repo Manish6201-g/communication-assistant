@@ -8,35 +8,46 @@ export default {
   theme: {
     extend: {
       colors: {
-        cyber: {
-          bg: '#080C14',
-          surface: '#0D1527',
-          card: '#111B32',
-          cardHover: '#162340',
-          border: '#1E2F52',
-          borderGlow: '#06B6D4',
-          cyan: '#06B6D4',
-          cyanLight: '#22D3EE',
-          blue: '#3B82F6',
-          blueDeep: '#1D4ED8',
+        app: {
+          bg: '#080C15',
+          surface: '#0E1422',
+          surfaceHover: '#131B2D',
+          card: '#121A2C',
+          cardSubtle: '#0F1626',
+          border: 'rgba(255, 255, 255, 0.08)',
+          borderSubtle: 'rgba(255, 255, 255, 0.04)',
+          borderHover: 'rgba(56, 189, 248, 0.3)',
+          text: '#F8FAFC',
           textMuted: '#94A3B8',
-          textDim: '#64748B'
+          textSubtle: '#64748B',
+          accent: '#38BDF8',
+          accentGlow: 'rgba(56, 189, 248, 0.15)',
         }
       },
       fontFamily: {
-        sans: ['Inter', 'Plus Jakarta Sans', 'Noto Sans', 'system-ui', 'sans-serif'],
-        mono: ['JetBrains Mono', 'SF Mono', 'Fira Code', 'monospace'],
+        sans: ['"Plus Jakarta Sans"', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
       },
       boxShadow: {
-        'neon-cyan': '0 0 25px -2px rgba(6, 182, 212, 0.45)',
-        'neon-blue': '0 0 25px -2px rgba(59, 130, 246, 0.45)',
-        'neon-pulse': '0 0 35px 2px rgba(6, 182, 212, 0.3)',
-        'cyber-card': '0 10px 40px -10px rgba(0, 0, 0, 0.6), 0 0 1px 1px rgba(34, 211, 238, 0.15)',
-        'cyber-card-active': '0 10px 40px -10px rgba(6, 182, 212, 0.25), 0 0 2px 1.5px rgba(6, 182, 212, 0.5)'
+        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.36)',
+        'dock': '0 20px 40px -15px rgba(0, 0, 0, 0.7), 0 0 1px 1px rgba(255, 255, 255, 0.1)',
+        'glow-sky': '0 0 25px -4px rgba(56, 189, 248, 0.35)',
+        'glow-rose': '0 0 25px -4px rgba(244, 63, 94, 0.45)',
+        'card-subtle': '0 4px 20px -2px rgba(0, 0, 0, 0.4)',
       },
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'cyber-mesh': 'radial-gradient(at 0% 0%, rgba(6, 182, 212, 0.12) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.12) 0px, transparent 50%)'
+      animation: {
+        'pulse-subtle': 'pulseSubtle 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'fade-in': 'fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+      },
+      keyframes: {
+        pulseSubtle: {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.6' },
+        },
+        fadeIn: {
+          from: { opacity: '0', transform: 'translateY(6px)' },
+          to: { opacity: '1', transform: 'translateY(0)' },
+        }
       }
     },
   },

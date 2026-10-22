@@ -4,80 +4,66 @@
 
 @layer base {
   body {
-    background-color: #080C14;
-    color: #F1F5F9;
+    background-color: #080C15;
+    color: #F8FAFC;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
-/* Futuristic Scrollbars */
+/* Minimal Modern Scrollbars */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0D1527;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1E2F52;
+  background: rgba(255, 255, 255, 0.12);
   border-radius: 9999px;
-  border: 1px solid rgba(6, 182, 212, 0.2);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #06B6D4;
-  box-shadow: 0 0 10px rgba(6, 182, 212, 0.6);
+  background: rgba(255, 255, 255, 0.25);
 }
 
-/* 180-Degree Inversion for Flat Face-to-Face Tablet / Countertop */
+/* 180° Inverted Mode for Face-to-Face Counter / Tabletop Tablet Interaction */
 .flip-180 {
   transform: rotate(180deg);
-  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Voice Reactive Equalizer Animation */
-@keyframes cyber-wave {
+/* Glassmorphism Surface Base */
+.glass-panel {
+  background: rgba(14, 20, 34, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-dock {
+  background: rgba(12, 18, 30, 0.88);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* Smooth voice wave animation */
+@keyframes soundwave {
   0%, 100% {
-    height: 15%;
-    opacity: 0.5;
+    height: 18%;
   }
   50% {
     height: 100%;
-    opacity: 1;
-    filter: drop-shadow(0 0 6px rgba(6, 182, 212, 0.8));
   }
 }
 
-.animate-cyber-wave {
-  animation: cyber-wave 0.7s ease-in-out infinite alternate;
+.animate-soundwave {
+  animation: soundwave 0.8s ease-in-out infinite alternate;
 }
 
-/* Ambient Radial Glow */
-.cyber-glow-orb {
-  position: fixed;
-  border-radius: 9999px;
-  filter: blur(120px);
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.25;
-}
-
-/* Smooth Fade In */
-@keyframes fadeInSlide {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fade-in {
-  animation: fadeInSlide 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* Reduced Motion Override */
+/* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
   *, ::before, ::after {
     animation-duration: 0.01ms !important;
