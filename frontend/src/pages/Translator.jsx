@@ -1,12 +1,13 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { AlertCircle, Send, X } from 'lucide-react';
 import Navbar from '../components/Navbar';
+import HeroSection from '../components/HeroSection';
 import DualTouchPills from '../components/DualTouchPills';
 import VoiceCore from '../components/VoiceCore';
 import TimelineStream from '../components/TimelineStream';
 import FaceToFaceView from '../components/FaceToFaceView';
 import DualPanelsView from '../components/DualPanelsView';
-import LanguageSelectorModal from '../components/LanguageSelectorModal';
+import LanguageSelectorModal, { LANGUAGES } from '../components/LanguageSelectorModal';
 import QuickPhrasesModal from '../components/QuickPhrasesModal';
 import DiagnosticsDrawer from '../components/DiagnosticsDrawer';
 import { useTranslationSocket } from '../hooks/useTranslationSocket';
@@ -123,6 +124,11 @@ export default function Translator() {
     setShowTextInput(false);
   };
 
+  const getLangName = (code) => {
+    const found = LANGUAGES.find((l) => l.code === code);
+    return found ? found.name : code.toUpperCase();
+  };
+
   return (
     <div className="min-h-screen bg-[#080C15] text-slate-100 flex flex-col justify-between p-3 sm:p-5 lg:p-6 pb-6 relative selection:bg-sky-500/20 selection:text-sky-200">
       
@@ -143,6 +149,16 @@ export default function Translator() {
           onToggleFullscreen={toggleFullscreen}
           onOpenDiagnostics={() => setShowDiagnostics(true)}
           onClearConversation={clearConversation}
+        />
+
+        {/* Hero Section (Originkit Hero-13 Style) */}
+        <HeroSection
+          onStartConversation={() => handleStartForSpeaker('person_a')}
+          onSwitchToTabletop={() => setViewMode('facetoface')}
+          onOpenTelemetry={() => setShowDiagnostics(true)}
+          isListening={isCapturing}
+          operatorLangName={getLangName(personALang)}
+          visitorLangName={getLangName(personBLang)}
         />
 
         {/* Microphone Error Alert */}
