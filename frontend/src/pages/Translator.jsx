@@ -12,6 +12,7 @@ import QuickPhrasesModal from '../components/QuickPhrasesModal';
 import DiagnosticsDrawer from '../components/DiagnosticsDrawer';
 import { useTranslationSocket } from '../hooks/useTranslationSocket';
 import { useAudioCapture } from '../hooks/useAudioCapture';
+import { clientTranslationService } from '../services/clientTranslationService';
 
 export default function Translator() {
   const [personALang, setPersonALang] = useState('hi'); // Default Hindi (Native Indic)
@@ -28,12 +29,17 @@ export default function Translator() {
   const [showTextInput, setShowTextInput] = useState(false);
   const [customText, setCustomText] = useState('');
 
-  // Real Translation WebSocket Hook
+  // Standalone Client-Side Voice State
+  const [isClientListening, setIsClientListening] = useState(false);
+  const [clientAudioLevel, setClientAudioLevel] = useState(0);
+
+  // Translation Hook (WebSocket + Multi-Tier NMT Fallback)
   const {
     connectionStatus,
     activeSpeaker,
     messages,
     partialTranscript,
+    setPartialTranscript,
     latestLatency,
     sendAudioChunk,
     startListening: startListeningSocket,
@@ -44,7 +50,7 @@ export default function Translator() {
     replayMessageAudio
   } = useTranslationSocket({ personALang, personBLang, domain });
 
-  // Real Web Audio Capture Hook (16kHz PCM downsampler)
+  // Web Audio Capture Hook (16kHz PCM downsampler for backend WebSocket streaming)
   const handleAudioChunk = useCallback((arrayBuffer) => {
     sendAudioChunk(arrayBuffer);
   }, [sendAudioChunk]);
@@ -57,19 +63,74 @@ export default function Translator() {
     stopCapture
   } = useAudioCapture({ onAudioChunk: handleAudioChunk });
 
-  // Direct Start for specific speaker (Operator or Visitor)
+  // Oscillate visualizer waveform while speaking in client speech recognition
+  useEffect(() => {
+    let interval;
+    if (isClientListening) {
+      interval = setInterval(() => {
+        setClientAudioLevel(0.35 + Math.random() * 0.45);
+      }, 120);
+    } else {
+      setClientAudioLevel(0);
+    }
+    return () => clearInterval(interval);
+  }, [isClientListening]);
+
+  const isListening = connectionStatus === 'connected' ? isCapturing : isClientListening;
+  const currentAudioLevel = connectionStatus === 'connected' ? audioLevel : clientAudioLevel;
+
+  // Direct Start for specific speaker (Speaker A or Speaker B)
   const handleStartForSpeaker = async (speaker) => {
     switchSpeaker(speaker);
-    await startCapture();
-    startListeningSocket(speaker);
+
+    if (connectionStatus === 'connected') {
+      await startCapture();
+      startListeningSocket(speaker);
+    } else {
+      // High-Accuracy Client-Side Speech Recognition (Web Speech API with Speaker's Exact Language Code)
+      const speakerLang = speaker === 'person_a' ? personALang : personBLang;
+      setIsClientListening(true);
+
+      clientTranslationService.startSpeechRecognition({
+        langCode: speakerLang,
+        onStart: () => {
+          setIsClientListening(true);
+        },
+        onInterim: (interimText) => {
+          setPartialTranscript({
+            segment_id: Date.now(),
+            speaker_role: speaker,
+            source_text: interimText
+          });
+        },
+        onEnd: async (finalText) => {
+          setIsClientListening(false);
+          setPartialTranscript(null);
+          if (finalText && finalText.trim()) {
+            await sendDirectText(finalText.trim(), speaker);
+          }
+        },
+        onError: () => {
+          setIsClientListening(false);
+          setPartialTranscript(null);
+        }
+      });
+    }
   };
 
   const handleStopListening = () => {
-    stopCapture();
-    stopListeningSocket();
+    if (connectionStatus === 'connected') {
+      stopCapture();
+      stopListeningSocket();
+    } else {
+      clientTranslationService.stopSpeechRecognition();
+      setIsClientListening(false);
+      setPartialTranscript(null);
+    }
   };
 
   const handleSwapLanguages = () => {
+    clientTranslationService.playFeedbackTone('click');
     const temp = personALang;
     setPersonALang(personBLang);
     setPersonBLang(temp);
@@ -98,7 +159,7 @@ export default function Translator() {
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
       if (e.code === 'Space') {
         e.preventDefault();
-        if (isCapturing) {
+        if (isListening) {
           handleStopListening();
         } else {
           handleStartForSpeaker(activeSpeaker);
@@ -114,7 +175,7 @@ export default function Translator() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isCapturing, activeSpeaker]);
+  }, [isListening, activeSpeaker]);
 
   const handleDirectTextSubmit = (e) => {
     e.preventDefault();
@@ -151,22 +212,22 @@ export default function Translator() {
           onClearConversation={clearConversation}
         />
 
-        {/* Hero Section (Originkit Hero-13 Style) */}
+        {/* Hero Section */}
         <HeroSection
           onStartConversation={() => handleStartForSpeaker('person_a')}
           onSwitchToTabletop={() => setViewMode('facetoface')}
           onOpenTelemetry={() => setShowDiagnostics(true)}
-          isListening={isCapturing}
+          isListening={isListening}
           operatorLangName={getLangName(personALang)}
           visitorLangName={getLangName(personBLang)}
         />
 
-        {/* Microphone Error Alert */}
+        {/* Audio Error Alert if any */}
         {audioError && (
-          <div className="p-3.5 bg-rose-500/10 border border-rose-500/30 rounded-2xl text-xs sm:text-sm text-rose-300 flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <AlertCircle className="w-4 h-4 text-rose-400 flex-shrink-0" />
-              <span>Microphone access issue: {audioError}</span>
+          <div className="p-3 bg-rose-500/10 border border-rose-500/30 rounded-2xl flex items-center justify-between gap-3 text-rose-300 text-sm">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="w-5 h-5 flex-shrink-0 text-rose-400" />
+              <span>{audioError}</span>
             </div>
             <button
               onClick={() => handleStartForSpeaker(activeSpeaker)}
@@ -181,16 +242,16 @@ export default function Translator() {
         <DualTouchPills
           personALang={personALang}
           personBLang={personBLang}
-          isListening={isCapturing}
+          isListening={isListening}
           activeSpeaker={activeSpeaker}
-          audioLevel={audioLevel}
+          audioLevel={currentAudioLevel}
           onStartForSpeaker={handleStartForSpeaker}
           onStopListening={handleStopListening}
           onOpenLanguageModal={(target) => setLanguageModalTarget(target)}
           onSwapLanguages={handleSwapLanguages}
           onOpenQuickPhrases={() => setShowQuickPhrases(true)}
           onToggleTextInput={() => setShowTextInput(!showTextInput)}
-          disabled={connectionStatus !== 'connected'}
+          disabled={false}
         />
 
         {/* Text Input Fallback Bar (if toggled) */}
@@ -203,7 +264,7 @@ export default function Translator() {
               type="text"
               value={customText}
               onChange={(e) => setCustomText(e.target.value)}
-              placeholder={`Type message to translate as ${activeSpeaker === 'person_a' ? 'Operator' : 'Visitor'}...`}
+              placeholder={`Type message to translate as ${activeSpeaker === 'person_a' ? getLangName(personALang) : getLangName(personBLang)}...`}
               autoFocus
               className="flex-1 px-4 py-2 bg-slate-900 border border-white/10 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-400/50"
             />
@@ -226,11 +287,11 @@ export default function Translator() {
         )}
 
         {/* Central Fluid Visual Voice Core (ripples when active) */}
-        {isCapturing && (
+        {isListening && (
           <div className="py-1 animate-fade-in">
             <VoiceCore 
-              audioLevel={audioLevel} 
-              isListening={isCapturing} 
+              audioLevel={currentAudioLevel} 
+              isListening={isListening} 
               activeSpeaker={activeSpeaker} 
             />
           </div>
@@ -243,7 +304,7 @@ export default function Translator() {
               messages={messages}
               partialTranscript={partialTranscript}
               activeSpeaker={activeSpeaker}
-              isListening={isCapturing}
+              isListening={isListening}
               fontSize={fontSize}
               personALang={personALang}
               personBLang={personBLang}
@@ -258,10 +319,10 @@ export default function Translator() {
               messages={messages}
               partialTranscript={partialTranscript}
               activeSpeaker={activeSpeaker}
-              isListening={isCapturing}
               fontSize={fontSize}
               onStartForSpeaker={handleStartForSpeaker}
               onStopListening={handleStopListening}
+              isListening={isListening}
               onReplayAudio={replayMessageAudio}
             />
           )}
@@ -273,25 +334,24 @@ export default function Translator() {
               messages={messages}
               partialTranscript={partialTranscript}
               activeSpeaker={activeSpeaker}
-              isListening={isCapturing}
               fontSize={fontSize}
               onReplayAudio={replayMessageAudio}
             />
           )}
         </main>
-
       </div>
 
       {/* Language Selector Modal */}
       <LanguageSelectorModal
-        isOpen={languageModalTarget !== null}
+        isOpen={!!languageModalTarget}
         onClose={() => setLanguageModalTarget(null)}
         selectedCode={languageModalTarget === 'a' ? personALang : personBLang}
         onSelect={(code) => {
           if (languageModalTarget === 'a') setPersonALang(code);
-          else setPersonBLang(code);
+          if (languageModalTarget === 'b') setPersonBLang(code);
+          setLanguageModalTarget(null);
         }}
-        title={languageModalTarget === 'a' ? "Select Operator Language" : "Select Visitor Language"}
+        title={`Select Language for ${languageModalTarget === 'a' ? 'Speaker A (Operator)' : 'Speaker B (Visitor)'}`}
       />
 
       {/* Quick Phrases Modal */}
@@ -299,11 +359,12 @@ export default function Translator() {
         isOpen={showQuickPhrases}
         onClose={() => setShowQuickPhrases(false)}
         domain={domain}
-        activeSpeaker={activeSpeaker}
-        onSelectPhrase={sendDirectText}
+        onSelectPhrase={(phraseText) => {
+          sendDirectText(phraseText, activeSpeaker);
+        }}
       />
 
-      {/* Telemetry Slide-Over Drawer */}
+      {/* Diagnostics Drawer */}
       <DiagnosticsDrawer
         isOpen={showDiagnostics}
         onClose={() => setShowDiagnostics(false)}
@@ -311,9 +372,9 @@ export default function Translator() {
         connectionStatus={connectionStatus}
       />
 
-      {/* Minimal Footer */}
+      {/* Minimal Academic Footer */}
       <footer className="max-w-7xl w-full mx-auto pt-6 text-center text-xs text-slate-500 font-medium">
-        CivicEye • Zero Audio Storage Privacy • Faster-Whisper & Multilingual Neural Translation
+        AI Translator — Real-Time Multilingual Communication Assistant • Department of AI & Data Science, CGC University Mohali
       </footer>
     </div>
   );

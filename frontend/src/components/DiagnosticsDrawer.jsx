@@ -133,7 +133,7 @@ export default function DiagnosticsDrawer({
 
         {/* Footer info */}
         <div className="pt-6 border-t border-white/10 text-center text-xs text-slate-500 font-mono">
-          CivicEye Communication Assistant • v2.0
+          AI Translator • Real-Time Multilingual Communication Assistant • CGC University Mohali
         </div>
       </div>
     </div>

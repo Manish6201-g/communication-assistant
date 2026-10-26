@@ -19,7 +19,7 @@ export const DOMAINS = [
   { id: 'general', name: 'General Counter', icon: Landmark },
   { id: 'railway', name: 'Railway & Transit', icon: Train },
   { id: 'medical', name: 'Healthcare & Clinic', icon: Stethoscope },
-  { id: 'public_service', name: 'Civic Administration', icon: Building2 },
+  { id: 'public_service', name: 'Public Administration', icon: Building2 },
 ];
 
 export default function Navbar({
@@ -47,19 +47,19 @@ export default function Navbar({
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-base sm:text-lg font-extrabold text-white tracking-tight">
-              CivicEye <span className="text-sky-400 font-bold">Live</span>
+              AI Translator <span className="text-sky-400 font-bold">Assistant</span>
             </h1>
             <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-300 border border-sky-500/20">
-              Counter Pro
+              Bridge Beyond Language
             </span>
           </div>
           <div className="flex items-center gap-2 mt-0.5">
             <div className="flex items-center gap-1.5">
               <span className={`w-2 h-2 rounded-full ${
-                connectionStatus === 'connected' ? 'bg-emerald-400 animate-pulse' : 'bg-rose-500'
+                connectionStatus === 'connected' ? 'bg-emerald-400 animate-pulse' : 'bg-cyan-400 animate-pulse'
               }`} />
-              <span className="text-xs font-medium text-slate-400">
-                {connectionStatus === 'connected' ? 'Live Stream (16kHz PCM)' : 'Offline'}
+              <span className="text-xs font-medium text-slate-300">
+                {connectionStatus === 'connected' ? 'Neural Server Stream (16kHz PCM)' : 'Neural NMT Engine (Active)'}
               </span>
             </div>
             {latestLatency?.total_ms > 0 && (

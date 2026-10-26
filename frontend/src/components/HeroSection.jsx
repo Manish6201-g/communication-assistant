@@ -27,7 +27,7 @@ export default function HeroSection({
       <div className="w-full flex items-center justify-between px-4 py-2 bg-slate-900/40 backdrop-blur-md rounded-2xl border border-white/5 animate-fade-in">
         <div className="flex items-center gap-2 text-xs text-slate-400">
           <Sparkles className="w-3.5 h-3.5 text-sky-400" />
-          <span className="font-semibold text-slate-300">CivicEye Neural Translation Desk</span>
+          <span className="font-semibold text-slate-300">AI Translator — Real-Time Multilingual Assistant</span>
           <span className="text-slate-500">•</span>
           <span>{operatorLangName} ↔ {visitorLangName}</span>
         </div>
@@ -66,23 +66,23 @@ export default function HeroSection({
         {/* Animated Eyebrow Announcement Pill */}
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-500/10 border border-sky-400/30 text-sky-300 text-xs font-semibold shadow-[0_0_15px_rgba(56,189,248,0.2)] animate-pulse-subtle">
           <Sparkles className="w-3.5 h-3.5 text-sky-400" />
-          <span>Real-Time Neural Speech Translation</span>
+          <span>AI Translator • Bridge Beyond Language</span>
           <span className="w-1 h-1 rounded-full bg-sky-400" />
-          <span className="text-[11px] text-slate-400 font-mono">Zero Custom Hardware</span>
+          <span className="text-[11px] text-slate-400 font-mono">CGC University Mohali</span>
         </div>
 
         {/* Main Hero Headline */}
         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-[1.15]">
-          Break Language Barriers at{' '}
+          AI-Based Real-Time{' '}
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-sky-400 via-indigo-300 to-cyan-400">
-            Any Service Counter
+            Multilingual Assistant
           </span>
         </h1>
 
         {/* Hero Subtitle */}
         <p className="text-sm sm:text-base text-slate-300 max-w-2xl mx-auto leading-relaxed font-normal">
-          Bidirectional multilingual communication engineered for public desks, railway counters, and clinics. 
-          Features continuous 16kHz audio streaming, sub-second neural inference, and 180° tabletop mode.
+          Department of Artificial Intelligence & Data Science • CGC University Mohali.
+          Bidirectional speech-to-speech communication assistant with instant neural translation, speech synthesis, and 180° tabletop counter mode.
         </p>
 
         {/* Interactive Action CTAs */}

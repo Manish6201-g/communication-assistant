@@ -16,6 +16,11 @@ export const LANGUAGES = [
   { code: 'de', name: 'German', native: 'Deutsch', flag: '🇩🇪', category: 'global' },
   { code: 'ar', name: 'Arabic', native: 'العربية', flag: '🇸🇦', category: 'global' },
   { code: 'ja', name: 'Japanese', native: '日本語', flag: '🇯🇵', category: 'global' },
+  { code: 'zh', name: 'Chinese', native: '中文', flag: '🇨🇳', category: 'global' },
+  { code: 'ru', name: 'Russian', native: 'Русский', flag: '🇷🇺', category: 'global' },
+  { code: 'it', name: 'Italian', native: 'Italiano', flag: '🇮🇹', category: 'global' },
+  { code: 'pt', name: 'Portuguese', native: 'Português', flag: '🇵🇹', category: 'global' },
+  { code: 'ko', name: 'Korean', native: '한국어', flag: '🇰🇷', category: 'global' },
 ];
 
 export default function LanguageSelectorModal({
