@@ -1,6 +1,21 @@
+# Dependencies
 node_modules/
-__pycache__/
-*.pyc
-.DS_Store
+frontend/node_modules/
+
+# Builds
 dist/
+frontend/dist/
+frontend/.vite/
+
+# Python cache & env
+__pycache__/
+backend/__pycache__/
+*.pyc
+backend/venv/
+backend/.pytest_cache/
+
+# Environment files & system
 .env
+backend/.env
+frontend/.env
+.DS_Store

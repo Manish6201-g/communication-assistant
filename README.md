@@ -3,15 +3,45 @@
 > **A Real-Time Cross-Language Visual Translation Platform Powered by Multimodal AI & WebSockets on Standard Displays**  
 > *Theme: Pure Software Engineering & AI*
 
----
+A full-stack, real-time speech-to-speech and visual communication assistant designed for public-facing counters, interactive kiosks, healthcare desks, transport hubs, and face-to-face tablet interactions.
 
-## 🌟 Overview
-
-The **Screen-Based AI Communication Assistant** eliminates the need for expensive, fragile, and proprietary IoT hardware gadgets at public service desks (airports, railway stations, hospital triage, hotel receptions). By shifting the entire intelligence layer to modern software standards (Web Audio API, client-side VAD, asynchronous WebSockets, streaming neural ASR & NMT), **any standard connected display or tablet becomes an instantaneous bidirectional visual translation portal for ₹0 hardware cost**.
+Zero custom hardware required. Runs natively on standard computers, tablets, and kiosks.
 
 ---
 
-## 🚀 Key Features & Upgrades
+## 🏗 System Architecture
+
+```mermaid
+flowchart TD
+    subgraph Browser ["Frontend (React 18 + Vite + Tailwind CSS)"]
+        MIC["Microphone Audio"] --> WORKLET["Web Audio API Resampler (16kHz Mono PCM)"]
+        WORKLET --> WS_CLIENT["WebSocket Client (Binary Audio & JSON)"]
+        WS_CLIENT --> UI_PANELS["Dual Kiosk Panels (Person A & Person B)"]
+        UI_PANELS --> FACE_MODE["180° Face-to-Face Counter Flip Mode"]
+        UI_PANELS --> AUDIO_OUT["TTS Audio Player & Replay"]
+    end
+
+    subgraph Backend ["Backend (FastAPI + AsyncIO + WebSockets)"]
+        WS_SERVER["WebSocket Server (/ws/stream)"]
+        SESS["Session Manager (Bounded Queue & States)"]
+        VAD["Voice Activity Detector (Energy & Boundary Segmenter)"]
+        ASR["ASR Engine (Faster-Whisper int8 / Greedy Beam=1)"]
+        TRANS["Multilingual Neural Translation Engine (Indian Native + Global)"]
+        TTS["gTTS Neural Text-to-Speech Engine"]
+        
+        WS_SERVER <--> SESS
+        SESS --> VAD
+        VAD --> ASR
+        ASR --> TRANS
+        TRANS --> TTS
+        TRANS --> WS_SERVER
+        TTS --> WS_SERVER
+    end
+```
+
+---
+
+## 🚀 Key Features
 
 1. **True Bidirectional Real-Time Translation**
    - **Side A (Visitor / Customer Screen)**:
@@ -40,28 +70,46 @@ The **Screen-Based AI Communication Assistant** eliminates the need for expensiv
 
 ---
 
-## 🛠️ How to Run Locally
+## 📁 Repository Structure
 
-### Start Local Server
-```bash
-python3 server.py
-```
-Or with standard Python HTTP server:
-```bash
-python3 -m http.server 8000
-```
-
-Open your browser at:
-```
-http://localhost:8000
+```text
+├── frontend/                           # Modern React 18 + Vite + Tailwind frontend
+│   ├── src/
+│   │   ├── components/                 # DualTouchPills, HeroSection, VoiceCore, etc.
+│   │   ├── pages/Translator.jsx        # Dual-perspective translator page
+│   │   └── services/clientTranslationService.js
+├── backend/                            # FastAPI + AsyncIO WebSocket streaming server
+│   ├── app/
+│   │   ├── main.py                     # App entrypoint
+│   │   ├── api/websocket.py            # Streaming audio endpoints
+│   │   └── services/                   # ASR, VAD, NMT, and TTS services
+├── index.html                          # 13-Slide Presentation Deck & Terminal
+├── server.py                           # Local server with /api/translate endpoint
+├── src/
+│   ├── app.js                          # Presentation deck & translation logic
+│   └── style.css
+├── legacy_v1/                          # Standalone single-file prototype
+└── vercel.json                         # Vercel deployment config
 ```
 
 ---
 
-## ⌨️ Presentation Keyboard Shortcuts
+## 🛠️ How to Run Locally
 
-- `→` / `Space`: Next Slide
-- `←`: Previous Slide
-- `Esc`: Close Slide Drawer
-- `F11`: Toggle Fullscreen Mode
-- Top Right Tab: Toggle between **Pitch Deck** and **⚡ Live Assistant Terminal**
+### Option 1: Run Presentation Deck & Assistant Server
+```bash
+python3 server.py
+```
+Open your browser at: `http://localhost:8000`
+
+### Option 2: Run Full Production Stack
+```bash
+# Frontend
+npm run dev
+
+# Backend (in separate terminal)
+cd backend
+python -m venv venv && source venv/bin/activate
+pip install -r requirements.txt
+python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
