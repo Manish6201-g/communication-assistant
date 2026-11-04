@@ -34,13 +34,24 @@ export default function Navbar({
   isFullscreen,
   onToggleFullscreen,
   onOpenDiagnostics,
-  onClearConversation
+  onClearConversation,
+  onBackToLanding
 }) {
   return (
     <header className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-3 border-b border-white/10">
       
       {/* Brand & Connection State */}
       <div className="flex items-center gap-3">
+        {onBackToLanding && (
+          <button
+            onClick={onBackToLanding}
+            className="px-3.5 py-1.5 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-400/40 text-xs font-mono font-bold flex items-center gap-1.5 transition shadow-sm shadow-cyan-500/20"
+            title="Return to 3D Cybernetic Landing Page"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+            <span>← 3D Landing Page</span>
+          </button>
+        )}
         <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white shadow-glow-sky flex-shrink-0">
           <Languages className="w-5 h-5" />
         </div>

@@ -14,7 +14,7 @@ import { useTranslationSocket } from '../hooks/useTranslationSocket';
 import { useAudioCapture } from '../hooks/useAudioCapture';
 import { clientTranslationService } from '../services/clientTranslationService';
 
-export default function Translator() {
+export default function Translator({ onBackToLanding }) {
   const [personALang, setPersonALang] = useState('hi'); // Default Hindi (Native Indic)
   const [personBLang, setPersonBLang] = useState('en'); // Default English
   const [domain, setDomain] = useState('general');
@@ -210,6 +210,7 @@ export default function Translator() {
           onToggleFullscreen={toggleFullscreen}
           onOpenDiagnostics={() => setShowDiagnostics(true)}
           onClearConversation={clearConversation}
+          onBackToLanding={onBackToLanding}
         />
 
         {/* Hero Section */}

@@ -64,25 +64,22 @@ export default function HeroSection({
       <div className="relative z-10 max-w-3xl mx-auto text-center space-y-5">
         
         {/* Animated Eyebrow Announcement Pill */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-500/10 border border-sky-400/30 text-sky-300 text-xs font-semibold shadow-[0_0_15px_rgba(56,189,248,0.2)] animate-pulse-subtle">
-          <Sparkles className="w-3.5 h-3.5 text-sky-400" />
-          <span>AI Translator • Bridge Beyond Language</span>
-          <span className="w-1 h-1 rounded-full bg-sky-400" />
-          <span className="text-[11px] text-slate-400 font-mono">CGC University Mohali</span>
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-400/30 text-cyan-300 text-xs font-mono font-semibold shadow-[0_0_15px_rgba(0,229,255,0.2)]">
+          <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+          <span>AUTONOMOUS DISPLAY TRANSLATION OS · ZERO HARDWARE</span>
         </div>
 
         {/* Main Hero Headline */}
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-[1.15]">
-          AI-Based Real-Time{' '}
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-sky-400 via-indigo-300 to-cyan-400">
-            Multilingual Assistant
+        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.12]">
+          Where screens break{' '}
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-cyan-400">
+            language barriers.
           </span>
         </h1>
 
         {/* Hero Subtitle */}
-        <p className="text-sm sm:text-base text-slate-300 max-w-2xl mx-auto leading-relaxed font-normal">
-          Department of Artificial Intelligence & Data Science • CGC University Mohali.
-          Bidirectional speech-to-speech communication assistant with instant neural translation, speech synthesis, and 180° tabletop counter mode.
+        <p className="text-sm sm:text-base text-slate-300 max-w-2xl mx-auto leading-relaxed font-light">
+          Transform omnipresent countertop monitors, kiosks, and tablets into instant bidirectional visual translation terminals. Pure software engineering, zero procurement cost, &lt; 480ms streaming latency.
         </p>
 
         {/* Interactive Action CTAs */}
