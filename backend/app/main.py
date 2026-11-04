@@ -70,7 +70,7 @@ async def get_domains():
             {"id": "general", "name": "General Public Counter"},
             {"id": "railway", "name": "Railway & Transport"},
             {"id": "medical", "name": "Healthcare & Clinic"},
-            {"id": "public_service", "name": "Government / Civic Desk"}
+            {"id": "public_service", "name": "Government & Public Service Counter"}
         ]
     }
 

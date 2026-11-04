@@ -2,8 +2,8 @@ const fs = require('fs');
 
 let html = fs.readFileSync('index.html', 'utf8');
 
-// 1. Change Wordmark from "CIVIC" to "SCREEN"
-html = html.replace("const word = 'CIVIC'", "const word = 'SCREEN'");
+// 1. Set Wordmark to SCREEN
+html = // Wordmark is SCREEN;
 
 // 2. Replace buildTorii with buildCyberPortal
 // Let's locate buildTorii

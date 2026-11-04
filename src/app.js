@@ -1,4 +1,4 @@
-// Screen-Based AI Communication Assistant — CivicEye Architecture & Presentation Deck
+// Screen-Based AI Communication Assistant — AI Translator Architecture & Presentation Deck
 // Multi-Tier Real-Time Neural Translation Engine & Interactive Visual Simulator
 
 // Multilingual Dictionary & Neural Translation Heuristics for Offline / Resilient Translation
@@ -194,7 +194,7 @@ const SUPPORTED_LANGUAGES = [
   { code: 'ru-RU', short: 'ru', name: 'Russian (Русский)', native: 'Русский', flag: '🇷🇺' }
 ];
 
-// 5-Stage Neural Resolution Pipeline Data (CivicEye Style)
+// 5-Stage Neural Resolution Pipeline Data (AI Translator Style)
 const PIPELINE_STAGES = [
   {
     step: "01",
@@ -278,10 +278,10 @@ const PUBLIC_DOMAINS = [
     icon: "train"
   },
   {
-    tag: "CIVIC GOVERNANCE #04",
-    domain: "Municipal & Civic Counters",
+    tag: "PUBLIC ADMINISTRATION #04",
+    domain: "Municipal & Public Service Counters",
     title: "City Hall & Citizen Grievance Desks",
-    desc: "Municipal officials seamlessly serve international residents, migrant laborers, and tourists inquiring about permits, property taxes, transit passes, and civic assistance at ₹0 hardware capex.",
+    desc: "Municipal officials seamlessly serve international residents, migrant laborers, and tourists inquiring about permits, property taxes, transit passes, and public service assistance at ₹0 hardware capex.",
     color: "#f59e0b",
     stat: "₹0 Hardware Capex Barrier",
     icon: "building"
@@ -309,21 +309,21 @@ const slides = [
           A Real-Time Cross-Language Visual Translation Platform Powered by Multimodal AI &amp; WebSockets on Standard Displays
         </p>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-4xl">
-          <div class="civic-card p-6 flex flex-col items-center text-center border-t-2 border-t-sky-400/60">
+          <div class="ai-card p-6 flex flex-col items-center text-center border-t-2 border-t-sky-400/60">
             <div class="w-14 h-14 rounded-2xl bg-sky-500/15 border border-sky-400/30 flex items-center justify-center text-sky-400 mb-4 shadow-lg shadow-sky-500/10">
               <i data-lucide="monitor" class="w-7 h-7"></i>
             </div>
             <h3 class="text-white font-semibold text-base sm:text-lg">Zero Custom Hardware</h3>
             <p class="text-slate-400 text-sm mt-1">(Display Only)</p>
           </div>
-          <div class="civic-card p-6 flex flex-col items-center text-center border-t-2 border-t-sky-400/60">
+          <div class="ai-card p-6 flex flex-col items-center text-center border-t-2 border-t-sky-400/60">
             <div class="w-14 h-14 rounded-2xl bg-sky-500/15 border border-sky-400/30 flex items-center justify-center text-sky-400 mb-4 shadow-lg shadow-sky-500/10">
               <i data-lucide="split-square-vertical" class="w-7 h-7"></i>
             </div>
             <h3 class="text-white font-semibold text-base sm:text-lg">Bidirectional Split-Screen</h3>
             <p class="text-slate-400 text-sm mt-1">Single-Screen UX</p>
           </div>
-          <div class="civic-card p-6 flex flex-col items-center text-center border-t-2 border-t-sky-400/60">
+          <div class="ai-card p-6 flex flex-col items-center text-center border-t-2 border-t-sky-400/60">
             <div class="w-14 h-14 rounded-2xl bg-sky-500/15 border border-sky-400/30 flex items-center justify-center text-sky-400 mb-4 shadow-lg shadow-sky-500/10">
               <i data-lucide="zap" class="w-7 h-7"></i>
             </div>
@@ -352,11 +352,11 @@ const slides = [
     render: () => `
       <div class="max-w-6xl mx-auto py-8 px-4">
         <div class="text-center mb-10">
-          <span class="civic-pill text-cyan-400 border-cyan-400/30 bg-cyan-500/10">Architectural Thesis</span>
+          <span class="ai-pill text-cyan-400 border-cyan-400/30 bg-cyan-500/10">Architectural Thesis</span>
           <h2 class="text-3xl sm:text-5xl font-extrabold text-white mt-3 font-display">Hardware vs Software Efficiency</h2>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div class="civic-card civic-card-red p-8 border-l-4 border-l-rose-500 transition-all">
+          <div class="ai-card ai-card-red p-8 border-l-4 border-l-rose-500 transition-all">
             <div class="flex items-center gap-4 mb-6">
               <div class="w-14 h-14 rounded-2xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-400">
                 <i data-lucide="cpu" class="w-8 h-8"></i>
@@ -375,7 +375,7 @@ const slides = [
               <div class="flex items-center gap-3"><i data-lucide="x-circle" class="w-5 h-5 text-rose-400 shrink-0"></i> Firmware fragmentation & no instant OTA updates</div>
             </div>
           </div>
-          <div class="civic-card civic-card-emerald p-8 border-l-4 border-l-emerald-400 transition-all">
+          <div class="ai-card ai-card-emerald p-8 border-l-4 border-l-emerald-400 transition-all">
             <div class="flex items-center gap-4 mb-6">
               <div class="w-14 h-14 rounded-2xl bg-emerald-500/15 border border-emerald-400/30 flex items-center justify-center text-emerald-400">
                 <i data-lucide="monitor" class="w-8 h-8"></i>
@@ -406,26 +406,26 @@ const slides = [
     render: () => `
       <div class="max-w-6xl mx-auto py-8 px-4">
         <div class="text-center mb-8">
-          <span class="civic-pill text-cyan-400 border-cyan-400/30 bg-cyan-500/10">Visual Interaction Model</span>
+          <span class="ai-pill text-cyan-400 border-cyan-400/30 bg-cyan-500/10">Visual Interaction Model</span>
           <h2 class="text-3xl sm:text-5xl font-extrabold text-white mt-3 font-display">Dual-Facing Visual Communication</h2>
         </div>
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           <div class="lg:col-span-6 space-y-4">
-            <div class="civic-card p-6 border-l-4 border-l-cyan-400">
+            <div class="ai-card p-6 border-l-4 border-l-cyan-400">
               <h4 class="text-white font-bold text-lg font-display">Split-Screen Interface</h4>
               <p class="text-slate-300 text-sm mt-1">Side A reflects the native speaker; Side B mirrors live translated subtitles for the listener in real time.</p>
             </div>
-            <div class="civic-card p-6 border-l-4 border-l-teal-400">
+            <div class="ai-card p-6 border-l-4 border-l-teal-400">
               <h4 class="text-white font-bold text-lg font-display">Continuous Voice Detection</h4>
               <p class="text-slate-300 text-sm mt-1">Zero-click Web Audio API captures voices automatically via standard mic inputs with client-side VAD.</p>
             </div>
-            <div class="civic-card p-6 border-l-4 border-l-indigo-400">
+            <div class="ai-card p-6 border-l-4 border-l-indigo-400">
               <h4 class="text-white font-bold text-lg font-display">Instant Multi-Format Output</h4>
               <p class="text-slate-300 text-sm mt-1">Displays synced text captions alongside optional synthetic speech playback for visual and audible clarity.</p>
             </div>
           </div>
           <div class="lg:col-span-6">
-            <div class="civic-card p-6 border border-cyan-400/30 shadow-2xl rounded-2xl bg-slate-900/90 text-center">
+            <div class="ai-card p-6 border border-cyan-400/30 shadow-2xl rounded-2xl bg-slate-900/90 text-center">
               <div class="text-xs uppercase font-mono text-cyan-400 mb-2 font-bold tracking-wider">LIVE MEG-RA COUNTER SIMULATOR</div>
               <div class="text-xl font-extrabold text-white font-display mb-3">SPEAK ANY LANGUAGE INSTANTLY</div>
               <div class="flex justify-center gap-2 mb-4">
@@ -452,21 +452,21 @@ const slides = [
     render: () => `
       <div class="max-w-6xl mx-auto py-8 px-4">
         <div class="text-center mb-10">
-          <span class="civic-pill text-cyan-400 border-cyan-400/30 bg-cyan-500/10">End-to-End Engineering</span>
+          <span class="ai-pill text-cyan-400 border-cyan-400/30 bg-cyan-500/10">End-to-End Engineering</span>
           <h2 class="text-3xl sm:text-5xl font-extrabold text-white mt-3 font-display">Core Software Architecture</h2>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="civic-card p-6 border-t-4 border-t-cyan-400">
+          <div class="ai-card p-6 border-t-4 border-t-cyan-400">
             <span class="text-4xl font-extrabold text-cyan-400/40 font-mono">01</span>
             <h3 class="text-xl font-bold text-white my-2 font-display">1. Ingest &amp; VAD Layer</h3>
             <p class="text-slate-300 text-sm leading-relaxed">Web Audio API continuously samples browser audio streams. Client-side Voice Activity Detection segments clean utterances and streams binary frames.</p>
           </div>
-          <div class="civic-card p-6 border-t-4 border-t-teal-400">
+          <div class="ai-card p-6 border-t-4 border-t-teal-400">
             <span class="text-4xl font-extrabold text-teal-400/40 font-mono">02</span>
             <h3 class="text-xl font-bold text-white my-2 font-display">2. Neural AI Pipeline</h3>
             <p class="text-slate-300 text-sm leading-relaxed">Server executes low-latency Speech-to-Text (Whisper / Conformer), passes transcript to Neural Machine Translation (NMT), and applies domain parsing.</p>
           </div>
-          <div class="civic-card p-6 border-t-4 border-t-indigo-400">
+          <div class="ai-card p-6 border-t-4 border-t-indigo-400">
             <span class="text-4xl font-extrabold text-indigo-400/40 font-mono">03</span>
             <h3 class="text-xl font-bold text-white my-2 font-display">3. Dual-View UI Renderer</h3>
             <p class="text-slate-300 text-sm leading-relaxed">Reactive frontend pushes streaming subtitles to screen panels with sub-second visual updates, phonetic transcriptions, and accessibility controls.</p>
@@ -483,13 +483,13 @@ const slides = [
     render: () => `
       <div class="max-w-6xl mx-auto py-8 px-4">
         <div class="text-center mb-8">
-          <span class="civic-pill text-cyan-400 border-cyan-400/30 bg-cyan-500/10">Dialogue Streaming</span>
+          <span class="ai-pill text-cyan-400 border-cyan-400/30 bg-cyan-500/10">Dialogue Streaming</span>
           <h2 class="text-3xl sm:text-5xl font-extrabold text-white mt-3 font-display">Bidirectional Dialogue Flow</h2>
         </div>
-        <div class="civic-card p-8 border border-cyan-400/30 mb-8">
+        <div class="ai-card p-8 border border-cyan-400/30 mb-8">
           <div class="grid grid-cols-1 md:grid-cols-11 gap-6 items-center">
             <div class="md:col-span-5 bg-sky-950/40 border border-sky-500/30 rounded-2xl p-6">
-              <span class="civic-pill text-sky-300 mb-2">Side A (Customer)</span>
+              <span class="ai-pill text-sky-300 mb-2">Side A (Customer)</span>
               <div id="slide5-customer-text" class="text-xl sm:text-2xl font-bold text-white mb-2 font-display">"Mujhe ticket cancel karani hai"</div>
               <div class="text-xs text-sky-400 font-mono">Hindi (Auto-Detected)</div>
             </div>
@@ -498,7 +498,7 @@ const slides = [
               <span id="slide5-latency" class="text-[10px] font-mono text-teal-400 font-bold">340 ms</span>
             </div>
             <div class="md:col-span-5 bg-emerald-950/40 border border-emerald-500/30 rounded-2xl p-6">
-              <span class="civic-pill text-emerald-300 mb-2">Side B (Agent)</span>
+              <span class="ai-pill text-emerald-300 mb-2">Side B (Agent)</span>
               <div id="slide5-agent-text" class="text-xl sm:text-2xl font-bold text-white mb-2 font-display">"I need to cancel my ticket"</div>
               <div class="text-xs text-emerald-400 font-mono">English (Instant Live Caption)</div>
             </div>
@@ -520,10 +520,10 @@ const slides = [
     render: () => `
       <div class="max-w-6xl mx-auto py-8 px-4">
         <div class="text-center mb-8">
-          <span class="civic-pill text-cyan-400 border-cyan-400/30 bg-cyan-500/10">Production Architecture</span>
+          <span class="ai-pill text-cyan-400 border-cyan-400/30 bg-cyan-500/10">Production Architecture</span>
           <h2 class="text-3xl sm:text-5xl font-extrabold text-white mt-3 font-display">Software Stack &amp; Components</h2>
         </div>
-        <div class="civic-card overflow-hidden">
+        <div class="ai-card overflow-hidden">
           <table class="w-full text-left text-sm border-collapse">
             <thead>
               <tr class="bg-slate-900/90 border-b border-slate-800 text-xs font-mono text-cyan-400">
@@ -572,20 +572,20 @@ const slides = [
     render: () => `
       <div class="max-w-6xl mx-auto py-8 px-4">
         <div class="text-center mb-8">
-          <span class="civic-pill text-cyan-400 border-cyan-400/30 bg-cyan-500/10">Real-World Application</span>
+          <span class="ai-pill text-cyan-400 border-cyan-400/30 bg-cyan-500/10">Real-World Application</span>
           <h2 class="text-3xl sm:text-5xl font-extrabold text-white mt-3 font-display">Smart Countertop Deployment</h2>
         </div>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-          <div class="civic-card p-6 border-l-4 border-l-cyan-400">
+          <div class="ai-card p-6 border-l-4 border-l-cyan-400">
             <h3 class="text-2xl font-bold text-white font-display mb-4">Zero Friction Public Spaces</h3>
             <p class="text-slate-300 leading-relaxed mb-4">Public service counters at airports, railway stations, hospitals, and hotels already possess screens. Our platform transforms existing monitors into smart bilingual portals.</p>
             <p class="text-slate-300 leading-relaxed">Visitors communicate fluently without installing apps, sharing handheld hardware, or touching unfamiliar devices.</p>
           </div>
           <div class="grid grid-cols-2 gap-4">
-            <div class="civic-card p-6 text-center"><div class="text-3xl font-extrabold text-cyan-400 font-mono">4,000+</div><div class="text-xs text-slate-400 mt-1">Airports &amp; Rail Terminals</div></div>
-            <div class="civic-card p-6 text-center"><div class="text-3xl font-extrabold text-emerald-400 font-mono">0 sec</div><div class="text-xs text-slate-400 mt-1">Passenger App Setup Time</div></div>
-            <div class="civic-card p-6 text-center"><div class="text-3xl font-extrabold text-rose-400 font-mono">₹0</div><div class="text-xs text-slate-400 mt-1">Proprietary Hardware Capex</div></div>
-            <div class="civic-card p-6 text-center"><div class="text-3xl font-extrabold text-teal-400 font-mono">&lt; 480ms</div><div class="text-xs text-slate-400 mt-1">End-to-End Latency</div></div>
+            <div class="ai-card p-6 text-center"><div class="text-3xl font-extrabold text-cyan-400 font-mono">4,000+</div><div class="text-xs text-slate-400 mt-1">Airports &amp; Rail Terminals</div></div>
+            <div class="ai-card p-6 text-center"><div class="text-3xl font-extrabold text-emerald-400 font-mono">0 sec</div><div class="text-xs text-slate-400 mt-1">Passenger App Setup Time</div></div>
+            <div class="ai-card p-6 text-center"><div class="text-3xl font-extrabold text-rose-400 font-mono">₹0</div><div class="text-xs text-slate-400 mt-1">Proprietary Hardware Capex</div></div>
+            <div class="ai-card p-6 text-center"><div class="text-3xl font-extrabold text-teal-400 font-mono">&lt; 480ms</div><div class="text-xs text-slate-400 mt-1">End-to-End Latency</div></div>
           </div>
         </div>
       </div>
@@ -599,10 +599,10 @@ const slides = [
     render: () => `
       <div class="max-w-6xl mx-auto py-8 px-4">
         <div class="text-center mb-8">
-          <span class="civic-pill text-cyan-400 border-cyan-400/30 bg-cyan-500/10">Comparative Latency Analysis</span>
+          <span class="ai-pill text-cyan-400 border-cyan-400/30 bg-cyan-500/10">Comparative Latency Analysis</span>
           <h2 class="text-3xl sm:text-5xl font-extrabold text-white mt-3 font-display">End-to-End Latency Benchmark</h2>
         </div>
-        <div class="civic-card p-8 max-w-4xl mx-auto space-y-6">
+        <div class="ai-card p-8 max-w-4xl mx-auto space-y-6">
           <div>
             <div class="flex justify-between text-sm font-semibold mb-2"><span class="text-slate-300">Traditional Mobile Apps</span><span class="text-rose-400 font-mono">2,400 ms (High Delay)</span></div>
             <div class="w-full bg-slate-900 rounded-full h-7 p-1 border border-slate-800"><div class="bg-rose-500 h-full rounded-full flex items-center justify-end pr-3 text-xs font-bold text-white" style="width: 100%">2,400 ms</div></div>
@@ -630,9 +630,9 @@ const slides = [
     badge: "FINANCIAL ADVANTAGE",
     render: () => `
       <div class="max-w-6xl mx-auto py-8 px-4 text-center">
-        <span class="civic-pill text-cyan-400 border-cyan-400/30 bg-cyan-500/10 mb-4">Institutional Economics</span>
+        <span class="ai-pill text-cyan-400 border-cyan-400/30 bg-cyan-500/10 mb-4">Institutional Economics</span>
         <h2 class="text-3xl sm:text-5xl font-extrabold text-white my-3 font-display">Cost &amp; Deployment Metrics</h2>
-        <div class="civic-card p-10 max-w-2xl mx-auto mt-8 border border-teal-500/30">
+        <div class="ai-card p-10 max-w-2xl mx-auto mt-8 border border-teal-500/30">
           <div class="text-8xl sm:text-9xl font-black text-teal-400 font-mono mb-2">₹0</div>
           <div class="text-2xl font-bold text-white font-display">Proprietary Hardware Capex</div>
           <p class="text-slate-400 text-sm mt-3">100% software-driven value delivered over ubiquitous web browsers.</p>
@@ -648,19 +648,19 @@ const slides = [
     render: () => `
       <div class="max-w-6xl mx-auto py-8 px-4">
         <div class="text-center mb-8">
-          <span class="civic-pill text-cyan-400 border-cyan-400/30 bg-cyan-500/10">Algorithmic Edge</span>
+          <span class="ai-pill text-cyan-400 border-cyan-400/30 bg-cyan-500/10">Algorithmic Edge</span>
           <h2 class="text-3xl sm:text-5xl font-extrabold text-white mt-3 font-display">Key Software Innovations</h2>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="civic-card p-6 border-t-2 border-t-cyan-400">
+          <div class="ai-card p-6 border-t-2 border-t-cyan-400">
             <h3 class="text-xl font-bold text-white mb-2 font-display">Dual-Oriented UX</h3>
             <p class="text-slate-300 text-sm">Dynamic CSS layouts support mirrored orientation on dual-sided screens or split-view on single monitors for transparent face-to-face dialogue.</p>
           </div>
-          <div class="civic-card p-6 border-t-2 border-t-teal-400">
+          <div class="ai-card p-6 border-t-2 border-t-teal-400">
             <h3 class="text-xl font-bold text-white mb-2 font-display">Local Privacy Shield</h3>
             <p class="text-slate-300 text-sm">Capable of running self-hosted open-source models (Vosk, MarianMT) entirely on-premise without exposing sensitive conversations to external clouds.</p>
           </div>
-          <div class="civic-card p-6 border-t-2 border-t-indigo-400">
+          <div class="ai-card p-6 border-t-2 border-t-indigo-400">
             <h3 class="text-xl font-bold text-white mb-2 font-display">Domain Glossary Injection</h3>
             <p class="text-slate-300 text-sm">Dynamic terminology injection allows tailoring vocabulary for medical diagnostics, legal desks, immigration terminologies, and railway jargon.</p>
           </div>
@@ -676,19 +676,19 @@ const slides = [
     render: () => `
       <div class="max-w-6xl mx-auto py-8 px-4">
         <div class="text-center mb-8">
-          <span class="civic-pill text-cyan-400 border-cyan-400/30 bg-cyan-500/10">Growth Horizons</span>
+          <span class="ai-pill text-cyan-400 border-cyan-400/30 bg-cyan-500/10">Growth Horizons</span>
           <h2 class="text-3xl sm:text-5xl font-extrabold text-white mt-3 font-display">Scalability &amp; Future Scope</h2>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="civic-card p-6 border-l-4 border-l-cyan-400">
+          <div class="ai-card p-6 border-l-4 border-l-cyan-400">
             <h4 class="text-white font-bold text-lg font-display mb-2">Computer Vision Lip-Sync</h4>
             <p class="text-slate-300 text-sm">Adding camera-based visual speech detection to improve accuracy in high-noise train stations and airport halls.</p>
           </div>
-          <div class="civic-card p-6 border-l-4 border-l-teal-400">
+          <div class="ai-card p-6 border-l-4 border-l-teal-400">
             <h4 class="text-white font-bold text-lg font-display mb-2">Multi-User Conference Mode</h4>
             <p class="text-slate-300 text-sm">Partitioning the screen into multi-language panels for multi-party international negotiations.</p>
           </div>
-          <div class="civic-card p-6 border-l-4 border-l-indigo-400">
+          <div class="ai-card p-6 border-l-4 border-l-indigo-400">
             <h4 class="text-white font-bold text-lg font-display mb-2">Contextual Session Summaries</h4>
             <p class="text-slate-300 text-sm">Automatic generation of bilingual session summaries, action items, and exportable PDF logs.</p>
           </div>
@@ -704,23 +704,23 @@ const slides = [
     render: () => `
       <div class="max-w-6xl mx-auto py-8 px-4">
         <div class="text-center mb-8">
-          <span class="civic-pill text-cyan-400 border-cyan-400/30 bg-cyan-500/10">Examiner Justification</span>
+          <span class="ai-pill text-cyan-400 border-cyan-400/30 bg-cyan-500/10">Examiner Justification</span>
           <h2 class="text-3xl sm:text-5xl font-extrabold text-white mt-3 font-display">Viva Defense &amp; Faculty Q&amp;A</h2>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="civic-card p-6 border-l-4 border-l-cyan-400">
+          <div class="ai-card p-6 border-l-4 border-l-cyan-400">
             <h4 class="text-white font-bold font-display text-base sm:text-lg">Q. If only a screen is used, what is the engineering?</h4>
             <p class="text-slate-300 text-sm mt-2 leading-relaxed">The core engineering is in the full-stack real-time software pipeline: low-latency WebSockets audio streaming, streaming neural ASR &amp; NMT orchestration, and responsive bilingual visual rendering.</p>
           </div>
-          <div class="civic-card p-6 border-l-4 border-l-teal-400">
+          <div class="ai-card p-6 border-l-4 border-l-teal-400">
             <h4 class="text-white font-bold font-display text-base sm:text-lg">Q. How is this different from Google Translate?</h4>
             <p class="text-slate-300 text-sm mt-2 leading-relaxed">Google Translate requires manual button presses and turns. Our system provides automated Voice Activity Detection, continuous parallel streaming, and dual-perspective visual alignment designed specifically for counters and screens.</p>
           </div>
-          <div class="civic-card p-6 border-l-4 border-l-amber-400">
+          <div class="ai-card p-6 border-l-4 border-l-amber-400">
             <h4 class="text-white font-bold font-display text-base sm:text-lg">Q. How is low latency achieved?</h4>
             <p class="text-slate-300 text-sm mt-2 leading-relaxed">Instead of waiting for an entire audio recording to finish (batching), audio frames are streamed every 250ms over persistent WebSockets, decoding text incrementally to achieve &lt;500ms latency.</p>
           </div>
-          <div class="civic-card p-6 border-l-4 border-l-emerald-400">
+          <div class="ai-card p-6 border-l-4 border-l-emerald-400">
             <h4 class="text-white font-bold font-display text-base sm:text-lg">Q. Can this operate without internet?</h4>
             <p class="text-slate-300 text-sm mt-2 leading-relaxed">Yes! By running quantized local models (such as Faster-Whisper int8 and MarianMT or local Ollama) on the host machine driving the screen, the system can operate 100% offline.</p>
           </div>
@@ -735,20 +735,20 @@ const slides = [
     badge: "REFERENCES",
     render: () => `
       <div class="max-w-5xl mx-auto py-8 px-4 text-center">
-        <span class="civic-pill text-cyan-400 border-cyan-400/30 bg-cyan-500/10 mb-4">Academic &amp; Industrial Citations</span>
+        <span class="ai-pill text-cyan-400 border-cyan-400/30 bg-cyan-500/10 mb-4">Academic &amp; Industrial Citations</span>
         <h2 class="text-3xl sm:text-5xl font-extrabold text-white my-3 font-display">Image Sources &amp; References</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left mt-8">
-          <div class="civic-card p-6">
+          <div class="ai-card p-6">
             <h4 class="text-white font-bold text-base mb-1 font-display">Megra Dual-Screen Translator</h4>
             <p class="text-slate-400 text-xs mb-3 font-mono">megra.com.my</p>
             <p class="text-slate-300 text-xs leading-relaxed">Reference design for dual-sided tabletop counter translation displays.</p>
           </div>
-          <div class="civic-card p-6">
+          <div class="ai-card p-6">
             <h4 class="text-white font-bold text-base mb-1 font-display">Denver International Airport</h4>
             <p class="text-slate-400 text-xs mb-3 font-mono">daktronics.com</p>
             <p class="text-slate-300 text-xs leading-relaxed">Photographic study of Southwest airline check-in service desks and flight counters.</p>
           </div>
-          <div class="civic-card p-6">
+          <div class="ai-card p-6">
             <h4 class="text-white font-bold text-base mb-1 font-display">Tecnovy Cloud AI Architecture</h4>
             <p class="text-slate-400 text-xs mb-3 font-mono">tecnovy.com</p>
             <p class="text-slate-300 text-xs leading-relaxed">Cloud artificial intelligence software architecture data pipeline model.</p>
@@ -1370,7 +1370,7 @@ class AppState {
   }
 
   // =========================================================================
-  // CIVICEYE-STYLE FULL LANDING PAGE RENDERER
+  // AI TRANSLATOR FULL LANDING PAGE RENDERER
   // =========================================================================
   renderLandingView(container) {
     container.innerHTML = `
@@ -1409,7 +1409,7 @@ class AppState {
           </div>
 
           <!-- Hero Live HUD / Interactive Preview Card (Dual Screen Mockup) -->
-          <div class="w-full max-w-5xl civic-card p-6 sm:p-8 border border-white/15 relative overflow-hidden group shadow-2xl">
+          <div class="w-full max-w-5xl ai-card p-6 sm:p-8 border border-white/15 relative overflow-hidden group shadow-2xl">
             <div class="flex flex-wrap items-center justify-between gap-4 pb-4 mb-6 border-b border-white/10">
               <div class="flex items-center gap-2.5">
                 <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -1424,7 +1424,7 @@ class AppState {
 
             <div class="grid grid-cols-1 md:grid-cols-11 gap-4 items-center">
               <div class="md:col-span-5 bg-sky-950/40 p-5 rounded-2xl border border-sky-500/30 text-left">
-                <span class="civic-pill text-sky-300 text-[10px] mb-2">Customer Side (Hindi Auto)</span>
+                <span class="ai-pill text-sky-300 text-[10px] mb-2">Customer Side (Hindi Auto)</span>
                 <div id="hero-cust-subtitle" class="text-xl font-bold text-white font-display">"Mujhe ticket cancel karani hai"</div>
                 <div class="text-[11px] text-sky-400 font-mono mt-2">Speech Segment: 250ms PCM chunks</div>
               </div>
@@ -1437,7 +1437,7 @@ class AppState {
               </div>
 
               <div class="md:col-span-5 bg-emerald-950/40 p-5 rounded-2xl border border-emerald-500/30 text-left">
-                <span class="civic-pill text-emerald-300 text-[10px] mb-2">Agent Screen (English Live Subtitle)</span>
+                <span class="ai-pill text-emerald-300 text-[10px] mb-2">Agent Screen (English Live Subtitle)</span>
                 <div id="hero-agent-subtitle" class="text-xl font-bold text-white font-display">"I need to cancel my ticket"</div>
                 <div class="text-[11px] text-emerald-400 font-mono mt-2">NMT Confidence: 99.4% • Instant Sync</div>
               </div>
@@ -1469,7 +1469,7 @@ class AppState {
         <!-- ================= SECTION 01: THE PARADIGM SHIFT ================= -->
         <section id="paradigm" class="max-w-6xl mx-auto px-4 scroll-mt-24">
           <div class="flex items-center gap-3 mb-3">
-            <span class="civic-pill text-rose-400 border-rose-500/30 bg-rose-500/10">CHAPTER 01 — ARCHITECTURAL THESIS</span>
+            <span class="ai-pill text-rose-400 border-rose-500/30 bg-rose-500/10">CHAPTER 01 — ARCHITECTURAL THESIS</span>
           </div>
           <h2 class="text-3xl sm:text-5xl font-black text-white font-display mb-4">
             Hardware vs Software Efficiency
@@ -1479,7 +1479,7 @@ class AppState {
           </p>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="civic-card civic-card-red p-8 border-l-4 border-l-rose-500">
+            <div class="ai-card ai-card-red p-8 border-l-4 border-l-rose-500">
               <div class="flex items-center gap-4 mb-6">
                 <div class="w-12 h-12 rounded-xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-400">
                   <i data-lucide="cpu" class="w-6 h-6"></i>
@@ -1499,7 +1499,7 @@ class AppState {
               </div>
             </div>
 
-            <div class="civic-card civic-card-emerald p-8 border-l-4 border-l-emerald-400">
+            <div class="ai-card ai-card-emerald p-8 border-l-4 border-l-emerald-400">
               <div class="flex items-center gap-4 mb-6">
                 <div class="w-12 h-12 rounded-xl bg-emerald-500/15 border border-emerald-400/30 flex items-center justify-center text-emerald-400">
                   <i data-lucide="monitor" class="w-6 h-6"></i>
@@ -1525,7 +1525,7 @@ class AppState {
         <!-- ================= SECTION 02: 5-STAGE NEURAL PIPELINE ================= -->
         <section id="pipeline" class="max-w-6xl mx-auto px-4 scroll-mt-24">
           <div class="flex items-center gap-3 mb-3">
-            <span class="civic-pill text-cyan-400 border-cyan-400/30 bg-cyan-500/10">CHAPTER 02 — ARCHITECTURE WORKFLOW</span>
+            <span class="ai-pill text-cyan-400 border-cyan-400/30 bg-cyan-500/10">CHAPTER 02 — ARCHITECTURE WORKFLOW</span>
           </div>
           <h2 class="text-3xl sm:text-5xl font-black text-white font-display mb-4">
             5-Stage Real-Time Pipeline
@@ -1536,7 +1536,7 @@ class AppState {
 
           <div class="space-y-6">
             ${PIPELINE_STAGES.map((s, idx) => `
-              <div class="civic-card p-6 sm:p-7 border border-white/10 flex flex-col sm:flex-row sm:items-start gap-6 group hover:border-cyan-400/40">
+              <div class="ai-card p-6 sm:p-7 border border-white/10 flex flex-col sm:flex-row sm:items-start gap-6 group hover:border-cyan-400/40">
                 <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border transition-transform group-hover:scale-105" style="background-color: ${s.color}15; border-color: ${s.color}40; color: ${s.color}; box-shadow: 0 0 25px ${s.color}25">
                   <i data-lucide="${s.icon}" class="w-7 h-7"></i>
                 </div>
@@ -1564,18 +1564,18 @@ class AppState {
         <!-- ================= SECTION 03: PUBLIC COUNTER DEPLOYMENT ================= -->
         <section id="domains" class="max-w-6xl mx-auto px-4 scroll-mt-24">
           <div class="flex items-center gap-3 mb-3">
-            <span class="civic-pill text-teal-400 border-teal-400/30 bg-teal-500/10">CHAPTER 03 — INSTITUTIONAL USE CASES</span>
+            <span class="ai-pill text-teal-400 border-teal-400/30 bg-teal-500/10">CHAPTER 03 — INSTITUTIONAL USE CASES</span>
           </div>
           <h2 class="text-3xl sm:text-5xl font-black text-white font-display mb-4">
             Smart Countertop Deployment
           </h2>
           <p class="text-slate-400 text-base sm:text-lg max-w-3xl mb-12">
-            Public service desks already possess monitors and tablets. CivicEye-powered Screen Assistant converts them into transparent translation terminals.
+            Public service desks already possess monitors and tablets. AI-powered Screen Assistant converts them into transparent translation terminals.
           </p>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             ${PUBLIC_DOMAINS.map(d => `
-              <div class="civic-card p-7 border border-white/10 flex flex-col justify-between group hover:border-cyan-400/40">
+              <div class="ai-card p-7 border border-white/10 flex flex-col justify-between group hover:border-cyan-400/40">
                 <div>
                   <div class="flex items-center justify-between mb-4">
                     <span class="font-mono text-[11px] font-bold uppercase tracking-wider text-slate-400">${d.tag}</span>
@@ -1597,7 +1597,7 @@ class AppState {
         <!-- ================= SECTION 04: LATENCY BENCHMARK ================= -->
         <section id="latency" class="max-w-6xl mx-auto px-4 scroll-mt-24">
           <div class="flex items-center gap-3 mb-3">
-            <span class="civic-pill text-amber-400 border-amber-400/30 bg-amber-500/10">CHAPTER 04 — PERFORMANCE METRICS</span>
+            <span class="ai-pill text-amber-400 border-amber-400/30 bg-amber-500/10">CHAPTER 04 — PERFORMANCE METRICS</span>
           </div>
           <h2 class="text-3xl sm:text-5xl font-black text-white font-display mb-4">
             End-to-End Latency Benchmark
@@ -1606,7 +1606,7 @@ class AppState {
             By replacing bulky batch REST requests with continuous asynchronous WebSocket streaming, our software achieves conversational fluency below 500ms latency.
           </p>
 
-          <div class="civic-card p-8 border border-white/15 max-w-4xl mx-auto space-y-6">
+          <div class="ai-card p-8 border border-white/15 max-w-4xl mx-auto space-y-6">
             <div>
               <div class="flex justify-between items-center text-sm font-semibold mb-2">
                 <span class="text-slate-300">Traditional Mobile Apps</span>
@@ -1664,7 +1664,7 @@ class AppState {
         <!-- ================= SECTION 05: EMBEDDED LIVE ASSISTANT TERMINAL ================= -->
         <section id="terminal" class="max-w-6xl mx-auto px-4 scroll-mt-24">
           <div class="flex items-center gap-3 mb-3">
-            <span class="civic-pill text-emerald-400 border-emerald-400/30 bg-emerald-500/10">CHAPTER 05 — LIVE TERMINAL ENGINE</span>
+            <span class="ai-pill text-emerald-400 border-emerald-400/30 bg-emerald-500/10">CHAPTER 05 — LIVE TERMINAL ENGINE</span>
           </div>
           <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
             <div>
@@ -1691,7 +1691,7 @@ class AppState {
         <!-- ================= SECTION 06: VIVA FACULTY Q&A ================= -->
         <section id="viva" class="max-w-6xl mx-auto px-4 scroll-mt-24">
           <div class="flex items-center gap-3 mb-3">
-            <span class="civic-pill text-indigo-400 border-indigo-400/30 bg-indigo-500/10">CHAPTER 06 — FACULTY & EXAMINER DEFENSE</span>
+            <span class="ai-pill text-indigo-400 border-indigo-400/30 bg-indigo-500/10">CHAPTER 06 — FACULTY & EXAMINER DEFENSE</span>
           </div>
           <h2 class="text-3xl sm:text-5xl font-black text-white font-display mb-4">
             Viva Defense & Technical Q&amp;A
@@ -1701,7 +1701,7 @@ class AppState {
           </p>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="civic-card p-6 border-l-4 border-l-cyan-400 hover:border-l-cyan-300 transition-all cursor-pointer" onclick="app.toggleAccordion(this)">
+            <div class="ai-card p-6 border-l-4 border-l-cyan-400 hover:border-l-cyan-300 transition-all cursor-pointer" onclick="app.toggleAccordion(this)">
               <div class="flex items-start gap-4">
                 <div class="w-10 h-10 rounded-xl bg-cyan-500/15 border border-cyan-400/30 flex items-center justify-center text-cyan-400 shrink-0">
                   <i data-lucide="monitor" class="w-5 h-5"></i>
@@ -1715,7 +1715,7 @@ class AppState {
               </div>
             </div>
 
-            <div class="civic-card p-6 border-l-4 border-l-teal-400 hover:border-l-teal-300 transition-all cursor-pointer" onclick="app.toggleAccordion(this)">
+            <div class="ai-card p-6 border-l-4 border-l-teal-400 hover:border-l-teal-300 transition-all cursor-pointer" onclick="app.toggleAccordion(this)">
               <div class="flex items-start gap-4">
                 <div class="w-10 h-10 rounded-xl bg-teal-500/15 border border-teal-400/30 flex items-center justify-center text-teal-400 shrink-0">
                   <i data-lucide="globe" class="w-5 h-5"></i>
@@ -1729,7 +1729,7 @@ class AppState {
               </div>
             </div>
 
-            <div class="civic-card p-6 border-l-4 border-l-amber-400 hover:border-l-amber-300 transition-all cursor-pointer" onclick="app.toggleAccordion(this)">
+            <div class="ai-card p-6 border-l-4 border-l-amber-400 hover:border-l-amber-300 transition-all cursor-pointer" onclick="app.toggleAccordion(this)">
               <div class="flex items-start gap-4">
                 <div class="w-10 h-10 rounded-xl bg-amber-500/15 border border-amber-400/30 flex items-center justify-center text-amber-400 shrink-0">
                   <i data-lucide="clock" class="w-5 h-5"></i>
@@ -1743,7 +1743,7 @@ class AppState {
               </div>
             </div>
 
-            <div class="civic-card p-6 border-l-4 border-l-emerald-400 hover:border-l-emerald-300 transition-all cursor-pointer" onclick="app.toggleAccordion(this)">
+            <div class="ai-card p-6 border-l-4 border-l-emerald-400 hover:border-l-emerald-300 transition-all cursor-pointer" onclick="app.toggleAccordion(this)">
               <div class="flex items-start gap-4">
                 <div class="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-400/30 flex items-center justify-center text-emerald-400 shrink-0">
                   <i data-lucide="wifi" class="w-5 h-5"></i>
@@ -1760,7 +1760,7 @@ class AppState {
         </section>
 
 
-        <!-- ================= CIVICEYE BRAND FOOTER ================= -->
+        <!-- ================= AI TRANSLATOR BRAND FOOTER ================= -->
         <footer class="border-t border-white/10 pt-16 pb-8 text-center text-xs font-mono text-slate-400">
           <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-6 mb-8">
             <div class="flex items-center gap-3">
@@ -1796,7 +1796,7 @@ class AppState {
     container.innerHTML = `
       <div class="space-y-4">
         <!-- Quick Preset Scenario Chips -->
-        <div class="flex flex-wrap items-center justify-between gap-3 civic-card p-3.5 border border-white/10">
+        <div class="flex flex-wrap items-center justify-between gap-3 ai-card p-3.5 border border-white/10">
           <div class="flex flex-wrap items-center gap-1.5">
             <span class="text-xs text-slate-400 font-mono mr-1">Preload Domain Scenarios:</span>
             <button onclick="app.setQuickPreset(0)" class="px-3 py-1 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 transition">
@@ -1822,10 +1822,10 @@ class AppState {
         <div class="grid grid-cols-1 lg:grid-cols-11 gap-6 items-stretch">
           
           <!-- SIDE A: CUSTOMER -->
-          <div id="customer-panel-container" class="lg:col-span-5 civic-card p-6 border-2 border-cyan-500/40 rounded-2xl flex flex-col justify-between transition-transform duration-500 bg-gradient-to-b from-slate-900 to-sky-950/20 relative">
+          <div id="customer-panel-container" class="lg:col-span-5 ai-card p-6 border-2 border-cyan-500/40 rounded-2xl flex flex-col justify-between transition-transform duration-500 bg-gradient-to-b from-slate-900 to-sky-950/20 relative">
             <div>
               <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-                <span class="civic-pill text-cyan-300">SIDE A · CUSTOMER</span>
+                <span class="ai-pill text-cyan-300">SIDE A · CUSTOMER</span>
                 <select onchange="app.setCustomerLanguage(this.value)" class="bg-slate-900 text-cyan-300 border border-cyan-500/30 rounded-lg px-2.5 py-1 font-semibold text-xs focus:outline-none focus:border-cyan-400">
                   ${SUPPORTED_LANGUAGES.map(l => `
                     <option value="${l.code}" ${l.code === this.customerLang ? 'selected' : ''}>
@@ -1894,10 +1894,10 @@ class AppState {
           </div>
 
           <!-- SIDE B: AGENT -->
-          <div class="lg:col-span-5 civic-card p-6 border-2 border-emerald-500/40 rounded-2xl flex flex-col justify-between bg-gradient-to-b from-slate-900 to-emerald-950/20 relative">
+          <div class="lg:col-span-5 ai-card p-6 border-2 border-emerald-500/40 rounded-2xl flex flex-col justify-between bg-gradient-to-b from-slate-900 to-emerald-950/20 relative">
             <div>
               <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-                <span class="civic-pill text-emerald-300">SIDE B · OFFICIAL</span>
+                <span class="ai-pill text-emerald-300">SIDE B · OFFICIAL</span>
                 <select onchange="app.setAgentLanguage(this.value)" class="bg-slate-900 text-emerald-300 border border-emerald-500/30 rounded-lg px-2.5 py-1 font-semibold text-xs focus:outline-none focus:border-emerald-400">
                   ${SUPPORTED_LANGUAGES.map(l => `
                     <option value="${l.code}" ${l.code === this.agentLang ? 'selected' : ''}>
@@ -1970,7 +1970,7 @@ class AppState {
   renderAssistantView(container) {
     container.innerHTML = `
       <div class="max-w-7xl mx-auto py-6 px-3 sm:px-6">
-        <div class="flex items-center justify-between mb-6 civic-card p-4">
+        <div class="flex items-center justify-between mb-6 ai-card p-4">
           <div class="flex items-center gap-3">
             <span class="w-3.5 h-3.5 rounded-full bg-emerald-400 animate-pulse"></span>
             <div>

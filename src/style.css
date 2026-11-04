@@ -1,5 +1,5 @@
 /* =============================================================
-   Screen-Based AI Communication Assistant — CivicEye Design System
+   Screen-Based AI Communication Assistant — AI Translator Design System
    Autonomous Municipal & Public Interface Intelligence
    ============================================================= */
 
@@ -16,13 +16,13 @@
   --line-soft: rgba(223, 231, 224, 0.06);
   --line-bright: rgba(223, 231, 224, 0.24);
   
-  --civic-red: #e0231c;
-  --civic-ember: #ff5a3c;
-  --civic-cyan: #00e5ff;
-  --civic-teal: #2dd4bf;
-  --civic-emerald: #10b981;
-  --civic-amber: #f59e0b;
-  --civic-indigo: #6366f1;
+  --ai-red: #e0231c;
+  --ai-ember: #ff5a3c;
+  --ai-cyan: #00e5ff;
+  --ai-teal: #2dd4bf;
+  --ai-emerald: #10b981;
+  --ai-amber: #f59e0b;
+  --ai-indigo: #6366f1;
 
   --font-display: 'Onest', 'Space Grotesk', system-ui, -apple-system, sans-serif;
   --font-mono: 'DM Mono', 'Space Mono', monospace;
@@ -50,11 +50,11 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
-  selection-background-color: var(--civic-red);
+  selection-background-color: var(--ai-red);
 }
 
 ::selection {
-  background: var(--civic-red);
+  background: var(--ai-red);
   color: #ffffff;
 }
 
@@ -75,7 +75,7 @@ body {
 }
 
 /* Glass Card Architecture */
-.civic-card {
+.ai-card {
   background: rgba(10, 14, 20, 0.72);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -85,24 +85,24 @@ body {
   position: relative;
 }
 
-.civic-card:hover {
+.ai-card:hover {
   border-color: rgba(0, 229, 255, 0.35);
   box-shadow: 0 20px 40px -15px rgba(0, 229, 255, 0.12);
   transform: translateY(-2px);
 }
 
-.civic-card-red:hover {
+.ai-card-red:hover {
   border-color: rgba(224, 35, 28, 0.4);
   box-shadow: 0 20px 40px -15px rgba(224, 35, 28, 0.15);
 }
 
-.civic-card-emerald:hover {
+.ai-card-emerald:hover {
   border-color: rgba(16, 185, 129, 0.4);
   box-shadow: 0 20px 40px -15px rgba(16, 185, 129, 0.12);
 }
 
 /* Badges & Pills */
-.civic-pill {
+.ai-pill {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -121,7 +121,7 @@ body {
 .audio-bar {
   display: inline-block;
   width: 4px;
-  background: var(--civic-cyan);
+  background: var(--ai-cyan);
   border-radius: 4px;
   margin: 0 1.5px;
   transition: height 0.08s ease;
@@ -140,19 +140,19 @@ body {
 
 /* Gradient Text */
 .gradient-heading {
-  background: linear-gradient(135deg, #ffffff 40%, var(--bone) 70%, var(--civic-cyan) 100%);
+  background: linear-gradient(135deg, #ffffff 40%, var(--bone) 70%, var(--ai-cyan) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .gradient-red {
-  background: linear-gradient(135deg, #ffffff 30%, var(--civic-ember) 100%);
+  background: linear-gradient(135deg, #ffffff 30%, var(--ai-ember) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-/* Bottom Floating Command Dock (CivicEye style) */
-.civic-dock {
+/* Bottom Floating Command Dock (AI Translator style) */
+.ai-dock {
   position: fixed;
   bottom: 1.5rem;
   left: 50%;
@@ -224,5 +224,5 @@ body {
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--civic-cyan);
+  background: var(--ai-cyan);
 }
