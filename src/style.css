@@ -1,40 +1,194 @@
-/* Custom styling for Screen-Based AI Communication Assistant */
+/* =============================================================
+   Screen-Based AI Communication Assistant — CivicEye Design System
+   Autonomous Municipal & Public Interface Intelligence
+   ============================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Onest:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+
 :root {
-  --bg-dark: #070B12;
-  --card-dark: #0E1726;
-  --card-border: rgba(56, 189, 248, 0.15);
-  --accent-cyan: #38BDF8;
-  --accent-teal: #2DD4BF;
-  --accent-emerald: #10B981;
-  --accent-coral: #F43F5E;
-  --accent-amber: #F59E0B;
-  --accent-indigo: #6366F1;
+  --ink: #05070a;          /* deep void black */
+  --ink-2: #0a0e14;        /* raised card black */
+  --ink-3: #111722;        /* elevated surface */
+  --bone: #dfe7e0;         /* pale sage white */
+  --bone-dim: #aab4ad;
+  --muted: #78837c;
+  --line: rgba(223, 231, 224, 0.12);
+  --line-soft: rgba(223, 231, 224, 0.06);
+  --line-bright: rgba(223, 231, 224, 0.24);
+  
+  --civic-red: #e0231c;
+  --civic-ember: #ff5a3c;
+  --civic-cyan: #00e5ff;
+  --civic-teal: #2dd4bf;
+  --civic-emerald: #10b981;
+  --civic-amber: #f59e0b;
+  --civic-indigo: #6366f1;
+
+  --font-display: 'Onest', 'Space Grotesk', system-ui, -apple-system, sans-serif;
+  --font-mono: 'DM Mono', 'Space Mono', monospace;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--ink);
+  color-scheme: dark;
 }
 
 body {
-  background-color: var(--bg-dark);
-  color: #F1F5F9;
-  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  margin: 0;
+  background-color: var(--ink);
+  color: var(--bone);
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  selection-background-color: var(--civic-red);
 }
 
-/* Glass Card */
-.glass-card {
-  background: rgba(14, 23, 38, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
-  border-radius: 1rem;
+::selection {
+  background: var(--civic-red);
+  color: #ffffff;
 }
 
-.glass-card-hover {
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+/* Typography Helpers */
+.font-display {
+  font-family: var(--font-display);
 }
-.glass-card-hover:hover {
-  border-color: rgba(56, 189, 248, 0.4);
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+/* Background Cyber Grid */
+.cyber-grid {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(223, 231, 224, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(223, 231, 224, 0.03) 1px, transparent 1px);
+}
+
+/* Glass Card Architecture */
+.civic-card {
+  background: rgba(10, 14, 20, 0.72);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--line);
+  border-radius: 1.25rem;
+  transition: all 0.3s var(--ease-out);
+  position: relative;
+}
+
+.civic-card:hover {
+  border-color: rgba(0, 229, 255, 0.35);
+  box-shadow: 0 20px 40px -15px rgba(0, 229, 255, 0.12);
   transform: translateY(-2px);
-  box-shadow: 0 25px 50px -12px rgba(56, 189, 248, 0.15);
+}
+
+.civic-card-red:hover {
+  border-color: rgba(224, 35, 28, 0.4);
+  box-shadow: 0 20px 40px -15px rgba(224, 35, 28, 0.15);
+}
+
+.civic-card-emerald:hover {
+  border-color: rgba(16, 185, 129, 0.4);
+  box-shadow: 0 20px 40px -15px rgba(16, 185, 129, 0.12);
+}
+
+/* Badges & Pills */
+.civic-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* Audio Wave Visualizer */
+.audio-bar {
+  display: inline-block;
+  width: 4px;
+  background: var(--civic-cyan);
+  border-radius: 4px;
+  margin: 0 1.5px;
+  transition: height 0.08s ease;
+}
+
+/* Glowing Elements */
+.glow-cyan {
+  box-shadow: 0 0 25px rgba(0, 229, 255, 0.28);
+}
+.glow-red {
+  box-shadow: 0 0 25px rgba(224, 35, 28, 0.35);
+}
+.glow-emerald {
+  box-shadow: 0 0 25px rgba(16, 185, 129, 0.28);
+}
+
+/* Gradient Text */
+.gradient-heading {
+  background: linear-gradient(135deg, #ffffff 40%, var(--bone) 70%, var(--civic-cyan) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-red {
+  background: linear-gradient(135deg, #ffffff 30%, var(--civic-ember) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Bottom Floating Command Dock (CivicEye style) */
+.civic-dock {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 9999px;
+  background: rgba(5, 7, 10, 0.88);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(224, 35, 28, 0.18);
+  max-width: calc(100vw - 2rem);
+  white-space: nowrap;
+  overflow-x: auto;
+  pointer-events: auto;
+}
+
+/* Counter Invert (180 deg) */
+.counter-flipped {
+  transform: rotate(180deg);
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Pulse Stream Ring */
+.pulse-stream {
+  animation: pulseRing 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulseRing {
+  0% { box-shadow: 0 0 0 0 rgba(0, 229, 255, 0.7); }
+  70% { box-shadow: 0 0 0 12px rgba(0, 229, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 229, 255, 0); }
 }
 
 /* Slide Transition Animations */
@@ -43,7 +197,7 @@ body {
 }
 
 .slide-content {
-  animation: fadeIn 0.4s ease-out forwards;
+  animation: fadeIn 0.35s var(--ease-out) forwards;
 }
 
 @keyframes fadeIn {
@@ -57,73 +211,18 @@ body {
   }
 }
 
-/* Audio Wave Visualizer */
-.audio-bar {
-  display: inline-block;
-  width: 4px;
-  background: #38BDF8;
-  border-radius: 4px;
-  margin: 0 1.5px;
-  transition: height 0.08s ease;
-}
-
-/* Glow effects */
-.glow-cyan {
-  box-shadow: 0 0 25px rgba(56, 189, 248, 0.25);
-}
-
-.glow-emerald {
-  box-shadow: 0 0 25px rgba(16, 185, 129, 0.25);
-}
-
-/* Gradient text */
-.gradient-text-cyan {
-  background: linear-gradient(135deg, #FFFFFF 30%, #38BDF8 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.gradient-text-teal {
-  background: linear-gradient(135deg, #2DD4BF 0%, #38BDF8 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-/* Custom Scrollbar */
+/* Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #070B12;
+  background: var(--ink);
 }
 ::-webkit-scrollbar-thumb {
-  background: #1E293B;
+  background: #1a2230;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #38BDF8;
-}
-
-/* Flip upside down for dual-facing tablet counters */
-.counter-flipped {
-  transform: rotate(180deg);
-  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-/* Pulsing stream connection dot */
-.pulse-stream {
-  animation: pulseStream 2s infinite;
-}
-
-@keyframes pulseStream {
-  0% {
-    box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.7);
-  }
-  70% {
-    box-shadow: 0 0 0 10px rgba(56, 189, 248, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(56, 189, 248, 0);
-  }
+  background: var(--civic-cyan);
 }
