@@ -3331,21 +3331,21 @@ function buildOldShellDisabled() {
 function buildTemple() {
   const g = new THREE.Group();
   
-  // Skyscraper window materials
+  // Transit Hub Glass & Architecture Materials
   const winTex = tx(texCityWindows(), { wrap: THREE.RepeatWrapping, repeat: [1, 2] });
   const bldgMat = new THREE.MeshStandardMaterial({
-    color: 0x151e2b,
+    color: 0x111722,
     roughness: 0.25,
-    metalness: 0.75,
+    metalness: 0.85,
     map: winTex
   });
   const bldgDarkMat = new THREE.MeshStandardMaterial({
-    color: 0x090d14,
+    color: 0x06090e,
     roughness: 0.65,
-    metalness: 0.35
+    metalness: 0.40
   });
-  
-  // Left urban skyline towers
+
+  // Modern Architectural Terminal Columns & Trusses
   const leftTowers = [
     { x: -14, z: 12, w: 7, h: 26, d: 9 },
     { x: -16, z: 0, w: 9, h: 38, d: 11 },
@@ -3354,7 +3354,6 @@ function buildTemple() {
     { x: -15, z: -44, w: 9, h: 36, d: 10 },
     { x: -18, z: -60, w: 11, h: 42, d: 13 }
   ];
-  // Right urban skyline towers
   const rightTowers = [
     { x: 14, z: 10, w: 7, h: 28, d: 8 },
     { x: 16, z: -2, w: 10, h: 44, d: 11 },
@@ -3363,24 +3362,24 @@ function buildTemple() {
     { x: 15, z: -46, w: 9, h: 34, d: 10 },
     { x: 19, z: -62, w: 12, h: 46, d: 14 }
   ];
-  
+
   [...leftTowers, ...rightTowers].forEach(t => {
     const mesh = new THREE.Mesh(new THREE.BoxGeometry(t.w, t.h, t.d), bldgMat);
     mesh.position.set(t.x, t.h / 2, t.z);
     mesh.castShadow = true; mesh.receiveShadow = true;
     g.add(mesh);
-    
-    // Spire with pulsing red warning beacon
+
+    // Spire beacon (Cyan & Emerald transit beacons)
     const spire = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.12, 5, 8), bldgDarkMat);
     spire.position.set(t.x, t.h + 2.5, t.z);
     g.add(spire);
-    const beacon = new THREE.Mesh(new THREE.SphereGeometry(0.2, 8, 8),
-      new THREE.MeshBasicMaterial({ color: 0xff2222 }));
+    const beacon = new THREE.Mesh(new THREE.SphereGeometry(0.25, 8, 8),
+      new THREE.MeshBasicMaterial({ color: 0x00e5ff }));
     beacon.position.set(t.x, t.h + 5, t.z);
     g.add(beacon);
   });
 
-  // Distant city skyline backdrop
+  // Distant city terminal concourse backdrop
   for (let i = -7; i <= 7; i++) {
     const dw = 12, dh = 24 + Math.abs(i) * 3 + Math.sin(i * 1.5) * 8;
     const db = new THREE.Mesh(new THREE.BoxGeometry(dw, dh, 6), bldgDarkMat);
@@ -3388,184 +3387,193 @@ function buildTemple() {
     g.add(db);
   }
 
-  // Modern streetlights lining the boulevard
-  const streetLightMat = new THREE.MeshStandardMaterial({ color: 0x4a5568, metalness: 0.8 });
-  const lampGlowMat = new THREE.MeshBasicMaterial({ color: 0xdff4ff });
+  // Modern Concourse Light Masts
+  const lightMastMat = new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.85 });
+  const lampGlowMat = new THREE.MeshBasicMaterial({ color: 0x00e5ff });
   [-20, -10, 0, 10].forEach(z => {
     [-6.2, 6.2].forEach(x => {
-      const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.1, 5, 8), streetLightMat);
-      pole.position.set(x, 2.5, z);
+      const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.12, 5.5, 8), lightMastMat);
+      pole.position.set(x, 2.75, z);
       g.add(pole);
-      const arm = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.08, 0.08), streetLightMat);
-      arm.position.set(x > 0 ? x - 0.35 : x + 0.35, 5, z);
+      const arm = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.08, 0.08), lightMastMat);
+      arm.position.set(x > 0 ? x - 0.4 : x + 0.4, 5.4, z);
       g.add(arm);
-      const head = new THREE.Mesh(new THREE.SphereGeometry(0.18, 8, 8), lampGlowMat);
-      head.position.set(x > 0 ? x - 0.7 : x + 0.7, 4.9, z);
+      const head = new THREE.Mesh(new THREE.SphereGeometry(0.2, 8, 8), lampGlowMat);
+      head.position.set(x > 0 ? x - 0.8 : x + 0.8, 5.3, z);
       g.add(head);
     });
   });
 
   /* -------------------------------------------------------------------------
-     PROBLEM 1: Road Damage / Deep Asphalt Crater (Focus at Step 1 / Camera 1)
+     3D STATION 1: Airport Flight Gate & Baggage Counter (Focus at Step 1 / Cam 1)
      ------------------------------------------------------------------------- */
-  const p1Group = new THREE.Group();
-  p1Group.position.set(-1.2, 0.04, 6.5);
-  
-  // Crater Decal / Fissure on asphalt
-  const craterGeo = new THREE.CircleGeometry(0.95, 16);
-  craterGeo.scale(1.4, 0.8, 1);
-  const craterMat = new THREE.MeshStandardMaterial({
-    color: 0x06080b,
-    roughness: 0.98,
-    metalness: 0.05
-  });
-  const crater = new THREE.Mesh(craterGeo, craterMat);
-  crater.rotation.x = -Math.PI / 2;
-  p1Group.add(crater);
+  const st1Group = new THREE.Group();
+  st1Group.position.set(-1.2, 0.04, 6.5);
 
-  // Concentric Holographic AI Hazard Rings
-  const rings = [];
+  // Countertop Desk
+  const deskMat1 = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.3, metalness: 0.8 });
+  const counterDesk1 = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.85, 1.2), deskMat1);
+  counterDesk1.position.set(0, 0.42, 0);
+  counterDesk1.castShadow = true;
+  st1Group.add(counterDesk1);
+
+  // Dual Screens on Airport Desk
+  const monMat = new THREE.MeshBasicMaterial({ color: 0x00e5ff });
+  const screen1A = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.6, 0.05), monMat);
+  screen1A.position.set(-0.55, 1.15, 0.2); screen1A.rotation.y = 0.2;
+  st1Group.add(screen1A);
+
+  const screen1B = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.6, 0.05), new THREE.MeshBasicMaterial({ color: 0x10b981 }));
+  screen1B.position.set(0.55, 1.15, 0.2); screen1B.rotation.y = -0.2;
+  st1Group.add(screen1B);
+
+  // Concentric Holographic Acoustic Speech Wave Rings (Floor)
+  const waveRings = [];
   for (let r = 0; r < 3; r++) {
     const ring = new THREE.Mesh(
-      new THREE.RingGeometry(0.8 + r * 0.4, 0.86 + r * 0.4, 32),
-      new THREE.MeshBasicMaterial({ color: 0xff3b30, transparent: true, opacity: 0.75, side: THREE.DoubleSide })
+      new THREE.RingGeometry(0.9 + r * 0.45, 0.96 + r * 0.45, 32),
+      new THREE.MeshBasicMaterial({ color: 0x00e5ff, transparent: true, opacity: 0.8, side: THREE.DoubleSide })
     );
     ring.rotation.x = -Math.PI / 2;
     ring.position.y = 0.02 + r * 0.005;
-    p1Group.add(ring);
-    rings.push(ring);
+    st1Group.add(ring);
+    waveRings.push(ring);
   }
-  WORLD.hazardRings = rings;
+  WORLD.speechWaveRings = waveRings;
 
-  // Sweeping Laser Scanner Bar
-  const laser = new THREE.Mesh(
-    new THREE.PlaneGeometry(2.4, 0.06),
-    new THREE.MeshBasicMaterial({ color: 0xff2200, transparent: true, opacity: 0.9, side: THREE.DoubleSide })
+  // Sweeping VAD Beam Indicator
+  const vadBeam = new THREE.Mesh(
+    new THREE.PlaneGeometry(2.2, 0.06),
+    new THREE.MeshBasicMaterial({ color: 0x00e5ff, transparent: true, opacity: 0.9, side: THREE.DoubleSide })
   );
-  laser.rotation.x = -Math.PI / 2;
-  laser.position.y = 0.05;
-  p1Group.add(laser);
-  WORLD.laserScanner = laser;
+  vadBeam.rotation.x = -Math.PI / 2;
+  vadBeam.position.y = 0.05;
+  st1Group.add(vadBeam);
+  WORLD.vadBeam = vadBeam;
 
-  // 4 Holographic AI Corner Bounding Brackets
-  const bracketMat = new THREE.MeshBasicMaterial({ color: 0xff3b30 });
-  const bSize = 0.35, bThick = 0.03, bDist = 1.3;
-  [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(([sx, sz]) => {
-    const bx = new THREE.Mesh(new THREE.BoxGeometry(bSize, 0.02, bThick), bracketMat);
-    bx.position.set(sx * bDist, 0.06, sz * bDist);
-    p1Group.add(bx);
-    const bz = new THREE.Mesh(new THREE.BoxGeometry(bThick, 0.02, bSize), bracketMat);
-    bz.position.set(sx * bDist, 0.06, sz * bDist);
-    p1Group.add(bz);
-  });
-
-  // Floating 3D AI Tag for Problem 1
-  const tag1 = makeHudTag(['CITIZEN REPORT: ROAD CRATER #1001', 'AI SEVERITY: 88% (CRITICAL)', 'WARD DISPATCH: ROADS DEPT'], '#ff3b30', '#ff3b30');
-  tag1.position.set(0, 2.2, 0);
+  // Holographic 3D Floating Tag for Desk 01
+  const tag1 = makeHudTag([
+    'DESK 01: AIRPORT FLIGHT GATE & BAGGAGE',
+    'PASSENGER: "Where is boarding gate number 4?"',
+    'SUBTITLE: "4番搭乗口はどこですか？" · 340ms WSS'
+  ], '#00e5ff', '#00e5ff');
+  tag1.position.set(0, 2.3, 0);
   tag1.rotation.y = 0.25;
-  p1Group.add(tag1);
-  g.add(p1Group);
+  st1Group.add(tag1);
+  g.add(st1Group);
 
   /* -------------------------------------------------------------------------
-     PROBLEM 2: Sanitation & Garbage Overflow (Focus at Step 2 / Camera 2)
+     3D STATION 2: Emergency Clinical Triage Reception (Focus at Step 2 / Cam 2)
      ------------------------------------------------------------------------- */
-  const p2Group = new THREE.Group();
-  p2Group.position.set(3.5, 0, -5.0);
+  const st2Group = new THREE.Group();
+  st2Group.position.set(3.5, 0, -5.0);
 
-  // Municipal Commercial Waste Dumpsters
-  const dumpMat = new THREE.MeshStandardMaterial({ color: 0x1e3a2f, roughness: 0.6, metalness: 0.4 });
-  const dump1 = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.2, 1.0), dumpMat);
-  dump1.position.set(0, 0.6, 0); dump1.castShadow = true;
-  p2Group.add(dump1);
-  const dump2 = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.2, 1.0), dumpMat);
-  dump2.position.set(1.8, 0.6, 0.2); dump2.rotation.y = 0.15; dump2.castShadow = true;
-  p2Group.add(dump2);
+  // Clinical Triage Counter
+  const medDeskMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.25, metalness: 0.7 });
+  const triageDesk = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.85, 1.2), medDeskMat);
+  triageDesk.position.set(0, 0.42, 0);
+  st2Group.add(triageDesk);
 
-  // Overflow Debris
-  const debrisMat = new THREE.MeshStandardMaterial({ color: 0x6b7280, roughness: 0.9 });
-  for (let k = 0; k < 6; k++) {
-    const bag = new THREE.Mesh(new THREE.DodecahedronGeometry(0.24), debrisMat);
-    bag.position.set(-0.6 + (k % 3) * 0.7, 0.2, 0.8 + Math.sin(k) * 0.3);
-    p2Group.add(bag);
-  }
+  // 180° Inverted Flat Countertop Tablet on desk
+  const tablet = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.04, 0.8), new THREE.MeshBasicMaterial({ color: 0xe0231c }));
+  tablet.position.set(0, 0.88, 0);
+  st2Group.add(tablet);
 
-  // Pulsating Amber Municipal Dispatch Ring
-  const sBeacon = new THREE.Mesh(
-    new THREE.RingGeometry(1.4, 1.5, 32),
-    new THREE.MeshBasicMaterial({ color: 0xf59e0b, transparent: true, opacity: 0.7, side: THREE.DoubleSide })
+  // Pulsating Emergency Medical Pulse Beacon Ring
+  const medBeacon = new THREE.Mesh(
+    new THREE.RingGeometry(1.4, 1.55, 32),
+    new THREE.MeshBasicMaterial({ color: 0xe0231c, transparent: true, opacity: 0.85, side: THREE.DoubleSide })
   );
-  sBeacon.rotation.x = -Math.PI / 2;
-  sBeacon.position.y = 0.03;
-  p2Group.add(sBeacon);
-  WORLD.sanitationBeacon = sBeacon;
+  medBeacon.rotation.x = -Math.PI / 2;
+  medBeacon.position.y = 0.03;
+  st2Group.add(medBeacon);
+  WORLD.triagePulse = medBeacon;
 
-  // Floating 3D Tag for Problem 2
-  const tag2 = makeHudTag(['SANITATION OVERFLOW #1002', 'SECTOR 22 COMMERCIAL COMPLEX', 'FIELD TRUCK DISPATCHED • ETA 14m'], '#f59e0b', '#f59e0b');
-  tag2.position.set(0.8, 2.4, 0.2);
+  // Floating 3D Tag for Desk 02
+  const tag2 = makeHudTag([
+    'DESK 02: EMERGENCY CLINICAL TRIAGE',
+    'PATIENT: "सीने में बहुत तेज दर्द है, डॉक्टर चाहिए"',
+    'SEVERITY: ACUTE TRIAGE PRIORITY 1 • <240ms'
+  ], '#ff3b30', '#ff3b30');
+  tag2.position.set(0.6, 2.3, 0.2);
   tag2.rotation.y = -0.3;
-  p2Group.add(tag2);
-  g.add(p2Group);
+  st2Group.add(tag2);
+  g.add(st2Group);
 
   /* -------------------------------------------------------------------------
-     PROBLEM 3: Streetlight & Power Grid Node (Focus at Step 3 / Camera 3)
+     3D STATION 3: High-Density Railway Transit Concourse (Focus at Step 3 / Cam 3)
      ------------------------------------------------------------------------- */
-  const p3Group = new THREE.Group();
-  p3Group.position.set(-3.2, 0, -17.0);
+  const st3Group = new THREE.Group();
+  st3Group.position.set(-3.2, 0, -17.0);
 
-  // High-Tech Smart Utility Pole
-  const uPole = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.16, 6.2, 12), streetLightMat);
-  uPole.position.y = 3.1;
-  p3Group.add(uPole);
+  // Railway Service Desk
+  const railDeskMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.4, metalness: 0.7 });
+  const railDesk = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.85, 1.2), railDeskMat);
+  railDesk.position.set(0, 0.42, 0);
+  st3Group.add(railDesk);
 
-  const uArm = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.1, 0.1), streetLightMat);
-  uArm.position.set(0.6, 6.1, 0);
-  p3Group.add(uArm);
+  // Departure Display Screen on Pole
+  const rPole = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.14, 5.5, 12), lightMastMat);
+  rPole.position.set(0, 2.75, 0);
+  st3Group.add(rPole);
 
-  // Overhead Repaired Streetlight fixture (glowing emerald green)
-  const uLamp = new THREE.Mesh(
-    new THREE.SphereGeometry(0.28, 16, 16),
-    new THREE.MeshBasicMaterial({ color: 0x10b981 })
-  );
-  uLamp.position.set(1.2, 6.0, 0);
-  p3Group.add(uLamp);
-  WORLD.resolvedStreetlight = uLamp;
+  const fidsScreen = new THREE.Mesh(new THREE.BoxGeometry(2.0, 1.0, 0.1), new THREE.MeshBasicMaterial({ color: 0x10b981 }));
+  fidsScreen.position.set(0, 4.8, 0);
+  st3Group.add(fidsScreen);
 
-  // Green verification pool of light shining on the ground
-  const lightCone = new THREE.Mesh(
-    new THREE.CircleGeometry(2.4, 32),
+  // Emerald Noise-Gate Verification Light Pool
+  const railLightPool = new THREE.Mesh(
+    new THREE.CircleGeometry(2.6, 32),
     new THREE.MeshBasicMaterial({
-      map: tx(texGlow('rgba(16,185,129,0.5)', 'rgba(5,150,105,0.08)')),
+      map: tx(texGlow('rgba(16,185,129,0.6)', 'rgba(5,150,105,0.08)')),
       transparent: true, blending: THREE.AdditiveBlending, depthWrite: false
     })
   );
-  lightCone.rotation.x = -Math.PI / 2;
-  lightCone.position.set(1.2, 0.04, 0);
-  p3Group.add(lightCone);
+  railLightPool.rotation.x = -Math.PI / 2;
+  railLightPool.position.set(0, 0.04, 0);
+  st3Group.add(railLightPool);
 
-  // Floating 3D Tag for Problem 3
-  const tag3 = makeHudTag(['STREETLIGHT NODE #1003', 'STATUS: RESOLVED & VERIFIED', 'SUPERVISOR PHOTO CONFIRMED (100%)'], '#10b981', '#10b981');
-  tag3.position.set(0.6, 4.4, 0);
+  // Floating 3D Tag for Desk 03
+  const tag3 = makeHudTag([
+    'DESK 03: RAILWAY TRANSIT CONCOURSE',
+    'PASSENGER: "अगली ट्रेन किस प्लेटफॉर्म से रवाना होगी?"',
+    'TRANSLATED: "Next Express Departs 14:35 Platform 4"'
+  ], '#10b981', '#10b981');
+  tag3.position.set(0, 3.2, 0);
   tag3.rotation.y = 0.2;
-  p3Group.add(tag3);
-  g.add(p3Group);
+  st3Group.add(tag3);
+  g.add(st3Group);
 
   /* -------------------------------------------------------------------------
-     TELEMETRY NETWORK LINES (Connecting City Problems at Step 4 & 5)
+     FIBER OPTIC DATA HIGHWAY & SPEECH PACKETS (Connecting All Counters)
      ------------------------------------------------------------------------- */
-  const lineMat = new THREE.LineBasicMaterial({ color: 0x00e5ff, transparent: true, opacity: 0.65 });
+  const lineMat = new THREE.LineBasicMaterial({ color: 0x00e5ff, transparent: true, opacity: 0.75 });
   const netPts = [
     new THREE.Vector3(-1.2, 2.2, 6.5),
-    new THREE.Vector3(3.5, 2.4, -5.0),
-    new THREE.Vector3(3.5, 2.4, -5.0),
-    new THREE.Vector3(-3.2, 4.4, -17.0),
-    new THREE.Vector3(-3.2, 4.4, -17.0),
-    new THREE.Vector3(0, 10.0, -32.0),
+    new THREE.Vector3(3.5, 2.2, -5.0),
+    new THREE.Vector3(3.5, 2.2, -5.0),
+    new THREE.Vector3(-3.2, 3.2, -17.0),
+    new THREE.Vector3(-3.2, 3.2, -17.0),
+    new THREE.Vector3(0, 8.0, -32.0),
     new THREE.Vector3(-1.2, 2.2, 6.5),
-    new THREE.Vector3(0, 10.0, -32.0)
+    new THREE.Vector3(0, 8.0, -32.0)
   ];
   const netGeo = new THREE.BufferGeometry().setFromPoints(netPts);
   const netLines = new THREE.LineSegments(netGeo, lineMat);
   g.add(netLines);
+
+  // Floating Speech Audio Data Packets
+  const packetGeo = new THREE.SphereGeometry(0.18, 12, 12);
+  const packetMatCyan = new THREE.MeshBasicMaterial({ color: 0x00e5ff });
+  const packetMatRed = new THREE.MeshBasicMaterial({ color: 0xe0231c });
+  const dataPackets = [];
+  for (let p = 0; p < 8; p++) {
+    const pkt = new THREE.Mesh(packetGeo, p % 2 === 0 ? packetMatCyan : packetMatRed);
+    pkt.position.set((Math.random() - 0.5) * 6, 1.5 + Math.random() * 1.5, -p * 6);
+    g.add(pkt);
+    dataPackets.push(pkt);
+  }
+  WORLD.dataPackets = dataPackets;
 
   scene.add(g);
   WORLD.temple = g;
@@ -3733,119 +3741,279 @@ function placeMoon() {
 }
 
 function buildTorii() {
-  /* the weathering costs the gate a lot of its chroma, so the tint puts it
-     back: red lifted well past green and blue rather than a flat brightening,
-     or the vermilion comes out of the grade as brick */
-  const lac = surface(lib('lacquer', () => texLacquer()), [2, 2],
-    { color: hdr(1.72, 1.02, .94), roughness: .92, metalness: .05, normal: .75 });
-  const gold = new THREE.MeshStandardMaterial({ color: 0x7a5d2a, roughness: .50, metalness: .60 });
+  /* Futuristic Dual-Screen Cyber Portal & Architectural Gateway */
   const g = new THREE.Group();
-  const BASE = .78, H = 8.2, SPAN = 3.55;
+  const BASE = 0.78, H = 8.5, SPAN = 3.8;
 
-  [-1, 1].forEach(s => {
-    const col = new THREE.Mesh(new THREE.CylinderGeometry(.30, .38, H, 26), lac);
-    col.position.set(s * SPAN, BASE + H / 2, 0); col.castShadow = true; g.add(col);
-    const foot = new THREE.Mesh(new THREE.CylinderGeometry(.46, .50, .52, 26), gold);
-    foot.position.set(s * SPAN, BASE + .26, 0); foot.castShadow = true; g.add(foot);
-    const collar = new THREE.Mesh(new THREE.CylinderGeometry(.345, .345, .26, 26), gold);
-    collar.position.set(s * SPAN, BASE + H - 1.42, 0); g.add(collar);
-    /* the ornate bracket where the beams cross the column */
-    const br = new THREE.Mesh(new THREE.BoxGeometry(.86, .30, .86), gold);
-    br.position.set(s * SPAN, BASE + H - .72, 0); g.add(br);
-    const br2 = new THREE.Mesh(new THREE.BoxGeometry(.60, .52, .60), gold);
-    br2.position.set(s * SPAN, BASE + H - .34, 0); g.add(br2);
-    [-1, 1].forEach(d => {
-      const wing = new THREE.Mesh(new THREE.BoxGeometry(.24, .70, .18), gold);
-      wing.position.set(s * SPAN + d * .40, BASE + H - .62, .30); g.add(wing);
-      const wing2 = wing.clone(); wing2.position.z = -.30; g.add(wing2);
-    });
+  // Modern metallic titanium materials
+  const metalMat = new THREE.MeshStandardMaterial({
+    color: 0x0a1018,
+    roughness: 0.22,
+    metalness: 0.88
+  });
+  const darkMetal = new THREE.MeshStandardMaterial({
+    color: 0x05070a,
+    roughness: 0.45,
+    metalness: 0.70
   });
 
-  /* nuki — the straight beam that pierces the columns */
-  const nuki = new THREE.Mesh(new THREE.BoxGeometry(9.4, .52, .46), lac);
-  nuki.position.set(0, BASE + H - 2.15, 0); nuki.castShadow = true; g.add(nuki);
+  // Glowing neon materials (Cyan & Vermilion)
+  const cyanNeon = new THREE.MeshBasicMaterial({ color: 0x00e5ff });
+  const redNeon = new THREE.MeshBasicMaterial({ color: 0xe0231c });
+  const emeraldNeon = new THREE.MeshBasicMaterial({ color: 0x10b981 });
 
-  /* gakuzuka — the little strut at the centre */
-  const gak = new THREE.Mesh(new THREE.BoxGeometry(.46, 1.22, .40), lac);
-  gak.position.set(0, BASE + H + .10, 0); g.add(gak);
-  const gakG = new THREE.Mesh(new THREE.BoxGeometry(.60, .18, .50), gold);
-  gakG.position.set(0, BASE + H + .68, 0); g.add(gakG);
+  // Generate Digital Ticker Canvas Texture
+  const tickerC = cvs(1024, 128), txC = tickerC.getContext('2d');
+  txC.fillStyle = '#05070a'; txC.fillRect(0, 0, 1024, 128);
+  txC.fillStyle = 'rgba(0, 229, 255, 0.08)'; txC.fillRect(0, 0, 1024, 128);
+  txC.strokeStyle = '#00e5ff'; txC.lineWidth = 4; txC.strokeRect(4, 4, 1016, 120);
+  txC.fillStyle = '#00e5ff'; txC.font = 'bold 36px "DM Mono", monospace';
+  txC.textBaseline = 'middle'; txC.textAlign = 'center';
+  txC.fillText('● REAL-TIME TRANSLATION GATE · [HINDI ⇄ ENGLISH] · LATENCY <480ms', 512, 64);
+  const tickerTex = tx(tickerC, { aniso: 16 });
+  const tickerMat = new THREE.MeshBasicMaterial({ map: tickerTex });
 
-  /* shimaki + kasagi — the two crowning beams, swept upward at the ends */
-  function beamPath(half, rise, power) {
-    const p = [];
-    for (let i = 0; i <= 26; i++) {
-      const u = i / 26 * 2 - 1;
-      p.push(new THREE.Vector3(u * half, Math.pow(Math.abs(u), power) * rise, 0));
+  // Left & Right Monolithic Cyber Columns
+  [-1, 1].forEach((s, idx) => {
+    // Main column body (Hexagonal / Sleek Box)
+    const col = new THREE.Mesh(new THREE.BoxGeometry(0.7, H, 0.9), metalMat);
+    col.position.set(s * SPAN, BASE + H / 2, 0);
+    col.castShadow = true; col.receiveShadow = true;
+    g.add(col);
+
+    // Neon edge accent channel
+    const neonMat = idx === 0 ? cyanNeon : redNeon;
+    const neonStrip = new THREE.Mesh(new THREE.BoxGeometry(0.08, H - 0.5, 0.94), neonMat);
+    neonStrip.position.set(s * SPAN + (idx === 0 ? 0.36 : -0.36), BASE + H / 2, 0);
+    g.add(neonStrip);
+
+    // Column Base Plinth
+    const foot = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.6, 1.3), darkMetal);
+    foot.position.set(s * SPAN, BASE + 0.3, 0);
+    g.add(foot);
+
+    // Pillar Telemetry HUD Screen
+    const hudC = cvs(256, 512), hx = hudC.getContext('2d');
+    hx.fillStyle = '#05070a'; hx.fillRect(0, 0, 256, 512);
+    hx.strokeStyle = idx === 0 ? '#00e5ff' : '#e0231c'; hx.lineWidth = 3; hx.strokeRect(4, 4, 248, 504);
+    hx.fillStyle = idx === 0 ? '#00e5ff' : '#e0231c';
+    hx.font = 'bold 22px monospace'; hx.fillText(idx === 0 ? 'DESK 01 · PASSENGER' : 'DESK 02 · OFFICIAL', 16, 44);
+    hx.font = '16px monospace'; hx.fillStyle = '#dfe7e0';
+    hx.fillText('STATUS: ONLINE', 16, 90);
+    hx.fillText('VAD SENSING: ACTIVE', 16, 125);
+    hx.fillText('WSS: STREAMING', 16, 160);
+    hx.fillText('BITRATE: 16kHz PCM', 16, 195);
+    // Draw simulated audio waveform on the pillar
+    hx.strokeStyle = '#00e5ff'; hx.lineWidth = 2; hx.beginPath();
+    for (let x = 16; x < 240; x += 4) {
+      const y = 300 + Math.sin(x * 0.1) * 35 * Math.random();
+      if (x === 16) hx.moveTo(x, y); else hx.lineTo(x, y);
     }
-    return p;
+    hx.stroke();
+    const hudTex = tx(hudC, { aniso: 16 });
+    const hudMesh = new THREE.Mesh(new THREE.PlaneGeometry(0.55, 1.8), new THREE.MeshBasicMaterial({ map: hudTex }));
+    hudMesh.position.set(s * SPAN, BASE + 4.2, 0.46);
+    g.add(hudMesh);
+
+    // Overhead Light Projector
+    const spot = new THREE.PointLight(idx === 0 ? 0x00e5ff : 0xe0231c, 2.5, 14, 2);
+    spot.position.set(s * SPAN, BASE + H + 0.5, 1.2);
+    g.add(spot);
+  });
+
+  // Upper Crossbeam Housing (The Digital Ticker Beam)
+  const beamHousing = new THREE.Mesh(new THREE.BoxGeometry(SPAN * 2 + 2.2, 1.1, 1.0), metalMat);
+  beamHousing.position.set(0, BASE + H - 0.2, 0);
+  beamHousing.castShadow = true;
+  g.add(beamHousing);
+
+  // Digital Ticker Screen Face (Front & Back)
+  const tickerMeshFront = new THREE.Mesh(new THREE.PlaneGeometry(SPAN * 2 + 1.8, 0.85), tickerMat);
+  tickerMeshFront.position.set(0, BASE + H - 0.2, 0.52);
+  g.add(tickerMeshFront);
+
+  const tickerMeshBack = tickerMeshFront.clone();
+  tickerMeshBack.position.z = -0.52;
+  tickerMeshBack.rotation.y = Math.PI;
+  g.add(tickerMeshBack);
+
+  // Upper Holographic Rail
+  const topRail = new THREE.Mesh(new THREE.BoxGeometry(SPAN * 2 + 3.0, 0.25, 1.4), darkMetal);
+  topRail.position.set(0, BASE + H + 0.5, 0);
+  g.add(topRail);
+
+  const topNeon = new THREE.Mesh(new THREE.BoxGeometry(SPAN * 2 + 3.1, 0.08, 1.44), cyanNeon);
+  topNeon.position.set(0, BASE + H + 0.65, 0);
+  g.add(topNeon);
+
+  // =========================================================================
+  // CENTRAL DUAL-FACING COUNTERTOP TERMINAL STATION
+  // =========================================================================
+  const counterStation = buildDualScreenStation();
+  counterStation.position.set(0, BASE, 0.5);
+  g.add(counterStation);
+
+  scene.add(g);
+  WORLD.torii = g;
+}
+
+/* Central 3D Countertop Dual-Display Terminal */
+function buildDualScreenStation() {
+  const station = new THREE.Group();
+
+  // Dark countertop desk
+  const deskMat = new THREE.MeshStandardMaterial({ color: 0x070b12, roughness: 0.3, metalness: 0.8 });
+  const desk = new THREE.Mesh(new THREE.BoxGeometry(3.6, 0.85, 1.6), deskMat);
+  desk.position.set(0, 0.42, 0);
+  desk.castShadow = true; desk.receiveShadow = true;
+  station.add(desk);
+
+  // Glowing base perimeter ring
+  const baseNeon = new THREE.Mesh(new THREE.BoxGeometry(3.7, 0.05, 1.7), new THREE.MeshBasicMaterial({ color: 0x00e5ff }));
+  baseNeon.position.set(0, 0.05, 0);
+  station.add(baseNeon);
+
+  // Customer Screen Texture (Left, facing forward-left)
+  const custC = cvs(512, 320), cx = custC.getContext('2d');
+  cx.fillStyle = '#05070a'; cx.fillRect(0, 0, 512, 320);
+  cx.strokeStyle = '#00e5ff'; cx.lineWidth = 4; cx.strokeRect(4, 4, 504, 312);
+  cx.fillStyle = 'rgba(0,229,255,0.12)'; cx.fillRect(10, 10, 492, 40);
+  cx.fillStyle = '#00e5ff'; cx.font = 'bold 18px "DM Mono", monospace';
+  cx.fillText('● PASSENGER DISPLAY · HINDI (हिन्दी)', 24, 36);
+  cx.fillStyle = '#ffffff'; cx.font = 'bold 26px "Onest", sans-serif';
+  cx.fillText('मुझे अपना टिकट रद्द कराना है', 24, 110);
+  cx.fillStyle = '#00e5ff'; cx.font = '20px "Onest", sans-serif';
+  cx.fillText('I need to cancel my ticket', 24, 150);
+  // Audio waveform bars
+  cx.fillStyle = '#00e5ff';
+  for (let i = 0; i < 28; i++) {
+    const bh = 15 + Math.sin(i * 0.4) * 25 * Math.random();
+    cx.fillRect(24 + i * 16, 260 - bh, 10, bh);
   }
-  const shimaki = new THREE.Mesh(sweepPoly(beamPath(5.05, .40, 2.6),
-    [[-.30, -.19], [.30, -.19], [.32, .06], [.28, .21], [-.28, .21], [-.32, .06]]), lac);
-  shimaki.position.set(0, BASE + H - .52, 0); shimaki.castShadow = true; g.add(shimaki);
+  const custTex = tx(custC, { aniso: 16 });
+  const custScreenMat = new THREE.MeshBasicMaterial({ map: custTex });
 
-  const kasagi = new THREE.Mesh(sweepPoly(beamPath(5.85, .62, 2.4),
-    [[-.42, -.24], [.42, -.24], [.46, .04], [.30, .28], [-.30, .28], [-.46, .04]]), lac);
-  kasagi.position.set(0, BASE + H + .96, 0); kasagi.castShadow = true; g.add(kasagi);
-  /* a black lacquer cap along the top of the kasagi */
-  const cap = new THREE.Mesh(sweepPoly(beamPath(5.95, .62, 2.4),
-    [[-.48, .22], [.48, .22], [.48, .34], [-.48, .34]]),
-    new THREE.MeshStandardMaterial({ color: 0x120c0c, roughness: .42, metalness: .14 }));
-  cap.position.set(0, BASE + H + .96, 0); g.add(cap);
+  // Agent Screen Texture (Right, facing forward-right)
+  const agentC = cvs(512, 320), ax = agentC.getContext('2d');
+  ax.fillStyle = '#05070a'; ax.fillRect(0, 0, 512, 320);
+  ax.strokeStyle = '#10b981'; ax.lineWidth = 4; ax.strokeRect(4, 4, 504, 312);
+  ax.fillStyle = 'rgba(16,185,129,0.12)'; ax.fillRect(10, 10, 492, 40);
+  ax.fillStyle = '#10b981'; ax.font = 'bold 18px "DM Mono", monospace';
+  ax.fillText('● OFFICIAL AGENT DESK · ENGLISH', 24, 36);
+  ax.fillStyle = '#dfe7e0'; cx.font = '16px monospace';
+  ax.fillText('INCOMING: "I need to cancel my ticket"', 24, 100);
+  ax.fillStyle = '#10b981'; ax.font = 'bold 22px "Onest", sans-serif';
+  ax.fillText('Sure, may I have your 6-digit PNR?', 24, 150);
+  // Suggested badges
+  ax.fillStyle = '#111722'; ax.fillRect(24, 210, 220, 36);
+  ax.strokeStyle = '#10b981'; ax.strokeRect(24, 210, 220, 36);
+  ax.fillStyle = '#dfe7e0'; ax.font = '13px monospace';
+  ax.fillText('1. PNR Reference?', 36, 234);
+  const agentTex = tx(agentC, { aniso: 16 });
+  const agentScreenMat = new THREE.MeshBasicMaterial({ map: agentTex });
 
-  /* the gate stands at the foot of the flight, not over the court — small
-     enough that the hall keeps the top of the frame to itself */
-  /* The lowest thing on the gate is the foot of each column, and it starts
-     at BASE — so anchoring the group at y=0 left the whole torii hanging
-     BASE*scale above the court. Drop it by exactly that and the feet land. */
-  const GS = .72;
-  g.position.set(0, -BASE * GS, -8.6); g.scale.setScalar(GS);
-  scene.add(g); WORLD.torii = g;
+  // Screen Mounts & Frames
+  const frameMat = new THREE.MeshStandardMaterial({ color: 0x111722, roughness: 0.2, metalness: 0.9 });
+  
+  // Customer Monitor (Screen 1)
+  const mon1 = new THREE.Group();
+  const stand1 = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.06, 0.45, 16), frameMat);
+  stand1.position.set(0, 0.22, 0); mon1.add(stand1);
+  const body1 = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.9, 0.06), frameMat);
+  body1.position.set(0, 0.65, 0); mon1.add(body1);
+  const disp1 = new THREE.Mesh(new THREE.PlaneGeometry(1.32, 0.82), custScreenMat);
+  disp1.position.set(0, 0.65, 0.035); mon1.add(disp1);
+  mon1.position.set(-0.95, 0.85, 0);
+  mon1.rotation.y = 0.25; mon1.rotation.x = -0.12;
+  station.add(mon1);
+
+  // Agent Monitor (Screen 2)
+  const mon2 = new THREE.Group();
+  const stand2 = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.06, 0.45, 16), frameMat);
+  stand2.position.set(0, 0.22, 0); mon2.add(stand2);
+  const body2 = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.9, 0.06), frameMat);
+  body2.position.set(0, 0.65, 0); mon2.add(body2);
+  const disp2 = new THREE.Mesh(new THREE.PlaneGeometry(1.32, 0.82), agentScreenMat);
+  disp2.position.set(0, 0.65, 0.035); mon2.add(disp2);
+  mon2.position.set(0.95, 0.85, 0);
+  mon2.rotation.y = -0.25; mon2.rotation.x = -0.12;
+  station.add(mon2);
+
+  // 3D Animated Audio Spectrum Visualizer Bars (standing between screens)
+  const eqGroup = new THREE.Group();
+  const eqMat = new THREE.MeshBasicMaterial({ color: 0x00e5ff });
+  const eqBars = [];
+  for (let b = 0; b < 12; b++) {
+    const bar = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.4, 0.04), eqMat);
+    bar.position.set((b - 5.5) * 0.08, 0.2, 0);
+    eqGroup.add(bar);
+    eqBars.push(bar);
+  }
+  eqGroup.position.set(0, 0.85, 0.1);
+  station.add(eqGroup);
+  WORLD.eqBars = eqBars;
+
+  // Countertop Glow Lamp
+  const deskLight = new THREE.PointLight(0x00e5ff, 2.0, 6, 2);
+  deskLight.position.set(0, 1.8, 0.5);
+  station.add(deskLight);
+
+  return station;
 }
 
 function buildLantern(x, z, s, y) {
-  const stone = lib('lanternStone', () => surface(lib('granite', () => texStone(17)), [1.5, 1.5],
-    { color: 0x9aa5a5, metalness: 0, normal: 1.45 }));
-  const dark  = lib('lanternDark', () => surface(postWood(), [.9, .9],
-    { color: 0xd8c2b6, metalness: .1, normal: .7 }));
+  /* Sleek 3D Public Counter Information Stela / Interactive Kiosk */
   const g = new THREE.Group();
-  const base = new THREE.Mesh(new THREE.CylinderGeometry(.44, .52, .26, 20), stone);
-  base.position.y = .13; base.castShadow = true; g.add(base);
-  const post = new THREE.Mesh(new THREE.CylinderGeometry(.15, .18, 1.02, 16), stone);
-  post.position.y = .77; post.castShadow = true; g.add(post);
-  const shelf = new THREE.Mesh(new THREE.CylinderGeometry(.42, .34, .13, 20), stone);
-  shelf.position.y = 1.34; shelf.castShadow = true; g.add(shelf);
+  const H = 3.6 * (s || 1);
 
-  const box = new THREE.Mesh(new THREE.BoxGeometry(.50, .50, .50), dark);
-  box.position.y = 1.66; box.castShadow = true; g.add(box);
-  const paneMat = new THREE.MeshBasicMaterial({ color: hdr(2.3, .30, .085), fog: false, toneMapped: false });
-  [[0, 0, .256, 0], [0, 0, -.256, Math.PI], [.256, 0, 0, Math.PI / 2], [-.256, 0, 0, -Math.PI / 2]].forEach(p => {
-    const pane = new THREE.Mesh(new THREE.PlaneGeometry(.34, .34), paneMat);
-    pane.position.set(p[0], 1.66, p[2]); pane.rotation.y = p[3]; g.add(pane);
+  const matChassis = new THREE.MeshStandardMaterial({
+    color: 0x080d14,
+    roughness: 0.25,
+    metalness: 0.85
   });
-  WORLD.lanternPane = WORLD.lanternPane || paneMat;
+  const matNeon = new THREE.MeshBasicMaterial({ color: 0x00e5ff });
 
-  const roof = new THREE.Mesh(new THREE.CylinderGeometry(.10, .62, .34, 4, 1), stone);
-  roof.position.y = 2.06; roof.rotation.y = Math.PI / 4; roof.castShadow = true; g.add(roof);
-  const brim = new THREE.Mesh(new THREE.CylinderGeometry(.66, .70, .07, 4, 1), stone);
-  brim.position.y = 1.93; brim.rotation.y = Math.PI / 4; g.add(brim);
-  const knob = new THREE.Mesh(new THREE.SphereGeometry(.09, 12, 10), stone);
-  knob.position.y = 2.28; g.add(knob);
-  const tip = new THREE.Mesh(new THREE.ConeGeometry(.055, .16, 10), stone);
-  tip.position.y = 2.4; g.add(tip);
+  // Main Kiosk Monolith
+  const body = new THREE.Mesh(new THREE.BoxGeometry(0.85 * (s || 1), H, 0.3 * (s || 1)), matChassis);
+  body.position.set(0, H / 2, 0);
+  body.castShadow = true; body.receiveShadow = true;
+  g.add(body);
 
-  const glow = new THREE.Mesh(new THREE.PlaneGeometry(3.4, 3.4),
-    new THREE.MeshBasicMaterial({ map: tx(texGlow('rgba(255,120,60,.9)', 'rgba(255,60,24,.28)')),
-      transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, fog: false, opacity: .5 }));
-  glow.position.y = 1.66; glow.renderOrder = 2; g.add(glow);
-  glow.userData.billboard = true;
+  // Side Neon Trim
+  [-1, 1].forEach(side => {
+    const trim = new THREE.Mesh(new THREE.BoxGeometry(0.04, H, 0.32 * (s || 1)), matNeon);
+    trim.position.set(side * 0.43 * (s || 1), H / 2, 0);
+    g.add(trim);
+  });
 
-  const lt = new THREE.PointLight(0xff5a24, 2.6, 9, 2);
-  lt.position.set(0, 1.66, 0); g.add(lt);
-  WORLD.lanternLights = WORLD.lanternLights || [];
-  WORLD.lanternLights.push(lt); WORLD.lanternGlows = WORLD.lanternGlows || []; WORLD.lanternGlows.push(glow);
+  // Digital Display Face
+  const kc = cvs(256, 512), kx = kc.getContext('2d');
+  kx.fillStyle = '#05070a'; kx.fillRect(0, 0, 256, 512);
+  kx.strokeStyle = '#00e5ff'; kx.lineWidth = 3; kx.strokeRect(4, 4, 248, 504);
+  kx.fillStyle = '#00e5ff'; kx.font = 'bold 22px monospace';
+  kx.fillText('SERVICE KIOSK', 20, 40);
+  kx.fillStyle = '#dfe7e0'; kx.font = '14px monospace';
+  kx.fillText('1. SPEECH ASR', 20, 90);
+  kx.fillText('2. DUAL TRANSLATE', 20, 130);
+  kx.fillText('3. 180° FLIP VIEW', 20, 170);
+  kx.fillText('4. AIRGAP SECURE', 20, 210);
+  // Frequency waves
+  kx.fillStyle = '#00e5ff';
+  for (let i = 0; i < 20; i++) {
+    const h = 10 + Math.sin(i * 0.5) * 40 * Math.random();
+    kx.fillRect(20 + i * 11, 440 - h, 7, h);
+  }
+  const kTex = tx(kc, { aniso: 16 });
+  const screen = new THREE.Mesh(new THREE.PlaneGeometry(0.72 * (s || 1), H * 0.75), new THREE.MeshBasicMaterial({ map: kTex }));
+  screen.position.set(0, H * 0.52, 0.16 * (s || 1));
+  g.add(screen);
 
-  g.position.set(x, y || 0, z); g.scale.setScalar(s || 1);
+  // Base Light
+  const pl = new THREE.PointLight(0x00e5ff, 1.8, 8, 2);
+  pl.position.set(0, H * 0.6, 0.4);
+  g.add(pl);
+
+  g.position.set(x, y || 0, z);
   scene.add(g);
   return g;
 }
@@ -4019,7 +4187,7 @@ function buildWordmark() {
   const m = cvs(4, 4).getContext('2d');
   m.font = '600 ' + SZ + 'px Wordmark, "Onest", sans-serif';
   m.textBaseline = 'alphabetic'; m.textAlign = 'left';
-  const word = 'CIVIC', gl = [];
+  const word = 'SCREEN', gl = [];
   let pen = 0, ascMax = 0, descMax = 0, xMin = 1e9, xMax = -1e9;
   for (const ch of word) {
     const t = m.measureText(ch);
@@ -5730,26 +5898,41 @@ function resize() {
 function updateWorld(dt) {
   WORLD.uT.value = clock;
 
-  /* CivicEye Animated Problem Scanning & Beacons */
-  if (WORLD.laserScanner) {
-    WORLD.laserScanner.position.z = Math.sin(clock * 3.2) * 0.8;
+  /* Screen-Based AI Communication Assistant 3D Animations */
+  // 1. Audio VAD scanning beam
+  if (WORLD.vadBeam) {
+    WORLD.vadBeam.position.z = Math.sin(clock * 3.5) * 0.7;
   }
-  if (WORLD.hazardRings) {
-    WORLD.hazardRings.forEach((hr, i) => {
-      const s = 1.0 + ((clock * 1.6 + i * 0.45) % 2.2);
-      hr.scale.set(s, s, s);
-      hr.material.opacity = Math.max(0, 0.75 - (s - 1.0) / 1.4);
+  // 2. Acoustic speech wave rings expanding from counter
+  if (WORLD.speechWaveRings) {
+    WORLD.speechWaveRings.forEach((ring, i) => {
+      const s = 1.0 + ((clock * 2.2 + i * 0.45) % 2.4);
+      ring.scale.set(s, s, s);
+      ring.material.opacity = Math.max(0, 0.8 - (s - 1.0) / 1.5);
     });
   }
-  if (WORLD.sanitationBeacon) {
-    const s2 = 1.0 + ((clock * 1.5) % 2.5);
-    WORLD.sanitationBeacon.scale.set(s2, s2, s2);
-    WORLD.sanitationBeacon.material.opacity = Math.max(0, 0.7 - (s2 - 1.0) / 1.6);
+  // 3. Clinical triage pulse beacon
+  if (WORLD.triagePulse) {
+    const s2 = 1.0 + ((clock * 2.4) % 2.5);
+    WORLD.triagePulse.scale.set(s2, s2, s2);
+    WORLD.triagePulse.material.opacity = Math.max(0, 0.75 - (s2 - 1.0) / 1.6);
   }
-  if (WORLD.resolvedStreetlight) {
-    WORLD.resolvedStreetlight.material.color.setHex(clock % 4 > 2 ? 0x00ff88 : 0x00e5ff);
+  // 4. Countertop live 3D Equalizer Spectrum Analyzer Bars
+  if (WORLD.eqBars && WORLD.eqBars.length) {
+    WORLD.eqBars.forEach((bar, idx) => {
+      const s = 0.2 + Math.abs(Math.sin(clock * 6.5 + idx * 0.6)) * 1.8 + Math.sin(clock * 11.0 + idx) * 0.5;
+      bar.scale.y = Math.max(0.15, s);
+      bar.position.y = 0.2 * bar.scale.y;
+    });
   }
-
+  // 5. Traveling speech data packets along fiber optic lines
+  if (WORLD.dataPackets) {
+    WORLD.dataPackets.forEach((pkt, i) => {
+      pkt.position.z = 10 - ((clock * 8.0 + i * 5.0) % 55);
+      pkt.position.y = 1.6 + Math.sin(clock * 3.0 + i) * 0.35;
+    });
+  }
+  
   /* the focused chapter warms the lanterns and swells the disc */
   RIG.focusAmt = damp(RIG.focusAmt, RIG.focus >= 0 ? 1 : 0, 5, dt);
   const pulse = Math.sin(clock * 1.9) * .5 + .5;
