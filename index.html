@@ -1242,7 +1242,8 @@ body[data-layout-footer="b"] .foot-base span:last-child{ text-align:right; }
     <a class="nav-link" href="#terminal-section" data-cursor><span>05 Terminal</span><span class="alt">LIVE-UI</span></a>
     <a class="nav-link" href="#viva-section" data-cursor><span>06 Viva Q&A</span><span class="alt">DEFENSE</span></a>
     <div class="nav-mobile-actions">
-      <a class="nav-btn-primary" href="#terminal-section">⚡ Live Terminal</a>
+      <a class="nav-btn-primary" href="#terminal-section">⚡ 3D Terminal</a>
+      <button class="nav-btn-secondary" onclick="openFullReactTerminal()" style="color:#00e5ff;border-color:rgba(0,229,255,0.4)">⚡ Full React Studio</button>
       <button class="nav-btn-secondary" onclick="openDeckModal()">13-Slide Pitch Deck</button>
       <a class="nav-btn-secondary" href="#gate">Hardware vs Software</a>
       <a class="nav-btn-secondary" href="#viva-section">Faculty Viva Q&A</a>
@@ -6275,8 +6276,11 @@ else addEventListener('DOMContentLoaded', boot);
   <a href="#eternity" style="padding:4px 8px;font-family:var(--font-mono);font-size:11px;color:#aab4ad;text-decoration:none">Benchmark</a>
   <span style="width:1px;height:14px;background:rgba(255,255,255,0.15)"></span>
   <a href="#terminal-section" style="padding:5px 12px;border-radius:9999px;background:#e0231c;color:#fff;font-family:var(--font-mono);font-size:11px;font-weight:700;text-decoration:none;box-shadow:0 4px 12px rgba(224,35,28,0.4)">
-    ⚡ Live Terminal
+    ⚡ 3D Terminal
   </a>
+  <button onclick="openFullReactTerminal()" style="padding:5px 12px;border-radius:9999px;background:rgba(0,229,255,0.15);border:1px solid rgba(0,229,255,0.4);color:#00e5ff;font-family:var(--font-mono);font-size:11px;font-weight:700;cursor:pointer">
+    ⚡ React Studio
+  </button>
   <button onclick="openDeckModal()" style="padding:5px 12px;border-radius:9999px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:#dfe7e0;font-family:var(--font-mono);font-size:11px;cursor:pointer">
     13-Slide Deck
   </button>
@@ -7157,6 +7161,15 @@ const DECK_SLIDES = [
 ];
 
 let currentSlideIdx = 0;
+
+function openFullReactTerminal() {
+  if (window.parent && window.parent !== window) {
+    window.parent.postMessage({ type: 'SWITCH_TO_TRANSLATOR' }, '*');
+  } else {
+    const el = document.getElementById('terminal-section');
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  }
+}
 
 function openDeckModal() {
   const modal = document.getElementById('deck-modal');

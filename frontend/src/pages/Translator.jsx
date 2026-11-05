@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { AlertCircle, Send, X } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import HeroSection from '../components/HeroSection';
