@@ -441,8 +441,8 @@ h1,h2,h3{ font-weight:400; margin:0; letter-spacing:-.005em; }
 .no-webgl .peek-fr{ background:linear-gradient(160deg,#162326,#0b1013 55%,#241010); }
 .no-webgl .word-fb{
   display:block; position:absolute; left:0; right:0; bottom:16%; z-index:1;
-  font-family:'Wordmark','Onest',sans-serif; font-weight:600; font-size:21.4vw; line-height:.78;
-  letter-spacing:.052em; text-align:center; pointer-events:none;
+  font-family:'Wordmark','Onest',sans-serif; font-weight:600; font-size:12.5vw; line-height:.78;
+  letter-spacing:.032em; text-align:center; pointer-events:none;
   background:linear-gradient(#e2ece5, #97a89c); -webkit-background-clip:text; background-clip:text;
   color:transparent;
 }
@@ -1287,7 +1287,7 @@ body[data-layout-footer="b"] .foot-base span:last-child{ text-align:right; }
     <span class="peek-cap"><b style="font-family:var(--font-mono);font-size:10px;color:#00e5ff;letter-spacing:1px">DUAL-OS</b><i>Live Dual-Facing Assistant Preview</i></span>
   </a>
 
-  <div class="word-fb" aria-hidden="true">SCREEN</div>
+  <div class="word-fb" aria-hidden="true">COMMUNICATOR</div>
 
   <div class="hero-side" data-rv="up">
     <span class="v" style="writing-mode:vertical-rl;font-family:var(--font-mono);font-size:11px;letter-spacing:.32em;color:rgba(0,229,255,.6)">ASSISTANT OS</span>
@@ -4099,12 +4099,12 @@ function buildForeground() {
 /* --------------------------------------------------- the giant wordmark */
 const WORD_Z = 3.0;
 function buildWordmark() {
-  /* Set the giant 3D SCREEN wordmark across the communication concourse */
-  const SZ = 320, TRACK = .26, PAD = 26;
+  /* Set the giant 3D COMMUNICATOR wordmark across the communication concourse */
+  const SZ = 320, TRACK = .14, PAD = 26;
   const m = cvs(4, 4).getContext('2d');
   m.font = '600 ' + SZ + 'px Wordmark, "Onest", sans-serif';
   m.textBaseline = 'alphabetic'; m.textAlign = 'left';
-  const word = 'SCREEN', gl = [];
+  const word = 'COMMUNICATOR', gl = [];
   let pen = 0, ascMax = 0, descMax = 0, xMin = 1e9, xMax = -1e9;
   for (const ch of word) {
     const t = m.measureText(ch);
@@ -5884,8 +5884,9 @@ function updateWorld(dt) {
   /* the type rises from behind the grass, then dissolves as you close on it */
   if (WORD.group) {
     const near = smooth(0.02, 0.92, RIG.smooth);
+    const step = 0.48 / Math.max(1, WORD.glyphs.length - 1);
     WORD.glyphs.forEach((g, i) => {
-      const st = clamp((WORD.reveal - i * .075) / .62, 0, 1);
+      const st = clamp((WORD.reveal - i * step) / .62, 0, 1);
       const e = easeOut(st);
       g.position.y = g.userData.baseY - (1 - e) * (WORD.ink.asc * 1.15);
       g.material.opacity = e * (1 - near * .96);
