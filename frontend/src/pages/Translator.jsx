@@ -513,7 +513,7 @@ export default function Translator({ onBackToLanding }) {
 
       {/* Minimal Academic Footer */}
       <footer className="max-w-7xl w-full mx-auto pt-6 text-center text-xs text-slate-500 font-medium">
-        AI Translator — Real-Time Multilingual Communication Assistant • Department of AI & Data Science, CGC University Mohali
+        Communication Assistant — Real-Time Multilingual Translation System • Department of AI & Data Science, CGC University Mohali
       </footer>
     </div>
   );

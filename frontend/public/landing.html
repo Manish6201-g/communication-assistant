@@ -1750,7 +1750,7 @@ body[data-layout-footer="b"] .foot-base span:last-child{ text-align:right; }
     </nav>
 
     <p class="sgf-copy sgf-fade">
-      © 2026<br/>SCREEN-BASED AI COMMUNICATION ASSISTANT — REAL-TIME TRANSLATION OS
+      © 2026<br/>COMMUNICATION ASSISTANT — REAL-TIME TRANSLATION OS
     </p>
 
     <nav aria-label="Platform">
@@ -1763,12 +1763,53 @@ body[data-layout-footer="b"] .foot-base span:last-child{ text-align:right; }
     </nav>
   </div>
 
-  <div class="sgf-mark" style="text-align:center;padding:3rem 1rem 1rem 1rem">
-    <p class="sr-only">AI TRANSLATOR</p>
-    <div style="font-family:var(--font-display);font-size:clamp(36px, 8vw, 84px);font-weight:900;letter-spacing:0.18em;color:#dfe7e0;text-transform:uppercase;line-height:1;margin:0 auto;text-shadow:0 0 30px rgba(0,229,255,0.25)">
-      AI TRANSLATOR
+  <div class="sgf-mark" style="text-align:center;padding:clamp(40px, 6vw, 90px) var(--pad, 24px) clamp(110px, 14vw, 170px);box-sizing:border-box">
+    <p class="sr-only">COMMUNICATION ASSISTANT</p>
+    
+    <!-- Top Cyber Pill Badge -->
+    <div style="display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:5px 16px;border-radius:9999px;background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.3);margin-bottom:1.5rem;box-shadow:0 0 20px rgba(0,229,255,0.15)">
+      <span style="width:8px;height:8px;border-radius:50%;background:#00e5ff;box-shadow:0 0 10px #00e5ff;display:inline-block"></span>
+      <span style="font-family:var(--font-mono);font-size:11px;letter-spacing:0.32em;color:#00e5ff;text-transform:uppercase;font-weight:700">COMMUNICATION ASSISTANT</span>
     </div>
-    <div style="font-family:var(--font-mono);font-size:12px;letter-spacing:0.35em;color:#00e5ff;margin-top:0.75rem;text-transform:uppercase">
+
+    <!-- Authentic Kinetic Split-Flap SVG Wordmark -->
+    <svg id="sgf-svg" class="sgf-svg" viewBox="0 0 1520 110" style="aspect-ratio:1520 / 110;width:100%;max-width:1520px;margin:0 auto;display:block;cursor:pointer" aria-hidden="true" focusable="false">
+      <defs>
+        <clipPath id="sgf-up" clipPathUnits="userSpaceOnUse">
+          <rect x="-100" y="-100" width="1800" height="154.5"/>
+        </clipPath>
+        <clipPath id="sgf-dn" clipPathUnits="userSpaceOnUse">
+          <rect x="-100" y="54.5" width="1800" height="200"/>
+        </clipPath>
+        <linearGradient id="sgf-grad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#ffffff"/>
+          <stop offset="50%" stop-color="#dfe7e0"/>
+          <stop offset="100%" stop-color="#72b5a5"/>
+        </linearGradient>
+      </defs>
+
+      <g class="sgf-g sgf-flip">
+        <!-- Top Half (Slides up-right on hover) -->
+        <g clip-path="url(#sgf-up)">
+          <g class="sgf-half sgf-up">
+            <text x="50%" y="82" text-anchor="middle" font-family="'Wordmark', 'Onest', sans-serif" font-weight="700" font-size="88" letter-spacing="0.10em" fill="url(#sgf-grad)">
+              COMMUNICATION ASSISTANT
+            </text>
+          </g>
+        </g>
+        <!-- Bottom Half (Slides down-left on hover) -->
+        <g clip-path="url(#sgf-dn)">
+          <g class="sgf-half sgf-dn">
+            <text x="50%" y="82" text-anchor="middle" font-family="'Wordmark', 'Onest', sans-serif" font-weight="700" font-size="88" letter-spacing="0.10em" fill="url(#sgf-grad)">
+              COMMUNICATION ASSISTANT
+            </text>
+          </g>
+        </g>
+      </g>
+    </svg>
+
+    <!-- Subtitle -->
+    <div style="font-family:var(--font-mono);font-size:12px;letter-spacing:0.35em;color:#00e5ff;margin-top:1.5rem;text-transform:uppercase;text-align:center">
       REAL-TIME MULTIMODAL COMMUNICATION PLATFORM
     </div>
   </div>
@@ -6195,7 +6236,7 @@ else addEventListener('DOMContentLoaded', boot);
       }
       msg.textContent = "Verified. Subscribing to city dispatch...";
       setTimeout(() => {
-        msg.textContent = "✓ Connected to AI Translator Telemetry Feed";
+        msg.textContent = "✓ Connected to Communication Assistant Telemetry Feed";
         input.value = "";
       }, 700);
     };
@@ -6205,6 +6246,19 @@ else addEventListener('DOMContentLoaded', boot);
     input.addEventListener('keydown', function(e) {
       if (e.key === 'Enter') handleSub(e);
     });
+
+    // Wordmark interactive split-flap flip trigger
+    const sgfSvg = document.getElementById('sgf-svg');
+    if (sgfSvg) {
+      sgfSvg.addEventListener('click', function() {
+        const flipEl = sgfSvg.querySelector('.sgf-flip');
+        if (flipEl) {
+          flipEl.classList.remove('is-flip');
+          void flipEl.offsetWidth;
+          flipEl.classList.add('is-flip');
+        }
+      });
+    }
   }
 })();
 </script>
