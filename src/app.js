@@ -1076,6 +1076,9 @@ class AppState {
       this.updateSuggestedReplies(newText);
       this.updateLiveDisplays();
       this.updateStreamTelemetry("IDLE");
+      if (fromSpeech && translated) {
+        this.speakText(translated, this.agentLang);
+      }
     }, 150);
   }
 
@@ -1097,6 +1100,9 @@ class AppState {
     this.agentTranslatedToCustomer = backTranslated;
     this.updateLiveDisplays();
     this.updateStreamTelemetry("IDLE");
+    if (fromSpeech && backTranslated) {
+      this.speakText(backTranslated, this.customerLang);
+    }
   }
 
   updateSuggestedReplies(customerQuery) {

@@ -1529,7 +1529,17 @@ body[data-layout-footer="b"] .foot-base span:last-child{ text-align:right; }
         <span style="font-family:var(--font-mono);font-size:11px;color:#00e5ff;background:rgba(0,229,255,0.1);border:1px solid rgba(0,229,255,0.3);padding:2px 8px;border-radius:4px">LATENCY: 340ms</span>
       </div>
 
-      <div style="display:flex;align-items:center;gap:0.75rem">
+      <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap">
+        <button id="live-convo-toggle-btn" onclick="toggleLiveConversation()" style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:8px;background:rgba(16,185,129,0.15);border:1px solid #10b981;color:#10b981;font-family:var(--font-mono);font-size:11px;font-weight:700;cursor:pointer;transition:all 0.2s">
+          <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#10b981;box-shadow:0 0 10px #10b981"></span>
+          <span>LIVE AUTO-CONVERSATION: ACTIVE</span>
+        </button>
+
+        <button id="live-speaker-toggle-btn" onclick="toggleSpeakerMute()" style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;background:rgba(0,229,255,0.12);border:1px solid rgba(0,229,255,0.3);color:#00e5ff;font-family:var(--font-mono);font-size:11px;font-weight:700;cursor:pointer;transition:all 0.2s">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+          <span id="speaker-status-label">SPEAKER: ON</span>
+        </button>
+
         <button id="flip-counter-btn" onclick="toggleCounterFlip()" style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#dfe7e0;font-family:var(--font-mono);font-size:11px;cursor:pointer;transition:all 0.2s">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
           <span>Flip Customer View (180°)</span>
@@ -6329,36 +6339,155 @@ let activeCustLang = 'hi-IN';
 let isFlipped = false;
 let currentReplies = NMT_DB[0].replies;
 let currentAgentReply = currentReplies[0];
+let isLiveAutoConversation = true;
+let isSpeakerMuted = false;
+let activeUtterance = null;
+
+// Multi-Tier Live Translation Engine
+async function translateTextLive(text, fromLang, toLang) {
+  if (!text || !text.trim()) return '';
+  const fromClean = fromLang.split('-')[0];
+  const toClean = toLang.split('-')[0];
+  if (fromClean === toClean) return text;
+
+  // 1. Google Translate GTX Endpoint
+  try {
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${fromClean}&tl=${toClean}&dt=t&q=${encodeURIComponent(text.trim())}`;
+    const res = await fetch(url);
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data[0]) {
+        const trans = data[0].map(c => c && c[0] ? c[0] : '').join('');
+        if (trans.trim()) return trans.trim();
+      }
+    }
+  } catch(e) {}
+
+  // 2. Server proxy /api/translate
+  try {
+    const res = await fetch(`/api/translate?text=${encodeURIComponent(text.trim())}&from=${fromClean}&to=${toClean}`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.translated) return data.translated;
+    }
+  } catch(e) {}
+
+  // 3. MyMemory API
+  try {
+    const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text.trim())}&langpair=${fromClean}|${toClean}`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.responseData && data.responseData.translatedText && !data.responseData.translatedText.includes('MYMEMORY WARNING')) {
+        return data.responseData.translatedText;
+      }
+    }
+  } catch(e) {}
+
+  return text;
+}
+
+// Infallible Browser Speech Synthesis (TTS) Engine
+function speakAudioLive(text, langCode, onEnd) {
+  if (!text || isSpeakerMuted || !('speechSynthesis' in window)) {
+    if (onEnd) onEnd();
+    return;
+  }
+
+  try {
+    window.speechSynthesis.cancel();
+    if (window.speechSynthesis.paused) {
+      window.speechSynthesis.resume();
+    }
+  } catch(e) {}
+
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.lang = langCode;
+  utt.rate = 1.0;
+  activeUtterance = utt;
+
+  const voices = window.speechSynthesis.getVoices();
+  if (voices && voices.length > 0) {
+    const prefix = langCode.split('-')[0].toLowerCase();
+    const match = voices.find(v => v.lang.toLowerCase().replace('_', '-') === langCode.toLowerCase().replace('_', '-')) ||
+                  voices.find(v => v.lang.toLowerCase().startsWith(prefix));
+    if (match) utt.voice = match;
+  }
+
+  let finished = false;
+  const done = () => {
+    if (finished) return;
+    finished = true;
+    activeUtterance = null;
+    if (onEnd) onEnd();
+  };
+
+  utt.onstart = () => {};
+  utt.onend = done;
+  utt.onerror = done;
+
+  const safetyTimer = setTimeout(done, Math.max(3500, text.length * 120));
+  utt.addEventListener('end', () => clearTimeout(safetyTimer));
+  utt.addEventListener('error', () => clearTimeout(safetyTimer));
+
+  setTimeout(() => {
+    try {
+      window.speechSynthesis.resume();
+      window.speechSynthesis.speak(utt);
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+      }
+    } catch(e) {
+      done();
+    }
+  }, 40);
+}
+
+function toggleSpeakerMute() {
+  isSpeakerMuted = !isSpeakerMuted;
+  const label = document.getElementById('speaker-status-label');
+  const btn = document.getElementById('live-speaker-toggle-btn');
+  if (label) label.innerText = isSpeakerMuted ? 'SPEAKER: MUTED' : 'SPEAKER: ON';
+  if (btn) {
+    btn.style.color = isSpeakerMuted ? '#ff5a3c' : '#00e5ff';
+    btn.style.borderColor = isSpeakerMuted ? 'rgba(255,90,60,0.4)' : 'rgba(0,229,255,0.3)';
+    btn.style.background = isSpeakerMuted ? 'rgba(255,90,60,0.12)' : 'rgba(0,229,255,0.12)';
+  }
+  if (isSpeakerMuted && 'speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+  }
+}
 
 // Handle Customer Typed/Spoken Input
-async function handleCustomerInput(val) {
+async function handleCustomerInput(val, autoSpeak = true) {
   const display = document.getElementById('live-agent-translation-display');
   if (!val || !val.trim()) {
     if (display) display.innerText = "(Awaiting input...)";
     return;
   }
 
-  // Find in DB
+  const fromShort = activeCustLang.split('-')[0];
   const lower = val.toLowerCase();
   let found = NMT_DB.find(item => item.keywords.some(k => lower.includes(k)));
-  
+  let translatedEnglish = '';
+
   if (found) {
-    if (display) display.innerText = '"' + found.en + '"';
+    translatedEnglish = found.en;
     updateReplies(found.replies);
   } else {
-    // Try translation API
-    try {
-      const fromShort = activeCustLang.split('-')[0];
-      const res = await fetch('/api/translate?text=' + encodeURIComponent(val) + '&from=' + fromShort + '&to=en');
-      if (res.ok) {
-        const data = await res.json();
-        if (data.translated && display) {
-          display.innerText = '"' + data.translated + '"';
-        }
+    translatedEnglish = await translateTextLive(val, fromShort, 'en');
+  }
+
+  const resultEnglish = translatedEnglish || val;
+  if (display) display.innerText = '"' + resultEnglish + '"';
+
+  // Automatically speak English translation via speaker out loud to Agent Desk
+  if (autoSpeak && resultEnglish) {
+    speakAudioLive(resultEnglish, 'en-US', () => {
+      // If live auto-conversation is active, hand over and listen to the agent
+      if (isLiveAutoConversation) {
+        setTimeout(startAgentListeningAuto, 400);
       }
-    } catch(e) {
-      if (display) display.innerText = '"' + val + '"';
-    }
+    });
   }
 }
 
@@ -6372,31 +6501,48 @@ function updateReplies(replies) {
   }
 }
 
-function selectReply(idx) {
+async function selectReply(idx) {
   if (currentReplies[idx]) {
-    currentAgentReply = currentReplies[idx];
-    const replyBoxText = document.getElementById('customer-agent-reply-text');
-    if (replyBoxText) replyBoxText.innerText = '"' + currentAgentReply + '"';
+    const englishReply = currentReplies[idx];
+    currentAgentReply = englishReply;
     const agentInput = document.getElementById('agent-reply-input');
-    if (agentInput) agentInput.value = currentAgentReply;
-    speakAgentReply();
+    if (agentInput) agentInput.value = englishReply;
+    await processAgentSpeech(englishReply);
   }
 }
 
-function handleAgentInput(val) {
-  if (!val) return;
+async function handleAgentInput(val) {
+  if (!val || !val.trim()) return;
   currentAgentReply = val;
+  await processAgentSpeech(val);
+}
+
+// Translate Agent English Speech into Customer's Native Language and Auto-Speak via Speaker
+async function processAgentSpeech(englishText, autoSpeak = true) {
   const replyBoxText = document.getElementById('customer-agent-reply-text');
-  if (replyBoxText) replyBoxText.innerText = '"' + val + '"';
+  const toLang = activeCustLang.split('-')[0];
+
+  let nativeTranslation = '';
+  // Check if current reply matches preset or translate live
+  nativeTranslation = await translateTextLive(englishText, 'en', toLang);
+
+  const finalNativeText = nativeTranslation || englishText;
+  if (replyBoxText) replyBoxText.innerText = '"' + finalNativeText + '"';
+
+  if (autoSpeak && finalNativeText) {
+    speakAudioLive(finalNativeText, activeCustLang, () => {
+      // If live auto-conversation is active, hand over and listen to the passenger
+      if (isLiveAutoConversation) {
+        setTimeout(startCustomerListeningAuto, 400);
+      }
+    });
+  }
 }
 
 function speakAgentReply() {
-  if ('speechSynthesis' in window && currentAgentReply) {
-    window.speechSynthesis.cancel();
-    const utt = new SpeechSynthesisUtterance(currentAgentReply);
-    utt.lang = 'en-US';
-    window.speechSynthesis.speak(utt);
-  }
+  const replyBoxText = document.getElementById('customer-agent-reply-text');
+  const text = replyBoxText ? replyBoxText.innerText.replace(/^"|"$/g, '') : currentAgentReply;
+  speakAudioLive(text, activeCustLang);
 }
 
 function toggleCounterFlip() {
@@ -6453,7 +6599,7 @@ function initSpeech() {
       if (isCustRecording) {
         const input = document.getElementById('customer-text-input');
         if (input) input.value = transcript;
-        handleCustomerInput(transcript);
+        handleCustomerInput(transcript, true);
       } else if (isAgentRecording) {
         const input = document.getElementById('agent-reply-input');
         if (input) input.value = transcript;
@@ -6469,6 +6615,26 @@ function initSpeech() {
   };
 }
 
+function startCustomerListeningAuto() {
+  if (!recognition) initSpeech();
+  if (!recognition) return;
+  isCustRecording = true;
+  isAgentRecording = false;
+  recognition.lang = activeCustLang;
+  try { recognition.start(); } catch(e){}
+  updateMicStyles();
+}
+
+function startAgentListeningAuto() {
+  if (!recognition) initSpeech();
+  if (!recognition) return;
+  isAgentRecording = true;
+  isCustRecording = false;
+  recognition.lang = 'en-US';
+  try { recognition.start(); } catch(e){}
+  updateMicStyles();
+}
+
 function toggleCustomerMic() {
   if (!recognition) initSpeech();
   if (!recognition) {
@@ -6478,11 +6644,7 @@ function toggleCustomerMic() {
   if (isCustRecording) {
     recognition.stop();
   } else {
-    isCustRecording = true;
-    isAgentRecording = false;
-    recognition.lang = activeCustLang;
-    try { recognition.start(); } catch(e){}
-    updateMicStyles();
+    startCustomerListeningAuto();
   }
 }
 
@@ -6495,11 +6657,24 @@ function toggleAgentMic() {
   if (isAgentRecording) {
     recognition.stop();
   } else {
-    isAgentRecording = true;
-    isCustRecording = false;
-    recognition.lang = 'en-US';
-    try { recognition.start(); } catch(e){}
-    updateMicStyles();
+    startAgentListeningAuto();
+  }
+}
+
+function toggleLiveConversation() {
+  isLiveAutoConversation = !isLiveAutoConversation;
+  const btn = document.getElementById('live-convo-toggle-btn');
+  if (btn) {
+    btn.innerHTML = isLiveAutoConversation
+      ? '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#10b981;box-shadow:0 0 10px #10b981"></span><span>LIVE AUTO-CONVERSATION: ACTIVE</span>'
+      : '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#64748b"></span><span>LIVE AUTO-CONVERSATION: OFF</span>';
+    btn.style.borderColor = isLiveAutoConversation ? '#10b981' : 'rgba(223,231,224,0.15)';
+    btn.style.color = isLiveAutoConversation ? '#10b981' : '#dfe7e0';
+  }
+  if (isLiveAutoConversation) {
+    startCustomerListeningAuto();
+  } else {
+    if (recognition) recognition.stop();
   }
 }
 

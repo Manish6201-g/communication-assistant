@@ -183,8 +183,11 @@ export function useTranslationSocket({ personALang, personBLang, domain }) {
     setPartialTranscript(null);
   }, [personALang, personBLang, connectionStatus]);
 
-  const sendDirectText = useCallback(async (text, speaker = activeSpeaker) => {
-    if (!text || !text.trim()) return;
+  const sendDirectText = useCallback(async (text, speaker = activeSpeaker, options = {}) => {
+    if (!text || !text.trim()) {
+      options.onSpeechEnd?.();
+      return null;
+    }
     const src = speaker === 'person_a' ? personALang : personBLang;
     const tgt = speaker === 'person_a' ? personBLang : personALang;
 
@@ -196,6 +199,7 @@ export function useTranslationSocket({ personALang, personBLang, domain }) {
         source_language: src,
         target_language: tgt
       });
+      return null;
     } else {
       // Direct high-accuracy Client NMT (Google Neural NMT / MyMemory / NMT Cache)
       try {
@@ -221,9 +225,22 @@ export function useTranslationSocket({ personALang, personBLang, domain }) {
         setMessages((prev) => [...prev.slice(-49), newMsg]);
         setLatestLatency(newMsg.latency);
         clientTranslationService.playFeedbackTone('translated');
-        clientTranslationService.speak(result.translatedText, tgt);
+
+        // Automatically speak translated output via speaker out loud to target listener
+        clientTranslationService.speak(result.translatedText, tgt, {
+          onStart: () => {
+            options.onSpeechStart?.();
+          },
+          onEnd: () => {
+            options.onSpeechEnd?.();
+          }
+        });
+
+        return newMsg;
       } catch (err) {
         console.error('Client NMT translation error:', err);
+        options.onSpeechEnd?.();
+        return null;
       }
     }
   }, [activeSpeaker, personALang, personBLang, connectionStatus]);

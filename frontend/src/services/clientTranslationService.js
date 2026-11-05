@@ -136,6 +136,24 @@ class ClientTranslationService {
     this.audioContext = null;
     this.currentAudioElement = null;
     this.activeRecognition = null;
+    this.currentUtterance = null;
+    this.isSpeakerEnabled = true;
+
+    // Cache available browser TTS voices as soon as they load
+    this.voices = [];
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      this.voices = window.speechSynthesis.getVoices();
+      window.speechSynthesis.onvoiceschanged = () => {
+        this.voices = window.speechSynthesis.getVoices();
+      };
+    }
+  }
+
+  setSpeakerEnabled(enabled) {
+    this.isSpeakerEnabled = !!enabled;
+    if (!this.isSpeakerEnabled && typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
   }
 
   /**
@@ -239,11 +257,64 @@ class ClientTranslationService {
 
     const startTime = performance.now();
 
-    // TIER 1: Google NMT Neural API (clients5.google.com)
+    // TIER 1: Google Translate GTX Endpoint (Public, High-Fidelity NMT, No Auth Required)
+    try {
+      const gtxUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${encodeURIComponent(fromLang)}&tl=${encodeURIComponent(toLang)}&dt=t&q=${encodeURIComponent(trimmed)}`;
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 4000);
+
+      const resp = await fetch(gtxUrl, { signal: controller.signal });
+      clearTimeout(timeoutId);
+
+      if (resp.ok) {
+        const data = await resp.json();
+        if (Array.isArray(data) && Array.isArray(data[0])) {
+          const translated = data[0].map(item => item && item[0] ? item[0] : '').filter(Boolean).join('');
+          if (translated && translated.trim()) {
+            const latencyMs = Math.round(performance.now() - startTime);
+            this.cache.set(cacheKey, translated.trim());
+            return {
+              translatedText: translated.trim(),
+              latencyMs,
+              provider: 'Google Neural Machine Translation (GTX)'
+            };
+          }
+        }
+      }
+    } catch (err) {
+      console.info('Tier 1 GTX fallback:', err.message);
+    }
+
+    // TIER 2: Local Backend API proxy (if running on server /api/translate)
+    try {
+      const apiUrl = `/api/translate?text=${encodeURIComponent(trimmed)}&from=${encodeURIComponent(fromLang)}&to=${encodeURIComponent(toLang)}`;
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3500);
+
+      const resp = await fetch(apiUrl, { signal: controller.signal });
+      clearTimeout(timeoutId);
+
+      if (resp.ok) {
+        const data = await resp.json();
+        if (data && data.translated && data.translated.trim()) {
+          const latencyMs = Math.round(performance.now() - startTime);
+          this.cache.set(cacheKey, data.translated.trim());
+          return {
+            translatedText: data.translated.trim(),
+            latencyMs,
+            provider: 'Server NMT Cluster'
+          };
+        }
+      }
+    } catch (err) {
+      // Local server unavailable (e.g. running on Vercel standalone)
+    }
+
+    // TIER 3: Google NMT Neural API (clients5.google.com)
     try {
       const gUrl = `https://clients5.google.com/translate_a/t?client=dict-chrome-ex&sl=${encodeURIComponent(fromLang)}&tl=${encodeURIComponent(toLang)}&q=${encodeURIComponent(trimmed)}`;
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 4500);
+      const timeoutId = setTimeout(() => controller.abort(), 4000);
 
       const gResp = await fetch(gUrl, { signal: controller.signal });
       clearTimeout(timeoutId);
@@ -265,43 +336,15 @@ class ClientTranslationService {
           return {
             translatedText: translated.trim(),
             latencyMs,
-            provider: 'Google Neural Machine Translation (GNMT)'
+            provider: 'Google NMT Cloud'
           };
         }
       }
     } catch (err) {
-      console.info('Tier 1 GNMT fetch fallback:', err.message);
+      console.info('Tier 3 GNMT fetch fallback:', err.message);
     }
 
-    // TIER 2: Google Single NMT Endpoint (translate.google.com)
-    try {
-      const singleUrl = `https://translate.google.com/translate_a/single?client=tw-ob&sl=${encodeURIComponent(fromLang)}&tl=${encodeURIComponent(toLang)}&dt=t&q=${encodeURIComponent(trimmed)}`;
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 4500);
-
-      const resp = await fetch(singleUrl, { signal: controller.signal });
-      clearTimeout(timeoutId);
-
-      if (resp.ok) {
-        const data = await resp.json();
-        if (Array.isArray(data) && Array.isArray(data[0])) {
-          const translated = data[0].map(item => item[0]).filter(Boolean).join('');
-          if (translated && translated.trim()) {
-            const latencyMs = Math.round(performance.now() - startTime);
-            this.cache.set(cacheKey, translated.trim());
-            return {
-              translatedText: translated.trim(),
-              latencyMs,
-              provider: 'Google NMT Neural Cluster'
-            };
-          }
-        }
-      }
-    } catch (err) {
-      console.info('Tier 2 single NMT fallback:', err.message);
-    }
-
-    // TIER 3: MyMemory API
+    // TIER 4: MyMemory API
     try {
       const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(trimmed)}&langpair=${fromLang}|${toLang}`;
       const controller = new AbortController();
@@ -327,10 +370,10 @@ class ClientTranslationService {
         }
       }
     } catch (err) {
-      console.info('Tier 3 MyMemory fallback:', err.message);
+      console.info('Tier 4 MyMemory fallback:', err.message);
     }
 
-    // TIER 4: Local High-Precision Neural Dictionary
+    // TIER 5: Local High-Precision Neural Dictionary
     const normalized = trimmed.toLowerCase().replace(/[.,/#!$%^&*;:{}=\-_`~()?]/g, "").trim();
     if (FALLBACK_DICTIONARY[normalized] && FALLBACK_DICTIONARY[normalized][toLang]) {
       const match = FALLBACK_DICTIONARY[normalized][toLang];
@@ -352,75 +395,109 @@ class ClientTranslationService {
 
   /**
    * Text-to-Speech Engine
+   * Speaks translated text automatically with zero stall, voice auto-detection,
+   * GC protection, and onEnd notification for live conversation looping.
    */
   speak(text, langCode, callbacks = {}) {
-    if (!text || !text.trim()) return;
-
-    if (this.currentAudioElement) {
-      try {
-        this.currentAudioElement.pause();
-        this.currentAudioElement.currentTime = 0;
-      } catch (e) {}
-      this.currentAudioElement = null;
+    if (!text || !text.trim() || !this.isSpeakerEnabled) {
+      callbacks.onEnd?.();
+      return;
     }
 
-    if ('speechSynthesis' in window) {
+    const cleanText = text.trim();
+
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+      console.warn('Speech synthesis not available in this environment');
+      callbacks.onEnd?.();
+      return;
+    }
+
+    try {
+      // Clear previous queue to prevent backlog
       window.speechSynthesis.cancel();
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+      }
+    } catch (e) {
+      console.warn('SpeechSynthesis reset warning:', e);
     }
 
     const langObj = SUPPORTED_LANGUAGES.find(l => l.code === langCode);
-    const ttsLocale = langObj ? langObj.ttsLang : 'en-US';
+    const ttsLocale = langObj ? langObj.ttsLang : (langCode.includes('-') ? langCode : `${langCode}-${langCode.toUpperCase()}`);
 
-    // For Indian languages and mobile browsers, online TTS audio stream delivers authentic accent
-    const preferOnlineTTS = ['pa', 'mr', 'gu', 'te', 'ta', 'bn', 'ur', 'hi'];
-    if (preferOnlineTTS.includes(langCode) || !('speechSynthesis' in window)) {
-      try {
-        const cleanText = encodeURIComponent(text.trim().slice(0, 150));
-        const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=${encodeURIComponent(langCode)}&client=tw-ob&q=${cleanText}`;
-        const audio = new Audio(ttsUrl);
-        this.currentAudioElement = audio;
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.lang = ttsLocale;
+    utterance.rate = 1.0;
+    utterance.pitch = 1.0;
 
-        audio.onplay = () => callbacks.onStart?.();
-        audio.onended = () => {
-          this.currentAudioElement = null;
-          callbacks.onEnd?.();
-        };
-        audio.onerror = () => {
-          this.fallbackBrowserTTS(text, ttsLocale, callbacks);
-        };
+    // Prevent Chrome garbage collection bug: hold reference on window and instance
+    window._activeUtterance = utterance;
+    this.currentUtterance = utterance;
 
-        audio.play().catch(() => {
-          this.fallbackBrowserTTS(text, ttsLocale, callbacks);
-        });
-        return;
-      } catch (e) {
-        // Fall back to browser speech synthesis
+    // Match best native voice for this language
+    const voices = this.voices && this.voices.length > 0 ? this.voices : window.speechSynthesis.getVoices();
+    if (voices && voices.length > 0) {
+      const cleanLocale = ttsLocale.toLowerCase().replace('_', '-');
+      const langPrefix = cleanLocale.split('-')[0];
+
+      // Exact match (e.g. hi-IN, en-US)
+      let match = voices.find(v => v.lang.toLowerCase().replace('_', '-') === cleanLocale);
+      
+      // Prefix match (e.g. hi, en)
+      if (!match) {
+        match = voices.find(v => v.lang.toLowerCase().replace('_', '-').startsWith(langPrefix));
+      }
+      
+      if (match) {
+        utterance.voice = match;
       }
     }
 
-    this.fallbackBrowserTTS(text, ttsLocale, callbacks);
-  }
+    let hasEnded = false;
+    const finish = () => {
+      if (hasEnded) return;
+      hasEnded = true;
+      window._activeUtterance = null;
+      this.currentUtterance = null;
+      callbacks.onEnd?.();
+    };
 
-  fallbackBrowserTTS(text, ttsLocale, callbacks = {}) {
-    if (!('speechSynthesis' in window)) return;
-    try {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = ttsLocale;
-      utterance.rate = 1.0;
-      utterance.pitch = 1.0;
+    utterance.onstart = () => {
+      callbacks.onStart?.();
+    };
 
-      const voices = window.speechSynthesis.getVoices();
-      const match = voices.find(v => v.lang.toLowerCase() === ttsLocale.toLowerCase() || v.lang.startsWith(ttsLocale.slice(0, 2)));
-      if (match) utterance.voice = match;
+    utterance.onend = finish;
+    utterance.onerror = (e) => {
+      console.warn('TTS utterance event error:', e);
+      finish();
+    };
 
-      utterance.onstart = () => callbacks.onStart?.();
-      utterance.onend = () => callbacks.onEnd?.();
-      utterance.onerror = (e) => callbacks.onError?.(e);
+    // Safety timeout: Chrome occasionally misses onend for certain speech engines
+    // Allocate ~120ms per character plus 3500ms baseline
+    const maxDurationMs = Math.max(3500, cleanText.length * 120);
+    const safetyTimer = setTimeout(() => {
+      if (!hasEnded) {
+        finish();
+      }
+    }, maxDurationMs);
 
-      window.speechSynthesis.speak(utterance);
-    } catch (e) {
-      console.warn('Browser TTS error:', e);
-    }
+    utterance.addEventListener('end', () => clearTimeout(safetyTimer));
+    utterance.addEventListener('error', () => clearTimeout(safetyTimer));
+
+    // Slight delay before speaking so synthesis engine can initialize
+    setTimeout(() => {
+      try {
+        window.speechSynthesis.resume();
+        window.speechSynthesis.speak(utterance);
+        // Additional resume kick for Chrome WebKit engine
+        if (window.speechSynthesis.paused) {
+          window.speechSynthesis.resume();
+        }
+      } catch (err) {
+        console.warn('Failed to trigger speech synthesis:', err);
+        finish();
+      }
+    }, 40);
   }
 
   /**

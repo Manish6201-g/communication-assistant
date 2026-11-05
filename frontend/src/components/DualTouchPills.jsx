@@ -7,7 +7,9 @@ import {
   Keyboard, 
   ChevronDown,
   Volume2,
-  SlidersHorizontal
+  VolumeX,
+  Radio,
+  Zap
 } from 'lucide-react';
 import { LANGUAGES } from './LanguageSelectorModal';
 
@@ -17,6 +19,11 @@ export default function DualTouchPills({
   isListening,
   activeSpeaker,
   audioLevel,
+  isLiveAutoMode = true,
+  onToggleLiveAutoMode,
+  isSpeakerEnabled = true,
+  onToggleSpeaker,
+  isSpeakerPlaying = false,
   onStartForSpeaker,
   onStopListening,
   onOpenLanguageModal,
@@ -33,7 +40,55 @@ export default function DualTouchPills({
   const isVisitorSpeaking = isListening && activeSpeaker === 'person_b';
 
   return (
-    <div className="w-full max-w-4xl mx-auto">
+    <div className="w-full max-w-4xl mx-auto space-y-2.5">
+      
+      {/* Top Hands-Free Live Mode & Speaker Toolbar */}
+      <div className="flex flex-wrap items-center justify-between gap-2 px-3 py-1.5 bg-[#0A0F1D]/80 backdrop-blur-md rounded-2xl border border-white/5 text-xs">
+        
+        {/* Live Auto-Conversation Mode Pill */}
+        <button
+          onClick={onToggleLiveAutoMode}
+          title={isLiveAutoMode ? "Live Auto-Conversation is ON: Speaks and listens hands-free back-and-forth" : "Click to enable Live Hands-Free Auto-Conversation"}
+          className={`flex items-center gap-2 px-3 py-1.5 rounded-xl font-bold transition-all border ${
+            isLiveAutoMode
+              ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.25)]'
+              : 'bg-slate-900 border-white/10 text-slate-400 hover:text-slate-200'
+          }`}
+        >
+          <span className={`w-2 h-2 rounded-full ${isLiveAutoMode ? 'bg-emerald-400 animate-pulse' : 'bg-slate-500'}`} />
+          <Radio className="w-3.5 h-3.5" />
+          <span>LIVE AUTO-CONVERSATION: {isLiveAutoMode ? 'ACTIVE (HANDS-FREE)' : 'OFF (MANUAL)'}</span>
+        </button>
+
+        {/* Speaker Auto-TTS Pill */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={onToggleSpeaker}
+            title={isSpeakerEnabled ? "Speaker Output is ON: Spoken translations play out loud automatically" : "Speaker is Muted"}
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl font-bold transition-all border ${
+              isSpeakerEnabled
+                ? isSpeakerPlaying
+                  ? 'bg-cyan-500/20 border-cyan-400 text-cyan-300 animate-pulse shadow-[0_0_12px_rgba(6,182,212,0.4)]'
+                  : 'bg-sky-500/10 border-sky-500/30 text-sky-300'
+                : 'bg-rose-500/10 border-rose-500/30 text-rose-300'
+            }`}
+          >
+            {isSpeakerEnabled ? (
+              <>
+                <Volume2 className="w-3.5 h-3.5" />
+                <span>{isSpeakerPlaying ? 'SPEAKING AUDIO...' : 'SPEAKER: ON'}</span>
+              </>
+            ) : (
+              <>
+                <VolumeX className="w-3.5 h-3.5" />
+                <span>SPEAKER: MUTED</span>
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Main Dual-Touch Station */}
       <div className="bg-[#0D1322]/90 backdrop-blur-2xl rounded-3xl border border-white/10 p-3 sm:p-4 shadow-glass">
         <div className="flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4">
           

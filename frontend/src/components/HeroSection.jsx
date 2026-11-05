@@ -79,7 +79,7 @@ export default function HeroSection({
 
         {/* Hero Subtitle */}
         <p className="text-sm sm:text-base text-slate-300 max-w-2xl mx-auto leading-relaxed font-light">
-          Transform omnipresent countertop monitors, kiosks, and tablets into instant bidirectional visual translation terminals. Pure software engineering, zero procurement cost, &lt; 480ms streaming latency.
+          Bidirectional hands-free speech-to-speech translation assistant. As one person speaks, neural translation triggers automatically with instant screen captions and synchronized speaker voice output.
         </p>
 
         {/* Interactive Action CTAs */}
@@ -91,7 +91,7 @@ export default function HeroSection({
             className="flex items-center gap-2.5 px-6 py-3 rounded-2xl bg-gradient-to-r from-sky-400 to-blue-500 hover:from-sky-300 hover:to-blue-400 text-slate-950 font-bold text-sm shadow-glow-sky transition transform active:scale-95"
           >
             <Mic className="w-4 h-4 text-slate-950" />
-            <span>{isListening ? 'Active Listening...' : `Start in ${operatorLangName}`}</span>
+            <span>{isListening ? 'Active Listening...' : `Start Live in ${operatorLangName}`}</span>
             <ArrowRight className="w-4 h-4 text-slate-950 ml-0.5" />
           </button>
 

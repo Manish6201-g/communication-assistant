@@ -29,9 +29,33 @@ export default function Translator({ onBackToLanding }) {
   const [showTextInput, setShowTextInput] = useState(false);
   const [customText, setCustomText] = useState('');
 
-  // Standalone Client-Side Voice State
+  // Standalone Client-Side Voice State & Live Hands-Free Loop
   const [isClientListening, setIsClientListening] = useState(false);
   const [clientAudioLevel, setClientAudioLevel] = useState(0);
+  const [isLiveAutoMode, setIsLiveAutoMode] = useState(true);
+  const isLiveAutoModeRef = useRef(true);
+  const handoverTimeoutRef = useRef(null);
+
+  // Speaker TTS Status
+  const [isSpeakerEnabled, setIsSpeakerEnabled] = useState(true);
+  const [isSpeakerPlaying, setIsSpeakerPlaying] = useState(false);
+  const [livePhase, setLivePhase] = useState('idle'); // idle, listening, translating, speaking, handover
+  const [liveStatusText, setLiveStatusText] = useState('');
+
+  // Keep isLiveAutoModeRef synchronized
+  useEffect(() => {
+    isLiveAutoModeRef.current = isLiveAutoMode;
+    if (!isLiveAutoMode && handoverTimeoutRef.current) {
+      clearTimeout(handoverTimeoutRef.current);
+      handoverTimeoutRef.current = null;
+    }
+  }, [isLiveAutoMode]);
+
+  const toggleSpeaker = () => {
+    const next = !isSpeakerEnabled;
+    setIsSpeakerEnabled(next);
+    clientTranslationService.setSpeakerEnabled(next);
+  };
 
   // Translation Hook (WebSocket + Multi-Tier NMT Fallback)
   const {
@@ -63,10 +87,10 @@ export default function Translator({ onBackToLanding }) {
     stopCapture
   } = useAudioCapture({ onAudioChunk: handleAudioChunk });
 
-  // Oscillate visualizer waveform while speaking in client speech recognition
+  // Oscillate visualizer waveform while speaking or playing TTS audio
   useEffect(() => {
     let interval;
-    if (isClientListening) {
+    if (isClientListening || isSpeakerPlaying) {
       interval = setInterval(() => {
         setClientAudioLevel(0.35 + Math.random() * 0.45);
       }, 120);
@@ -74,27 +98,43 @@ export default function Translator({ onBackToLanding }) {
       setClientAudioLevel(0);
     }
     return () => clearInterval(interval);
-  }, [isClientListening]);
+  }, [isClientListening, isSpeakerPlaying]);
 
   const isListening = connectionStatus === 'connected' ? isCapturing : isClientListening;
   const currentAudioLevel = connectionStatus === 'connected' ? audioLevel : clientAudioLevel;
 
-  // Direct Start for specific speaker (Speaker A or Speaker B)
-  const handleStartForSpeaker = async (speaker) => {
+  const getLangName = (code) => {
+    const found = LANGUAGES.find((l) => l.code === code);
+    return found ? found.name : code.toUpperCase();
+  };
+
+  // Direct Start for specific speaker (Speaker A or Speaker B) with Hands-Free Continuous Handover
+  const handleStartForSpeaker = async (speaker, isAutoTurn = false) => {
+    if (handoverTimeoutRef.current) {
+      clearTimeout(handoverTimeoutRef.current);
+      handoverTimeoutRef.current = null;
+    }
+
     switchSpeaker(speaker);
 
     if (connectionStatus === 'connected') {
       await startCapture();
       startListeningSocket(speaker);
     } else {
-      // High-Accuracy Client-Side Speech Recognition (Web Speech API with Speaker's Exact Language Code)
       const speakerLang = speaker === 'person_a' ? personALang : personBLang;
+      const targetLang = speaker === 'person_a' ? personBLang : personALang;
+      const speakerLabel = speaker === 'person_a' ? `Operator (${getLangName(personALang)})` : `Visitor (${getLangName(personBLang)})`;
+      const targetLabel = speaker === 'person_a' ? `Visitor (${getLangName(personBLang)})` : `Operator (${getLangName(personALang)})`;
+
       setIsClientListening(true);
+      setLivePhase('listening');
+      setLiveStatusText(`🎙️ Listening to ${speakerLabel}... Speak now`);
 
       clientTranslationService.startSpeechRecognition({
         langCode: speakerLang,
         onStart: () => {
           setIsClientListening(true);
+          setLivePhase('listening');
         },
         onInterim: (interimText) => {
           setPartialTranscript({
@@ -102,30 +142,85 @@ export default function Translator({ onBackToLanding }) {
             speaker_role: speaker,
             source_text: interimText
           });
+          setLivePhase('listening');
+          setLiveStatusText(`🎙️ ${speakerLabel}: "${interimText}"`);
         },
         onEnd: async (finalText) => {
           setIsClientListening(false);
           setPartialTranscript(null);
+
           if (finalText && finalText.trim()) {
-            await sendDirectText(finalText.trim(), speaker);
+            setLivePhase('translating');
+            setLiveStatusText(`⚡ Translating ${speakerLabel} speech to ${targetLabel}...`);
+
+            await sendDirectText(finalText.trim(), speaker, {
+              onSpeechStart: () => {
+                setIsSpeakerPlaying(true);
+                setLivePhase('speaking');
+                setLiveStatusText(`🔊 Speaking translated output out loud to ${targetLabel}...`);
+              },
+              onSpeechEnd: () => {
+                setIsSpeakerPlaying(false);
+                setLivePhase('idle');
+                setLiveStatusText('');
+
+                // If Live Auto Mode is active, switch turn to the other speaker automatically!
+                if (isLiveAutoModeRef.current) {
+                  const nextSpeaker = speaker === 'person_a' ? 'person_b' : 'person_a';
+                  const nextLabel = nextSpeaker === 'person_a' ? `Operator (${getLangName(personALang)})` : `Visitor (${getLangName(personBLang)})`;
+                  setLivePhase('handover');
+                  setLiveStatusText(`👉 Turn handed over to ${nextLabel}... Listening automatically`);
+
+                  handoverTimeoutRef.current = setTimeout(() => {
+                    if (isLiveAutoModeRef.current) {
+                      handleStartForSpeaker(nextSpeaker, true);
+                    }
+                  }, 400);
+                }
+              }
+            });
+          } else {
+            // Silence / pause detected
+            if (isLiveAutoModeRef.current && isAutoTurn) {
+              handoverTimeoutRef.current = setTimeout(() => {
+                if (isLiveAutoModeRef.current) {
+                  handleStartForSpeaker(speaker, true);
+                }
+              }, 450);
+            } else {
+              setLivePhase('idle');
+              setLiveStatusText('');
+            }
           }
         },
         onError: () => {
           setIsClientListening(false);
           setPartialTranscript(null);
+          setLivePhase('idle');
+          setLiveStatusText('');
         }
       });
     }
   };
 
   const handleStopListening = () => {
+    if (handoverTimeoutRef.current) {
+      clearTimeout(handoverTimeoutRef.current);
+      handoverTimeoutRef.current = null;
+    }
     if (connectionStatus === 'connected') {
       stopCapture();
       stopListeningSocket();
     } else {
       clientTranslationService.stopSpeechRecognition();
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
       setIsClientListening(false);
       setPartialTranscript(null);
+      setLivePhase('idle');
+      setLiveStatusText('');
+      setIsSpeakerPlaying(false);
     }
   };
 
@@ -177,17 +272,24 @@ export default function Translator({ onBackToLanding }) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isListening, activeSpeaker]);
 
-  const handleDirectTextSubmit = (e) => {
+  const handleDirectTextSubmit = async (e) => {
     e.preventDefault();
     if (!customText.trim()) return;
-    sendDirectText(customText.trim(), activeSpeaker);
+    const text = customText.trim();
     setCustomText('');
     setShowTextInput(false);
-  };
-
-  const getLangName = (code) => {
-    const found = LANGUAGES.find((l) => l.code === code);
-    return found ? found.name : code.toUpperCase();
+    await sendDirectText(text, activeSpeaker, {
+      onSpeechStart: () => {
+        setIsSpeakerPlaying(true);
+        setLivePhase('speaking');
+        setLiveStatusText('🔊 Speaking translated audio out loud...');
+      },
+      onSpeechEnd: () => {
+        setIsSpeakerPlaying(false);
+        setLivePhase('idle');
+        setLiveStatusText('');
+      }
+    });
   };
 
   return (
@@ -239,13 +341,18 @@ export default function Translator({ onBackToLanding }) {
           </div>
         )}
 
-        {/* Dual Direct-Touch Mic Pods */}
+        {/* Dual Direct-Touch Mic Pods with Live Hands-Free & Speaker Controls */}
         <DualTouchPills
           personALang={personALang}
           personBLang={personBLang}
           isListening={isListening}
           activeSpeaker={activeSpeaker}
           audioLevel={currentAudioLevel}
+          isLiveAutoMode={isLiveAutoMode}
+          onToggleLiveAutoMode={() => setIsLiveAutoMode(!isLiveAutoMode)}
+          isSpeakerEnabled={isSpeakerEnabled}
+          onToggleSpeaker={toggleSpeaker}
+          isSpeakerPlaying={isSpeakerPlaying}
           onStartForSpeaker={handleStartForSpeaker}
           onStopListening={handleStopListening}
           onOpenLanguageModal={(target) => setLanguageModalTarget(target)}
@@ -254,6 +361,26 @@ export default function Translator({ onBackToLanding }) {
           onToggleTextInput={() => setShowTextInput(!showTextInput)}
           disabled={false}
         />
+
+        {/* Live Conversation Status & Voice Phase Feedback Banner */}
+        {liveStatusText && (
+          <div className="w-full max-w-4xl mx-auto p-3 bg-[#0A101D]/90 backdrop-blur-xl border border-sky-400/40 rounded-2xl flex items-center justify-between gap-3 text-xs sm:text-sm shadow-[0_0_25px_rgba(56,189,248,0.2)] animate-fade-in">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping flex-shrink-0" />
+              <span className="font-semibold text-white truncate">{liveStatusText}</span>
+            </div>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <span className={`text-[10px] sm:text-[11px] font-mono uppercase font-bold px-2 py-0.5 rounded-lg border ${
+                livePhase === 'listening' ? 'bg-sky-500/15 border-sky-400/40 text-sky-300' :
+                livePhase === 'translating' ? 'bg-amber-500/15 border-amber-400/40 text-amber-300' :
+                livePhase === 'speaking' ? 'bg-emerald-500/15 border-emerald-400/40 text-emerald-300 animate-pulse' :
+                'bg-indigo-500/15 border-indigo-400/40 text-indigo-300'
+              }`}>
+                {livePhase}
+              </span>
+            </div>
+          </div>
+        )}
 
         {/* Text Input Fallback Bar (if toggled) */}
         {showTextInput && (
@@ -360,8 +487,19 @@ export default function Translator({ onBackToLanding }) {
         isOpen={showQuickPhrases}
         onClose={() => setShowQuickPhrases(false)}
         domain={domain}
-        onSelectPhrase={(phraseText) => {
-          sendDirectText(phraseText, activeSpeaker);
+        onSelectPhrase={async (phraseText) => {
+          await sendDirectText(phraseText, activeSpeaker, {
+            onSpeechStart: () => {
+              setIsSpeakerPlaying(true);
+              setLivePhase('speaking');
+              setLiveStatusText('🔊 Speaking translated phrase out loud...');
+            },
+            onSpeechEnd: () => {
+              setIsSpeakerPlaying(false);
+              setLivePhase('idle');
+              setLiveStatusText('');
+            }
+          });
         }}
       />
 
